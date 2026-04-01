@@ -5,6 +5,17 @@ All notable changes to the English documentation are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased] - 2026-04-01
+
+### Added
+
+- **Contributing Guide**: Added bilingual `CONTRIBUTING.md` contribution guide document
+- **Release Process Optimization**: Refactored `publish.sh` to support PR workflow
+
+### Documentation Updates
+
+- **AGENT_IMPORT_GUIDE.md**: Added AI agent import guide explaining how to load skills and prompts
+
 ---
 
 

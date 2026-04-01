@@ -79,7 +79,25 @@ uav_system_architecture:
 
 ```yaml
 uav_ros2_interfaces:
-  # MAVROS (MAVLink ↔ ROS2)
+  # MicroXRCE-DDS (默认优先选择)
+  microxrce_dds:
+    topics:
+      - /fmu/out/vehicle_odometry (vehicle_odometry)
+      - /fmu/out/vehicle_local_position (vehicle_local_position)
+      - /fmu/out/vehicle_global_position (vehicle_global_position)
+      - /fmu/out/sensor_combined (sensor_combined)
+      - /fmu/out/vehicle_attitude (vehicle_attitude)
+      - /fmu/out/vehicle_status (vehicle_status)
+      - /fmu/out/battery_status (battery_status)
+      - /fmu/out/timesync_status (timesync_status)
+    services:
+      - /fmu/in/vehicle_command
+      - /fmu/in/vehicle_do_set_mode
+      - /fmu/in/param_set
+      - /fmu/in/param_get
+    client: microxrce_dds_bridge
+    
+  # MAVROS (备选方案)
   mavros:
     topics:
       - /mavros/state (ConnectionState)
@@ -404,9 +422,18 @@ accuracy:
 name: fused_localization_skill
 description: 多传感器融合定位
 input:
-  - /gps/local_position
-  - /vio/pose
-  - /barometer/altitude
+  # MicroXRCE-DDS 输入
+  - /fmu/out/vehicle_global_position
+    type: vehicle_global_position
+  - /fmu/out/vehicle_odometry
+    type: vehicle_odometry
+  - /fmu/out/sensor_combined
+    type: sensor_combined
+  - /fmu/out/vehicle_attitude
+    type: vehicle_attitude
+  # 备选 MAVROS 输入
+  - /mavros/global_position/global
+  - /mavros/local_position/pose
   - /mavros/imu/data
   
 output:
@@ -475,21 +502,38 @@ description: 机载计算机轨迹控制
 type: autonomous_flight
 
 interface:
+  # 优先使用 MicroXRCE-DDS
   inputs:
+    - topic: /fmu/in/vehicle_command
+      type: vehicle_command
+    - topic: /fmu/out/vehicle_odometry
+      type: vehicle_odometry
+    - topic: /fmu/out/vehicle_status
+      type: vehicle_status
+  # 备选 MAVROS 接口
+  inputs_mavros:
     - topic: /setpoint_position/local
       type: PoseStamped
     - topic: /mavros/state
       type: MAVState
   outputs:
-    - topic: /mavros/setpoint_raw
+    - topic: /fmu/in/vehicle_command
     - topic: /trajectory
       
 parameters:
   # 必须先发送 setpoint 再切换 offboard
   setpoint_rate: 10 Hz (minimum)
   timeout: 1.0  # s, 超过此时间无命令则退出 offboard
+  # 使用 MicroXRCE-DDS 时的命令模式
+  command_mode: {type: enum, values: [SetPosition, SetVelocity, SetAttitude]}
   
 preconditions:
+  # MicroXRCE-DDS 前置条件
+  - microxrce_dds_bridge running
+  - vehicle_odometry received
+  - vehicle_status connected
+  - timesync established
+  # MAVROS 前置条件 (备选)
   - mavros connected
   - local_position received
   - home position set
@@ -632,12 +676,25 @@ description: 自主起飞/降落技能
 type: flight
 
 interface:
+  # 优先使用 MicroXRCE-DDS
   inputs:
     - topic: /mission/command
       type: std_msgs/String  # "takeoff" / "land"
-    - topic: /gps/fix
+    - topic: /fmu/out/vehicle_global_position
+      type: vehicle_global_position
   outputs:
-    - topic: /mavros/cmd/command
+    - topic: /fmu/in/vehicle_command
+      type: vehicle_command
+    - topic: /flight/status
+      
+  # 备选 MAVROS 接口
+  inputs_mavros:
+    - topic: /mission/command
+      type: std_msgs_String
+    - topic: /gps/fix
+  outputs_mavros:
+    - topic: /mavros/cmd/takeoff
+    - topic: /mavros/cmd/land
     - topic: /flight/status
       
 parameters:
@@ -646,6 +703,13 @@ parameters:
   landing_speed: {type: float, default: 0.5}      # m/s
   
 preconditions:
+  # MicroXRCE-DDS 前置条件
+  - timesync_established
+  - vehicle_status_connected
+  - global_position_received
+  - imu_calibrated
+  # MAVROS 前置条件 (备选)
+  - mavros connected
   - gps_locked (>6 satellites)
   - home_position_set
   - imu_ calibrated
@@ -698,11 +762,17 @@ description: 多机编队飞行
 type: formation
 
 interface:
+  # 优先使用 MicroXRCE-DDS
   inputs:
     - topic: /leader/pose
     - topic: /formation/target_offsets
   outputs:
-    - topic: /setpoint_position/local
+    - topic: /fmu/in/vehicle_command
+    - topic: /formation/status
+      
+  # 备选 MAVROS 接口
+  outputs_mavros:
+    - topic: /mavros/setpoint_position/local
     - topic: /formation/status
       
 params:
@@ -724,11 +794,18 @@ description: 无人机目标跟踪
 type: tracking
 
 interface:
+  # 优先使用 MicroXRCE-DDS
   inputs:
     - topic: /target/position_3d
     - topic: /cancel
   outputs:
-    - topic: /setpoint_position/local
+    - topic: /fmu/in/vehicle_command
+      type: vehicle_command
+    - topic: /tracking/status
+      
+  # 备选 MAVROS 接口
+  outputs_mavros:
+    - topic: /mavros/setpoint_position/local
     - topic: /tracking/status
       
 params:
@@ -904,7 +981,7 @@ sensors:
   - obstacle sensors (forward/back/down)
   - GPS + GLONASS
   - IMU + barometer
-interface: OSDK / MAVLink (via DJI OSDK)
+interface: OSDK / MAVLink / MicroXRCE-DDS (via DJI OSDK)
 ```
 
 ### 7.2 工业巡检四旋翼
@@ -921,7 +998,7 @@ sensors:
   - LIDAR (optional)
   - RTK GPS
   - ADS-B receiver
-interface: MAVLink / ROS2 via OSDK
+interface: MAVLink / ROS2 via OSDK / MicroXRCE-DDS
 ```
 
 ### 7.3 定制开发平台
@@ -937,7 +1014,7 @@ sensors:
   - Livox MID-70 (360° lidar)
   - Here3 RTK GPS
   - Holybro Pixhawk 6
-interface: ROS2 + PX4 + MAVROS
+interface: ROS2 + PX4 + MicroXRCE-DDS (优先) / MAVROS
 ```
 
 ---

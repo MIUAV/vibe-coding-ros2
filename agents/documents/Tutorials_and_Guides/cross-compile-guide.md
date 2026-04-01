@@ -191,7 +191,6 @@ colcon build \
         -DCMAKE_C_COMPILER=aarch64-linux-gnu-gcc \
         -DCMAKE_CXX_COMPILER=aarch64-linux-gnu-g++ \
         -DCMAKE_BUILD_TYPE=Release \
-        -DENABLE_RDK_BPU=OFF \
         -DENABLE_JETSON=OFF \
         -DBUILD_TESTING=OFF \
         -DCMAKE_CXX_FLAGS="-Wno-dev" \

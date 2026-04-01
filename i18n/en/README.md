@@ -321,3 +321,4 @@ ros2 run <package_name> <node_name>
 - Check `agents/skills/README.md` for available skills
 - Check `agents/documents/Tutorials_and_Guides/` for detailed tutorials
 - Check `agents/memory-bank/` for project context
+- Check [Agent Import Guide](./AGENT_IMPORT_GUIDE.md) for AI tool integration

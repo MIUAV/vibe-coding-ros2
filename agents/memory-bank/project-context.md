@@ -25,7 +25,7 @@
 | 平台 | 说明 |
 |------|------|
 | 开发机 | x86_64 / Ubuntu 22.04 |
-| 目标机 | Jetson OrinNX / RDK-X5 |
+| 目标机 | Jetson OrinNX / AGX |
 | ROS2 | Humble |
 
 ---

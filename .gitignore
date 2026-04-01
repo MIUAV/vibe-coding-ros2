@@ -1,0 +1,5 @@
+# AI workspace local bootstrap files
+.cursor/
+.github/
+.vscode/
+publish.sh
