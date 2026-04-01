@@ -4,10 +4,10 @@
 
 <p align="left">
     <img src="https://visitor-badge.laobi.icu/badge?page_id=MIUAV.vibe-coding-ros2" alt="Visitor Badge" />
-    <img src="https://img.shields.io/github/stars/MIUAV/vibe-coding-ros2?style=flat-square" alt="GitHub stars" />
-    <img src="https://img.shields.io/github/forks/MIUAV/vibe-coding-ros2?style=flat-square" alt="GitHub forks" />
-    <img src="https://img.shields.io/github/issues/MIUAV/vibe-coding-ros2?style=flat-square" alt="GitHub issues" />
-    <img src="https://img.shields.io/github/last-commit/MIUAV/vibe-coding-ros2?style=flat-square" alt="Last commit" />
+    <img src="https://img.shields.io/badge/stars-private-lightgrey?style=flat-square" alt="GitHub stars" />
+    <img src="https://img.shields.io/badge/forks-private-lightgrey?style=flat-square" alt="GitHub forks" />
+    <img src="https://img.shields.io/badge/issues-private-lightgrey?style=flat-square" alt="GitHub issues" />
+    <img src="https://img.shields.io/badge/last%20commit-v0.0.1--alpha-blue?style=flat-square" alt="Last commit" />
 </p>
 
 ## 📊 仓库活跃度
@@ -23,7 +23,7 @@
 - **多节点通信** — Topic/Service/Action 多种通信机制
 - **硬件驱动集成** — 相机、激光雷达、IMU、电机驱动
 - **实时性要求** — 控制系统对延迟敏感
-- **跨平台部署** — x86 开发机 → ARM 部署机（OrinNX/RDK-X5/JetBot）
+- **跨平台部署** — x86 开发机 → ARM 部署机（OrinNX/AGX/JetBot）
 - **生态依赖** — Navigation2、MoveIt、ROS2 工业应用
 
 > **核心理念**: *规划驱动 + 上下文固定 + AI 结对执行*，让机器人代码从「难以维护」变成「可审计、可迭代」。
@@ -189,6 +189,24 @@ vibe-coding-ros2/
 
 ## 🚀 快速入门
 
+### Step 0: 一键初始化 AI 规则与技能导入
+
+```bash
+./init-agent.sh --target all
+```
+
+说明:
+- `--target all`: 同时生成 VS Code Copilot 与 Cursor 配置
+- `--target copilot`: 仅生成 Copilot 配置
+- `--target cursor`: 仅生成 Cursor 配置
+
+脚本会自动生成:
+- Copilot 指令文件: `.github/copilot-instructions.md`
+- Cursor 规则文件: `.cursor/rules/vibe-coding-ros2.mdc`
+- MCP 配置模板: `.vscode/mcp.json` 与 `.cursor/mcp.json`
+- 全量技能索引: `agents/generated/skill-index.md`
+- 项目准则索引: `agents/generated/context-index.md`
+
 ### Step 1: 选择 AI 工具
 
 推荐使用 **Claude Opus 4.5** (VS Code Copilot) 或 **Codex CLI**
@@ -206,7 +224,7 @@ mkdir -p memory-bank
 # 项目上下文 - [项目名称]
 
 ## 1. 项目概述
-- 机器人平台: [ Jetson OrinNX / RDK-X5 / x86 ]
+- 机器人平台: [ Jetson OrinNX / AGX / x86 ]
 - ROS2 发行版: Humble
 - 核心功能: [列表]
 
@@ -240,6 +258,7 @@ mkdir -p memory-bank
 | 指南 | [调试指南](./documents/Tutorials_and_Guides/ros2-debug-guide.md) | rqt, bag, launch 调试 |
 | 指南 | [Docker 配置](./documents/Tutorials_and_Guides/docker-setup-guide.md) | 容器开发环境 |
 | 指南 | [交叉编译](./documents/Tutorials_and_Guides/cross-compile-guide.md) | ARM64 编译 |
+| 指南 | [Agent 导入指南](./i18n/zh-CN/AGENT_IMPORT_GUIDE.md) | AI 工具加载技能与提示 |
 
 ---
 

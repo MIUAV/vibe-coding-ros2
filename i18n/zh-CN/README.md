@@ -120,7 +120,7 @@ package_name/
 
 **目标平台**:
 - NVIDIA Jetson OrinNX
-- RDK-X5 (Horizon)
+- Jetson OrinNX / AGX
 - 其他 ARM64 嵌入式设备
 
 **触发词**:
