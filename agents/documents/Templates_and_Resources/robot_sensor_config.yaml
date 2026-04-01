@@ -1,0 +1,1234 @@
+# ROS2 机器人传感器配置 YAML
+# 按照感知维度划分: 视觉、听觉、触觉、接近觉、力觉、惯性等
+# 包含 IP地址、MAC地址、设备命名等网络配置信息
+
+# ============================================================
+# 机器人基础信息
+# ============================================================
+robot:
+  name: "robot_humble_nvr"
+  type: "wheeled_mobile_robot"  # humanoid | quadruped | manipulator | wheeled | uav
+  serial_number: "SN-2025-001"
+  hardware_platform: "Jetson Orin NX / RDK-X5"
+  ros2_distro: "humble"
+  domain_id: 0
+
+# ============================================================
+# 网络配置
+# ============================================================
+network:
+  # 主机网络
+  onboard_computer:
+    hostname: "robot-brain"
+    ethernet:
+      interface: "eth0"
+      ip: "192.168.1.100"
+      mac: "00:11:22:33:44:55"
+      gateway: "192.168.1.1"
+      netmask: "255.255.255.0"
+      mtu: 1500
+    
+    wireless:
+      interface: "wlan0"
+      ip: "192.168.2.100"
+      mac: "66:77:88:99:AA:BB"
+      ssid: "RobotNetwork_5G"
+      
+  # 外部通信
+  remote_control:
+    hostname: "control_station"
+    ip: "192.168.1.200"
+    port: 10000
+    
+  # RTK GPS 基站
+  rtk_base:
+    ip: "192.168.1.50"
+    port: 9001
+    
+  # MAVLink 通信 (无人机)
+  mavlink:
+    serial_port: "/dev/ttyUSB0"
+    baudrate: 921600
+    companion_ip: "192.168.1.100"
+    companion_port: 14550
+
+# ============================================================
+# 感知配置 - 按感知维度划分
+# ============================================================
+perception:
+
+  # ----------------------------------------------------------
+  # 视觉感知 (Visual Perception)
+  # ----------------------------------------------------------
+  visual:
+    description: "通过光电传感器获取二维图像信息"
+    
+    # 正面深度相机
+    front_depth_camera:
+      name: "front_realsense_d435i"
+      type: "RealSense_D435i"
+      perception_type: "depth_vision"
+      enabled: true
+      
+      # 硬件连接
+      hardware:
+        connection: "USB-C"
+        device_path: "/dev/video0"  # 逻辑设备名
+        serial_number: "841612070344"
+        
+      # 网络配置 (如果是通过网络连接)
+      network:
+        ip: null  # USB连接，无需IP
+        mac: null
+        
+      # ROS2 接口
+      ros2:
+        namespace: "/camera/front"
+        topics:
+          color: "/camera/front/color/image_raw"
+          color_camera_info: "/camera/front/color/camera_info"
+          depth: "/camera/front/depth/image_rect_raw"
+          depth_camera_info: "/camera/front/depth/camera_info"
+          infra1: "/camera/front/infra1/image_rect_raw"
+          infra2: "/camera/front/infra2/image_rect_raw"
+        frame_id: "front_camera_link"
+        depth_aligned: true
+        
+      # 相机内参
+      intrinsics:
+        width: 1280
+        height: 720
+        fx: 639.0
+        fy: 639.0
+        cx: 639.5
+        cy: 359.5
+        
+      # TF 坐标
+      tf:
+        parent: "base_link"
+        x: 0.3
+        y: 0.0
+        z: 0.5
+        roll: 0.0
+        pitch: 0.0
+        yaw: 0.0
+        
+      # 同步设置
+      sync:
+        depth_to_color: true
+        hardware_sync: false
+        
+    # 底部跟随相机 (用于视觉里程计)
+    stereo_down_camera:
+      name: "down_stereo"
+      type: "RealSense_T265"
+      perception_type: "stereo_vision_odometry"
+      enabled: true
+      
+      hardware:
+        connection: "USB-C"
+        device_path: "/dev/video2"
+        serial_number: "948122072157"
+        
+      ros2:
+        namespace: "/camera/down"
+        topics:
+          fisheye1: "/camera/down/fisheye1/image_raw"
+          fisheye2: "/camera/down/fisheye2/image_raw"
+          odom: "/camera/down/odom/sample"
+        frame_id: "down_camera_link"
+        
+      tf:
+        parent: "base_link"
+        x: 0.0
+        y: 0.0
+        z: -0.1  # 向下安装
+        roll: 3.14159  # 180度翻转
+        pitch: 0.0
+        yaw: 0.0
+        
+    # 正面工业相机
+    front_industrial_camera:
+      name: "front_basler_aita"
+      type: "Basler_ACE2_5c"
+      perception_type: "industrial_vision"
+      enabled: false  # 可选
+      
+      hardware:
+        connection: "GigE_Vision"
+        interface: "GigE"
+        ip: "192.168.1.60"
+        mac: "00:11:22:33:66:01"
+        device_path: "/dev/basler_front"
+        
+      ros2:
+        namespace: "/camera/basler"
+        topics:
+          image: "/camera/basler/image_raw"
+          camera_info: "/camera/basler/camera_info"
+        frame_id: "basler_camera_link"
+        
+      network_config:
+        persistent_ip: true
+        ip_assignment: "static"  # static | dhcp
+        gigevision_packet_size: 1500
+        
+      tf:
+        parent: "base_link"
+        x: 0.35
+        y: 0.0
+        z: 0.4
+        roll: 0.0
+        pitch: 0.0
+        yaw: 0.0
+        
+    # 机械臂腕部相机 (眼在手)
+    wrist_camera:
+      name: "wrist_hande_camera"
+      type: "Intel_RealSense_D405"
+      perception_type: "eye_in_hand_vision"
+      enabled: false  # 机械臂配置
+      
+      hardware:
+        connection: "USB-C"
+        serial_number: "231322334455"
+        
+      ros2:
+        namespace: "/camera/wrist"
+        topics:
+          depth: "/camera/wrist/depth/image_rect_raw"
+          color: "/camera/wrist/color/image_raw"
+          
+    # 环绕相机阵列
+    surround_view:
+      name: "surround_cameras"
+      type: "Camera_Array_4x"
+      perception_type: "surround_vision"
+      enabled: false
+      
+      cameras:
+        - name: "front"
+          ip: "192.168.1.71"
+          mac: "00:11:22:33:71:01"
+        - name: "rear"
+          ip: "192.168.1.72"
+          mac: "00:11:22:33:72:01"
+        - name: "left"
+          ip: "192.168.1.73"
+          mac: "00:11:22:33:73:01"
+        - name: "right"
+          ip: "192.168.1.74"
+          mac: "00:11:22:33:74:01"
+          
+      ros2:
+        namespace: "/surround"
+        topics:
+          front: "/surround/front/image_raw"
+          rear: "/surround/rear/image_raw"
+          left: "/surround/left/image_raw"
+          right: "/surround/right/image_raw"
+          panorama: "/surround/panorama/image_raw"
+          
+    # 热成像相机
+    thermal_camera:
+      name: "thermal_flir"
+      type: "FLIR_Boson_320"
+      perception_type: "thermal_vision"
+      enabled: false
+      
+      hardware:
+        connection: "USB-C"  # 或 GigE
+        device_path: "/dev/video4"
+        
+      ros2:
+        namespace: "/thermal"
+        topics:
+          image: "/thermal/image_raw"
+          temperature: "/thermal/temperature"
+        frame_id: "thermal_link"
+        
+      tf:
+        parent: "base_link"
+        x: 0.0
+        y: 0.0
+        z: 0.6
+        roll: 0.0
+        pitch: 0.0
+        yaw: 0.0
+
+  # ----------------------------------------------------------
+  # 听觉感知 (Auditory Perception) 
+  # ----------------------------------------------------------
+  auditory:
+    description: "通过声电传感器获取声音信息"
+    
+    # 麦克风阵列
+    microphone_array:
+      name: "audio_capture"
+      type: "Realsense_Mic_Array"  # 或 Respeaker USB Mic Array
+      perception_type: "audio_capture"
+      enabled: false
+      
+      hardware:
+        connection: "USB"
+        device_path: "/dev/audio_device"
+        channels: 4  # 4麦克风波束形成
+        
+      ros2:
+        namespace: "/audio"
+        topics:
+          audio: "/audio/data"           # raw audio
+          audio_chunks: "/audio/chunks"  # processed chunks
+          direction: "/audio/direction" # 声源定位方向
+          vad: "/audio/vad"              # 语音活动检测
+        frame_id: "mic_array_link"
+        
+      # 音频参数
+      audio_params:
+        sample_rate: 16000
+        bit_depth: 16
+        channels: 1  # 单声道 (波束形成后)
+        format: "wave"
+        
+    # 水下声呐 (水下机器人)
+    underwater_sonar:
+      name: "ping_sonar"
+      type: "BlueRobotics_Ping"
+      perception_type: "acoustic_perception"
+      enabled: false
+      
+      hardware:
+        connection: "Serial"
+        device_path: "/dev/ttyUSB2"
+        baudrate: 115200
+        
+      ros2:
+        namespace: "/sonar"
+        topics:
+          ping: "/sonar/ping"
+          profile: "/sonar/profile"
+        frame_id: "sonar_link"
+        
+      # 声呐参数
+      sonar_params:
+        max_distance: 30.0  # meters
+        min_distance: 0.5
+        field_of_view: 30   # degrees
+        update_rate: 10     # Hz
+
+  # ----------------------------------------------------------
+  # 触觉感知 (Tactile Perception)
+  # ----------------------------------------------------------
+  tactile:
+    description: "通过接触传感器获取接触力和压力信息"
+    
+    # 末端力矩传感器
+    wrist_force_torque:
+      name: "wrist_ft_sensor"
+      type: "Robotiq_FT_300"  # 或 ATI Mini45 / JR3
+      perception_type: "force_torque"
+      enabled: false  # 机械臂配置
+      
+      hardware:
+        connection: "Ethernet"  # 或 CAN / Serial
+        ip: "192.168.1.80"
+        mac: "00:11:22:33:80:01"
+        device_path: "/dev/ft_sensor_0"
+        
+      ros2:
+        namespace: "/wrench"
+        topics:
+          wrench_raw: "/wrench/raw"           # geometry_msgs/WrenchStamped
+          wrench_filtered: "/wrench/filtered"  # 滤波后
+          temperature: "/wrench/temperature" # 传感器温度
+        frame_id: "wrist_ft_link"
+        
+      # 力矩传感器参数
+      ft_params:
+        force_range: [-150, 150]  # N
+        torque_range: [-20, 20]   # Nm
+        sampling_rate: 1000        # Hz
+        resolution: 0.1            # counts
+        filter_cutoff: 50          # Hz
+        
+      tf:
+        parent: "end_effector_link"
+        x: 0.0
+        y: 0.0
+        z: 0.0
+        roll: 0.0
+        pitch: 0.0
+        yaw: 0.0
+        
+    # 手指力传感器
+    gripper_force:
+      name: "gripper_ft_sensors"
+      type: "Robotiq_2F_Sensor"
+      perception_type: "gripper_force"
+      enabled: false
+      
+      hardware:
+        connection: "Serial"
+        device_path: "/dev/ttyUSB3"
+        baudrate: 115200
+        
+      ros2:
+        namespace: "/gripper"
+        topics:
+          force_left: "/gripper/force_left"
+          force_right: "/gripper/force_right"
+          grasp_status: "/gripper/status"
+        frame_id: "gripper_link"
+        
+    # 触觉传感器阵列 (人形/仿生机器人)
+    tactile_array:
+      name: "skin_tactile_array"
+      type: "BioTac_Skin_Sensor"  # 或 Weiss Robotics / Touchcape
+      perception_type: "tactile_array"
+      enabled: false
+      
+      hardware:
+        connection: "CAN"
+        can_channel: "can0"
+        device_path: "/dev/tactile_0"
+        
+      ros2:
+        namespace: "/tactile"
+        topics:
+          pressures: "/tactile/pressures"     # 压力矩阵
+          temperatures: "/tactile/temps"      # 温度
+          forces: "/tactile/forces"           # 估算力
+        frame_id: "tactile_link"
+        
+      # 触觉阵列参数
+      tactile_params:
+        taxel_count: 143   # 传感器数目
+        spatial_resolution: 1.0  # mm
+        sampling_rate: 100  # Hz
+        pressure_range: [0, 50]  # N/cm²
+        
+    # 接触开关 (简单触觉)
+    contact_switches:
+      name: "contact_bumpers"
+      type: "Contact_Switch_Array"
+      perception_type: "binary_contact"
+      enabled: true
+      
+      hardware:
+        connection: "GPIO"
+        device_path: "/dev/gpio_event_0"
+        
+      ros2:
+        namespace: "/bumper"
+        topics:
+          states: "/bumper/states"  # bool array
+        frame_id: "bumper_link"
+        
+      # 安装位置
+      locations:
+        - name: "front_left"
+          frame: "bumper_fl_link"
+        - name: "front_right"
+          frame: "bumper_fr_link"
+        - name: "rear"
+          frame: "bumper_rear_link"
+
+  # ----------------------------------------------------------
+  # 接近觉感知 (Proximity Perception)
+  # ----------------------------------------------------------
+  proximity:
+    description: "检测物体与传感器的距离，无需物理接触"
+    
+    # 正面激光雷达
+    front_lidar:
+      name: "front_2d_lidar"
+      type: "SICK_LMS511"  # 或 Hokuyo UST-10 / SICK TIM571
+      perception_type: "2d_proximity_scan"
+      enabled: true
+      
+      hardware:
+        connection: "Ethernet"
+        ip: "192.168.1.40"
+        mac: "00:11:22:33:40:01"
+        device_path: "/dev/lidar_front"
+        
+      ros2:
+        namespace: "/lidar"
+        topics:
+          scan: "/lidar/scan"              # sensor_msgs/LaserScan
+          intensity: "/lidar/intensity"     # 反射强度
+          status: "/lidar/status"           # 设备状态
+        frame_id: "front_laser_link"
+        scan_topic: "/lidar/scan"          # 用于 SLAM
+          
+      # 激光雷达参数
+      lidar_params:
+        scan_rate: 25           # Hz
+        angle_range: 270        # degrees
+        angle_resolution: 0.25  # degrees
+        max_range: 25.0         # meters
+        min_range: 0.1          # meters
+        filter_ambient_light: true
+        filter_dust: true
+        
+      tf:
+        parent: "base_link"
+        x: 0.25
+        y: 0.0
+        z: 0.15
+        roll: 0.0
+        pitch: 0.0
+        yaw: 0.0
+        
+    # 顶部 3D 激光雷达
+    top_lidar:
+      name: "top_3d_lidar"
+      type: "Livox_MID360"  # 或 Velodyne VLP-32 / Ouster OS1
+      perception_type: "3d_proximity_scan"
+      enabled: true
+      
+      hardware:
+        connection: "Ethernet"
+        ip: "192.168.1.41"
+        mac: "00:11:22:33:41:01"
+        device_path: "/dev/lidar_top"
+        
+      ros2:
+        namespace: "/lidar_top"
+        topics:
+          points: "/lidar_top/points"              # PointCloud2
+          points_nonground: "/lidar_top/points_ng" # 地面分割后
+          scan: "/lidar_top/scan"                  # 2D 俯视图
+        frame_id: "top_laser_link"
+        
+      # 3D 激光雷达参数
+      lidar_3d_params:
+        scan_rate: 10            # Hz
+        max_range: 100.0         # meters
+        min_range: 0.1           # meters
+        vertical_fov: 59.2      # degrees (MID360)
+        horizontal_fov: 360      # degrees
+        point_rate: 240000       # points/sec
+        return_mode: "strongest" # strongest | last | dual
+        bird_removal: true
+        
+      tf:
+        parent: "base_link"
+        x: 0.0
+        y: 0.0
+        z: 0.5  # 顶部安装
+        roll: 0.0
+        pitch: 0.0
+        yaw: 0.0
+        
+    # 超声波传感器阵列
+    ultrasonic_array:
+      name: "ultrasonic_sensors"
+      type: "HC_SR04_Array"
+      perception_type: "ultrasonic_proximity"
+      enabled: true
+      
+      hardware:
+        connection: "GPIO/I2C"
+        device_path: "/dev/ultrasonic_0"
+        channels: 6  # 前3后3
+        
+      ros2:
+        namespace: "/ultrasonic"
+        topics:
+          ranges: "/ultrasonic/ranges"      # Float32MultiArray
+          front: "/ultrasonic/front_0"       # 分通道
+          rear: "/ultrasonic/rear_0"
+        frame_id: "ultrasonic_link"
+        
+      # 超声波参数
+      ultrasonic_params:
+        max_range: 4.0    # meters
+        min_range: 0.02   # meters
+        field_of_view: 60 # degrees
+        update_rate: 20   # Hz
+        
+      tf:
+        front:
+          parent: "base_link"
+          x: 0.3
+          y: 0.0
+          z: 0.1
+        rear:
+          parent: "base_link"
+          x: -0.3
+          y: 0.0
+          z: 0.1
+          
+    # 红外接近传感器
+    infrared_proximity:
+      name: "infrared_sensors"
+      type: "Sharp_GP2Y0A02YK"
+      perception_type: "infrared_proximity"
+      enabled: false
+      
+      hardware:
+        connection: "Analog_GPIO"
+        channels: 4
+        
+      ros2:
+        namespace: "/infrared"
+        topics:
+          distances: "/infrared/distances"
+        frame_id: "infrared_link"
+        
+      infrared_params:
+        ranges: [0.2, 1.5]  # m
+        field_of_view: 15   # degrees
+        
+    # ToF 深度传感器
+    tof_sensor:
+      name: "tof_distance"
+      type: "VL53L0X"
+      perception_type: "tof_proximity"
+      enabled: false
+      
+      hardware:
+        connection: "I2C"
+        device_path: "/dev/i2c-1"
+        i2c_address: "0x29"
+        
+      ros2:
+        namespace: "/tof"
+        topics:
+          distance: "/tof/distance"
+        frame_id: "tof_link"
+        
+      tf:
+        parent: "base_link"
+        x: 0.0
+        y: 0.0
+        z: 0.05
+        
+    # 毫米波雷达 (用于无人机)
+    mmwave_radar:
+      name: "mmwave_presence"
+      type: "TexasInstruments_IWR6843"
+      perception_type: "radar_proximity"
+      enabled: false  # 无人机配置
+      
+      hardware:
+        connection: "LVDS / Ethernet"
+        ip: "192.168.1.90"
+        mac: "00:11:22:33:90:01"
+        
+      ros2:
+        namespace: "/mmwave"
+        topics:
+          detected_objects: "/mmwave/detected_objects"
+          point_cloud: "/mmwave/points"
+        frame_id: "mmwave_link"
+        
+      # 雷达参数
+      radar_params:
+        max_range: 50.0   # meters
+        range_resolution: 0.05  # meters
+        max_velocity: 30  # m/s
+        field_of_view: 120 # degrees
+        update_rate: 20   # Hz
+        
+    # 楼梯检测传感器 (近地面检测)
+    cliff_sensor:
+      name: "cliff_detectors"
+      type: "Cliff_Infrared_Sensor"
+      perception_type: "cliff_detection"
+      enabled: true
+      
+      hardware:
+        connection: "GPIO"
+        device_path: "/dev/cliff_0"
+        
+      ros2:
+        namespace: "/cliff"
+        topics:
+          front: "/cliff/front"
+          rear: "/cliff/rear"
+          triggered: "/cliff/triggered"
+        frame_id: "base_link"
+        
+      cliff_params:
+        detection_range: 0.05  # meters
+        threshold: 100         # ADC value
+
+  # ----------------------------------------------------------
+  # 力觉感知 (Force / Torque Perception)
+  # ----------------------------------------------------------
+  force:
+    description: "感知力、力矩、压力等物理量"
+    
+    # 六维力矩传感器 (已在触觉部分定义手腕力矩)
+    # 这里补充电机电流估算力觉
+    motor_current_sensing:
+      name: "motor_current_sensors"
+      type: "Current_Sensor_Array"
+      perception_type: "current_based_force_estimation"
+      enabled: true
+      
+      hardware:
+        connection: "CAN"
+        can_channel: "can0"
+        
+      ros2:
+        namespace: "/motors"
+        topics:
+          currents: "/motors/currents"      # Float32MultiArray
+          efforts: "/motors/efforts_estimated"  # 估算力矩
+        frame_id: "base_link"
+        
+      # 电流-力矩转换参数
+      current_params:
+        motors:
+          - name: "left_wheel"
+            current_to_torque: 0.5  # Nm/A
+            max_current: 10.0       # A
+          - name: "right_wheel"
+            current_to_torque: 0.5
+            max_current: 10.0
+          - name: "front_left_wheel"
+            current_to_torque: 0.5
+            max_current: 10.0
+          - name: "front_right_wheel"
+            current_to_torque: 0.5
+            max_current: 10.0
+          - name: "rear_left_wheel"
+            current_to_torque: 0.5
+            max_current: 10.0
+          - name: "rear_right_wheel"
+            current_to_torque: 0.5
+            max_current: 10.0
+
+  # ----------------------------------------------------------
+  # 惯性感知 (Inertial Perception)
+  # ----------------------------------------------------------
+  inertial:
+    description: "通过惯性测量单元感知运动状态"
+    
+    # 主 IMU
+    primary_imu:
+      name: "main_imu"
+      type: "Xsens_MTi_630"  # 或 Vectornav VN-100 / BMI088
+      perception_type: "imu_6axis"
+      enabled: true
+      
+      hardware:
+        connection: "Ethernet"  # 或 CAN / Serial
+        ip: "192.168.1.30"
+        mac: "00:11:22:33:30:01"
+        device_path: "/dev/imu_primary"
+        baudrate: 921600  # Serial only
+        
+      ros2:
+        namespace: "/imu"
+        topics:
+          data: "/imu/data"                    # sensor_msgs/Imu (融合后)
+          raw: "/imu/raw"                      # 原始数据
+          mag: "/imu/mag"                     # 磁力计 (如果集成)
+          temperature: "/imu/temperature"      # IMU温度
+          status: "/imu/status"                # 设备状态
+        frame_id: "imu_link"
+        
+      # IMU 参数
+      imu_params:
+        # 加速度计
+        accel_range: 16.0        # g (2, 4, 8, 16)
+        resolution: 0.000488     # g/LSB
+        noise_density: 100       # μg/√Hz
+        
+        # 陀螺仪
+        gyro_range: 2000.0      # dps (125, 250, 500, 1000, 2000)
+        resolution: 0.01        # dps/LSB
+        noise_density: 0.005    # °/s/√Hz
+        
+        # 采样率
+        sampling_rate: 200      # Hz
+        output_rate: 100        # Hz (已过滤)
+        
+        # 方向定义 (NED vs ENU)
+        orientation_frame: "ENU"
+        
+      tf:
+        parent: "base_link"
+        x: 0.0
+        y: 0.0
+        z: 0.2  # 安装在中心偏上
+        roll: 0.0
+        pitch: 0.0
+        yaw: 0.0
+        
+    # 内部 IMU (嵌入式，通常用于四足/无人机)
+    internal_imu:
+      name: "internal_imu"
+      type: "BMI088"  # 内置于控制器
+      perception_type: "imu_6axis_internal"
+      enabled: true
+      
+      hardware:
+        connection: "SPI"
+        device_path: "/dev/spidev0.0"
+        
+      ros2:
+        namespace: "/imu_internal"
+        topics:
+          data: "/imu_internal/data"
+        frame_id: "base_link"
+        
+      # 内置IMU参数 (通常精度较低)
+      internal_imu_params:
+        accel_range: 12.0   # g
+        gyro_range: 1000.0  # dps
+        sampling_rate: 666   # Hz
+
+  # ----------------------------------------------------------
+  # 位置感知 (Position Perception) - GPS/编码器/里程计
+  # ----------------------------------------------------------
+  position:
+    description: "感知绝对/相对位置信息"
+    
+    # GPS 接收机
+    gnss_receiver:
+      name: "gnss_gps"
+      type: "u-blox_ZED-F9P"  # 或 NEO-M8P / M10
+      perception_type: "gnss_position"
+      enabled: true
+      
+      hardware:
+        connection: "USB-C / UART"
+        device_path: "/dev/gps_0"
+        baudrate: 460800
+        protocol: "NMEA"
+        
+      ros2:
+        namespace: "/gps"
+        topics:
+          fix: "/gps/fix"                    # sensor_msgs/NavSatFix
+          vel: "/gps/vel"                    # geometry_msgs/TwistStamped
+          satellites: "/gps/satellites"      # 卫星信息
+          status: "/gps/status"              # GPS状态
+        frame_id: "gps_link"
+        
+      # GPS 参数
+      gnss_params:
+        constellation: ["GPS", "GLONASS", "Galileo", "BeiDou"]
+        fix_rate: 5       # Hz
+        position_accuracy: 2.5  # m (单点)
+        
+      tf:
+        parent: "base_link"
+        x: 0.0
+        y: 0.0
+        z: 0.1
+        roll: 0.0
+        pitch: 0.0
+        yaw: 0.0
+        
+    # RTK GPS 基准站
+    rtk_base_station:
+      name: "rtk_base"
+      type: "Reach_M_Plus"  # 或 u-blox ZED-F9P 作为基站
+      perception_type: "rtk_base_station"
+      enabled: false  # 需要额外基准站
+      
+      hardware:
+        connection: "WiFi / Ethernet"
+        ip: "192.168.1.50"
+        port: 9001
+        
+      ros2:
+        namespace: "/rtk"
+        topics:
+          base_position: "/rtk/base_position"
+          correction: "/rtk/correction"  # RTCM3 校正数据
+          
+      # RTK 配置
+      rtk_params:
+        position_mode: "fixed"  # fixed | stationary
+        coordinate_system: "WGS84"
+        elevation_mask: 15     # degrees
+        
+    # 轮式里程计 (编码器)
+    wheel_encoders:
+      name: "wheel_odometry"
+      type: "Incremental_Encoder"
+      perception_type: "wheel_odometry"
+      enabled: true
+      
+      hardware:
+        connection: "Encoder_Interface / ABZ"
+        device_path: "/dev/encoder_0"
+        
+      ros2:
+        namespace: "/encoder"
+        topics:
+          ticks: "/encoder/ticks"        # Int32MultiArray
+          rpm: "/encoder/rpm"            # Float32
+          odom: "/wheel/odom"            # nav_msgs/Odometry (发布里程计)
+        frame_id: "base_link"
+        
+      # 编码器参数
+      encoder_params:
+        resolution: 4096   # pulses per revolution
+        gear_ratio: 20.0   # 电机减速比
+        wheel_radius: 0.1  # meters
+        wheel_separation: 0.5  # meters (差速驱动)
+        
+    # UWB 室内定位
+    uwb_anchors:
+      name: "uwb_localization"
+      type: "Pozyx_Creator"  # 或 Decawave DWM1001
+      perception_type: "uwb_ranging_position"
+      enabled: false
+      
+      hardware:
+        connection: "USB / I2C"
+        device_path: "/dev/uwb_0"
+        
+      ros2:
+        namespace: "/uwb"
+        topics:
+          ranges: "/uwb/ranges"
+          position: "/uwb/position"
+        frame_id: "uwb_link"
+        
+      # UWB 配置
+      uwb_params:
+        anchor_ids: [1, 2, 3, 4]
+        anchor_positions:  # 已知基站位置
+          - [0.0, 0.0, 2.0]   # Anchor 1
+          - [10.0, 0.0, 2.0]  # Anchor 2
+          - [10.0, 10.0, 2.0] # Anchor 3
+          - [0.0, 10.0, 2.0]  # Anchor 4
+
+  # ----------------------------------------------------------
+  # 嗅觉感知 (Olfactory Perception) - 气体/化学感知
+  # ----------------------------------------------------------
+  olfactory:
+    description: "感知气体成分和浓度 (特殊机器人应用)"
+    enabled: false
+    
+    # 气体传感器阵列
+    gas_sensor_array:
+      name: "gas_detection"
+      type: "iSense_Multi-Gas"
+      perception_type: "gas_sensing"
+      
+      hardware:
+        connection: "Serial"
+        device_path: "/dev/gas_sensor_0"
+        baudrate: 57600
+        
+      ros2:
+        namespace: "/gas"
+        topics:
+          concentrations: "/gas/concentrations"
+          alarm: "/gas/alarm"
+        frame_id: "gas_sensor_link"
+        
+      # 气体检测参数
+      gas_params:
+        detectable_gases:
+          - CO: {range: [0, 1000], unit: "ppm", alarm: 50}
+          - CO2: {range: [400, 10000], unit: "ppm", alarm: 5000}
+          - CH4: {range: [0, 100], unit: "ppm", alarm: 1000}
+          - H2S: {range: [0, 100], unit: "ppm", alarm: 10}
+        sampling_rate: 1  # Hz
+
+  # ----------------------------------------------------------
+  # 环境感知 (Environment Perception)
+  # ----------------------------------------------------------
+  environment:
+    description: "感知环境温湿度、光照等物理环境参数"
+    
+    # 温湿度传感器
+    temperature_humidity:
+      name: "env_temp_humidity"
+      type: "Sensirion_SHT40"  # 或 DHT22
+      perception_type: "temperature_humidity"
+      enabled: false
+      
+      hardware:
+        connection: "I2C"
+        device_path: "/dev/i2c-0"
+        i2c_address: "0x44"
+        
+      ros2:
+        namespace: "/environment"
+        topics:
+          temperature: "/environment/temperature"
+          humidity: "/environment/humidity"
+          pressure: "/environment/pressure"  # 如果有气压计
+        frame_id: "env_sensor_link"
+        
+    # 光照传感器
+    light_sensor:
+      name: "ambient_light"
+      type: "TSL2591"
+      perception_type: "ambient_light"
+      enabled: false
+      
+      hardware:
+        connection: "I2C"
+        device_path: "/dev/i2c-0"
+        i2c_address: "0x29"
+        
+      ros2:
+        namespace: "/environment"
+        topics:
+          lux: "/environment/illuminance"
+        frame_id: "light_sensor_link"
+
+# ============================================================
+# 传感器融合配置
+# ============================================================
+sensor_fusion:
+  description: "多传感器数据融合策略"
+  
+  # 定位融合 (robot_localization 包)
+  localization:
+    ekf_odom:
+      name: "ekf_odom_fusion"
+      enabled: true
+      package: "robot_localization"
+      node_name: "ekf_localization_odom"
+      
+      inputs:
+        - source: "/wheel/odom"
+          topic: "/wheel/odom"
+          type: "nav_msgs/Odometry"
+          sensor: "wheel_odometry"
+          weight: 0.5
+        - source: "/imu/data"
+          topic: "/imu/data"
+          type: "sensor_msgs/Imu"
+          sensor: "imu"
+          weight: 0.3
+        - source: "/gps/fix"
+          topic: "/gps/fix"
+          type: "sensor_msgs/NavSatFix"
+          sensor: "gps"
+          weight: 0.2
+          transform_timeout: 1.0
+          
+      output:
+        topic: "/odom/filtered"
+        frame_id: "odom"
+        base_link_frame: "base_link"
+        
+    ekf_map:
+      name: "ekf_map_fusion"
+      enabled: false  # 使用 SLAM 时启用
+      package: "robot_localization"
+      node_name: "ekf_localization_map"
+      
+      inputs:
+        - source: "/slam/pose"
+          topic: "/slam/pose"
+          type: "geometry_msgs/PoseWithCovarianceStamped"
+        - source: "/gps/fix"
+          topic: "/gps/fix"
+          
+  # 感知融合
+  perception_fusion:
+    obstacle_detection:
+      enabled: true
+      
+      inputs:
+        - source: "/lidar/scan"
+          weight: 0.6
+          type: "2d"
+        - source: "/camera/front/depth/image_rect_raw"
+          weight: 0.4
+          type: "2d_depth"
+          
+      output:
+        topic: "/obstacles/detected"
+        
+# ============================================================
+# TF 坐标树配置
+# ============================================================
+tf_tree:
+  description: "机器人 TF 坐标树定义"
+  
+  # 基础坐标框架
+  frames:
+    # 全局坐标系
+    - name: "map"
+      parent: null
+      type: "global"
+      
+    - name: "odom"
+      parent: "map"
+      type: "odometry"
+      
+    # 机器人基座
+    - name: "base_link"
+      parent: "odom"
+      type: "base"
+      description: "机器人几何中心"
+      
+    - name: "base_footprint"
+      parent: "base_link"
+      type: "ground_truth"
+      description: "地面投影"
+      
+    # 传感器坐标框架
+    - name: "front_laser_link"
+      parent: "base_link"
+      
+    - name: "top_laser_link"
+      parent: "base_link"
+      
+    - name: "front_camera_link"
+      parent: "base_link"
+      
+    - name: "imu_link"
+      parent: "base_link"
+      
+    - name: "gps_link"
+      parent: "base_link"
+      
+    - name: "wheel_left_link"
+      parent: "base_link"
+      
+    - name: "wheel_right_link"
+      parent: "base_link"
+      
+    # 末端执行器
+    - name: "end_effector_link"
+      parent: "base_link"
+      
+    - name: "gripper_link"
+      parent: "end_effector_link"
+
+# ============================================================
+# 时间同步配置
+# ============================================================
+time_sync:
+  description: "传感器时间同步配置"
+  
+  # PTP 精确时间协议
+  ptp_sync:
+    enabled: false
+    master_clock: "gps"  # gps | imu | external
+    
+  # 软同步配置 (message_filters)
+  software_sync:
+    enabled: true
+    
+    # 相机-IMU 同步
+    camera_imu_sync:
+      topics:
+        - "/camera/front/color/image_raw"
+        - "/camera/front/imu"
+      approximate: true
+      queue_size: 10
+      
+    # 激光-IMU 同步
+    lidar_imu_sync:
+      topics:
+        - "/lidar/scan"
+        - "/imu/data"
+      approximate: true
+      slop: 0.1  # seconds
+
+# ============================================================
+# 设备命名规范
+# ============================================================
+device_naming:
+  description: "设备命名规范和约定"
+  
+  # 传感器命名模式: {type}_{location}_{number}
+  # 示例: lidar_front_01, camera_rear_02
+  
+  conventions:
+    sensor_prefixes:
+      camera: "cam"
+      lidar: "lidar"
+      imu: "imu"
+      encoder: "enc"
+      motor: "mot"
+      gps: "gps"
+      ultrasonic: "us"
+      ft_sensor: "ft"
+      
+    locations:
+      front: "fr"
+      rear: "re"
+      left: "le"
+      right: "ri"
+      top: "to"
+      bottom: "bo"
+      wrist: "wr"
+      base: "ba"
+      
+    example_names:
+      - "cam_fr_color_01"     # 正面彩色相机01
+      - "cam_fr_depth_01"     # 正面深度相机01
+      - "lidar_to_3d_01"      # 顶部3D激光雷达
+      - "imu_ba_01"           # 基座IMU
+      - "ft_wr_01"            # 腕部力矩传感器
+      - "gps_ba_01"           # 基座GPS
+      
+# ============================================================
+# 安全配置
+# ============================================================
+safety:
+  description: "安全相关传感器配置"
+  
+  # 急停按钮
+  emergency_stop:
+    enabled: true
+    hardware:
+      connection: "GPIO"
+      device_path: "/dev/estop_0"
+    ros2:
+      topic: "/emergency_stop"
+      message_type: "std_msgs/Bool"
+    behavior: "immediate_motor_disable"
+    
+  # 安全扫描区域
+  safety_zones:
+    # 机器人周围 0.5m 范围内检测到障碍物则停止
+    - name: "protective_zone"
+      radius: 0.5  # meters
+      action: "stop"
+      
+    # 警告区域
+    - name: "warning_zone"
+      radius: 1.0  # meters
+      action: "slowdown"
+      
+  # 最大速度限制
+  speed_limits:
+    max_linear: 1.0   # m/s
+    max_angular: 2.0   # rad/s
+    max_fall_height: 0.05  # m (楼梯检测阈值)
+
+# ============================================================
+# ROS2 参数配置文件 (可用 ros2 param dump 导出)
+# ============================================================
+# 本文件可被解析为以下 ros2 launch 参数:
+#
+# use_sim_time: false
+# robot_name: "robot_humble_nvr"
+# domain_id: 0
+#
+# 相机参数
+# camera.front.enabled: true
+# camera.front.serial: "841612070344"
+#
+# 激光雷达参数
+# lidar.front.enabled: true
+# lidar.front.ip: "192.168.1.40"
+#
+# IMU 参数
+# imu.enabled: true
+# imu.frame_id: "imu_link"
+#
+# GPS 参数
+# gps.enabled: true
+# gps.device: "/dev/gps_0"
