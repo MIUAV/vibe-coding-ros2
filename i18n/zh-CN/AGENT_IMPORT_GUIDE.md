@@ -33,6 +33,8 @@
 
 技能是模块化的能力定义，采用 **分类体系** 组织：
 
+> 提示：技能数量会持续增长，静态目录树仅作示意。请始终以 `agents/generated/skill-index.md`（全量）和 `agents/generated/skill-routing.md`（路由/重名消歧）为准。
+
 #### 技能分类维度
 
 | 维度 | 说明 |
@@ -429,6 +431,9 @@ cat agents/skills/edge-platforms/rockchip-rknn/rknn-model-conversion/SKILL.md
 │ 创建包      │ @skills/ros2-package-generator            │
 │ 调试        │ @skills/ros2-debugging                    │
 │ 交叉编译    │ @skills/arm64-cross-compile               │
+│ 导入引导    │ @skills/common/agent-skill-bootstrap      │
+│ 技能路由    │ agents/generated/skill-routing.md          │
+│ 重建索引    │ ./init-agent.sh --target all              │
 │ 项目上下文  │ agents/memory-bank/project-context.md      │
 │ 实施计划    │ agents/memory-bank/implementation-plan.md  │
 │ 进度追踪    │ agents/memory-bank/progress.md             │
@@ -437,13 +442,40 @@ cat agents/skills/edge-platforms/rockchip-rknn/rknn-model-conversion/SKILL.md
 
 ---
 
-## 8. 相关文档
+## 8. 使用 Copilot /create-skill 扩展技能
 
-- [技能索引](./agents/skills/README.md)
-- [提示词库](./agents/prompts/)
-- [Memory Bank 模板](./agents/memory-bank/)
-- [机器人类型指南](./agents/robots/)
-- [贡献指南](../i18n/zh-CN/CONTRIBUTING.md)
+当新增技能时，建议先用 Copilot 的 `/create-skill` 生成初稿，再落盘到项目分类路径。
+
+推荐输入模板：
+
+```text
+/create-skill
+创建一个名为 <skill-name> 的技能，放在 agents/skills/<taxonomy-path>/<skill-name>/SKILL.md。
+要求：
+1) frontmatter 包含 name、description
+2) description 包含可检索关键词（例如：导入技能、重建技能索引）
+3) 内容包含：何时使用、快速参考、执行步骤、故障排查
+4) 提供 ROS2 场景命令示例
+```
+
+创建完成后，必须执行：
+
+```bash
+./init-agent.sh --target all
+```
+
+以刷新 `skill-index.md`、`skill-routing.md` 和 bootstrap 文件。
+
+---
+
+## 9. 相关文档
+
+- [技能索引](../../agents/skills/README.md)
+- [技能路由](../../agents/generated/skill-routing.md)
+- [提示词库](../../agents/prompts/)
+- [Memory Bank 模板](../../agents/memory-bank/)
+- [机器人类型指南](../../agents/robots/)
+- [贡献指南](./CONTRIBUTING.md)
 
 ---
 

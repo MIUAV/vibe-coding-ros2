@@ -7,16 +7,25 @@
 
 ---
 
-## [Unreleased] - 2026-04-01
+## [Unreleased] - 2026-04-02
 
 ### 新增
 
-- **贡献指南**: 添加双语的 `CONTRIBUTING.md` 贡献指南文档
-- **发布流程优化**: 重构 `publish.sh` 脚本以支持 PR 工作流
+- **sdf-xacro-model 技能**: 为 humanoid、manipulator、quadruped、wheeled_vehicle、multi_rotor_uav 添加 SDF/Xacro 模型生成技能
+- **simulator 技能目录**: 新增仿真器技能目录
+- **skill-routing.md**: 新增技能路由索引文件
+- **init-agent.sh 功能增强**: 支持 Copilot 和 Cursor 双 IDE 配置生成
+
+### 变更
+
+- **技能模块重构**: 删除 gazebo-harmonic、isaaclab、maniskill3、rviz2、unreal-engine 仿真技能
+- **AGENT_IMPORT_GUIDE.md**: 更新 AI 智能体加载指南
+- **README.md**: 新增嵌入式平台 Debug（容器/仿真→实机部署）技术说明
 
 ### 文档更新
 
-- **AGENT_IMPORT_GUIDE.md**: 新增 AI 智能体加载指南，详细说明技能和提示词的加载方式
+- **贡献指南**: 添加双语的 `CONTRIBUTING.md` 贡献指南文档
+- **发布流程优化**: 重构 `publish.sh` 脚本以支持 PR 工作流
 
 ---
 

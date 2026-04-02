@@ -7,5 +7,6 @@ Start from:
 1. agents/generated/agent-bootstrap.md
 2. agents/generated/context-index.md
 3. agents/generated/skill-index.md
+4. agents/generated/skill-routing.md
 
 If a request maps to a specific domain, load corresponding SKILL.md before implementation.

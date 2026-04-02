@@ -33,6 +33,8 @@ The script auto-generates:
 
 Skills are modular capability definitions organized in a **taxonomy system**:
 
+> Note: The skill set is growing quickly. Treat the static tree as illustrative only. Always use `agents/generated/skill-index.md` (full list) and `agents/generated/skill-routing.md` (routing/disambiguation) as the source of truth.
+
 #### Skill Taxonomy Dimensions
 
 | Dimension | Description |
@@ -434,6 +436,9 @@ Example:
 │ Create Package   │ @skills/ros2-package-generator        │
 │ Debug            │ @skills/ros2-debugging               │
 │ Cross Compile   │ @skills/arm64-cross-compile           │
+│ Import Bootstrap │ @skills/common/agent-skill-bootstrap │
+│ Skill Routing   │ agents/generated/skill-routing.md     │
+│ Rebuild Index   │ ./init-agent.sh --target all          │
 │ Project Context │ agents/memory-bank/project-context.md │
 │ Implementation  │ agents/memory-bank/implementation-plan.md │
 │ Progress        │ agents/memory-bank/progress.md       │
@@ -442,13 +447,40 @@ Example:
 
 ---
 
-## 8. Related Documentation
+## 8. Extend Skills with Copilot /create-skill
 
-- [Skills Index](./agents/skills/README.md)
-- [Prompt Library](./agents/prompts/)
-- [Memory Bank Templates](./agents/memory-bank/)
-- [Robot Type Guides](./agents/robots/)
-- [Contributing Guide](../i18n/en/CONTRIBUTING.md)
+When adding a new skill, prefer generating a first draft with Copilot `/create-skill`, then place it into the project taxonomy path.
+
+Recommended prompt template:
+
+```text
+/create-skill
+Create a skill named <skill-name> at agents/skills/<taxonomy-path>/<skill-name>/SKILL.md.
+Requirements:
+1) frontmatter includes name and description
+2) description includes searchable keywords (for example: import skills, rebuild skill index)
+3) sections include: when to use, quick reference, execution steps, troubleshooting
+4) include executable ROS2 command examples
+```
+
+After creating/updating any skill, run:
+
+```bash
+./init-agent.sh --target all
+```
+
+to refresh `skill-index.md`, `skill-routing.md`, and bootstrap files.
+
+---
+
+## 9. Related Documentation
+
+- [Skills Index](../../agents/skills/README.md)
+- [Skill Routing](../../agents/generated/skill-routing.md)
+- [Prompt Library](../../agents/prompts/)
+- [Memory Bank Templates](../../agents/memory-bank/)
+- [Robot Type Guides](../../agents/robots/)
+- [Contributing Guide](./CONTRIBUTING.md)
 
 ---
 
