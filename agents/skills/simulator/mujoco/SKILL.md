@@ -502,5 +502,7 @@ class MuJoCoROS2(Node):
 
 ## 另见
 
+- [mjcf-models](./mjcf-models/) - MJCF 模型
+- [control-systems](./control-systems/) - 控制系统
 - [pybullet](../pybullet/) - PyBullet 仿真
 - [isaaclab](../isaaclab/) - Isaac Lab
