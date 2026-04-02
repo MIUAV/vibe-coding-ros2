@@ -86,6 +86,18 @@ VibeCoding 的核心是一个能**自我优化**的 AI 系统：
 - **代码一多就切会话** — 保持上下文清晰
 - **逆向思考** — 从需求逆向构建代码
 
+### 嵌入式平台 Debug（容器/仿真 → 实机部署）
+
+| 阶段 | 环境 | Debug 手段 |
+|------|------|-----------|
+| **容器内 Debug** | x86 Docker / ARM Docker | `ros2 topic echo`、`rqt`、`ros2 bag` 录制分析 |
+| **仿真器验证** | Gazebo / Ignition | 仿真器内节点通信监控、`ros2 doctor` |
+| **实机部署** | Jetson OrinNX / RDK-X5 / 旭日X3 | SSH 远程连接、网络抓包（`tcpdump`）、远程 GDB / GDBServer |
+| **跨平台对比** | 容器 vs 实机 | 确认时钟源（`/use_sim_time`）、话题带宽、延迟差异 |
+
+> **工作流**: 容器内开发调试 → 仿真器验证功能 → 交叉编译部署到实机 → SSH 远程 Debug
+> **关键点**: 实机与容器环境的差异主要在时钟源（仿真用 `/use_sim_time`）、硬件驱动依赖、网络配置
+
 ---
 
 ## 📋 工具链
@@ -118,13 +130,15 @@ sudo apt install -y ros-humble-diagnostics
 sudo apt install -y ros-humble-gazebo-ros-pkgs ros-humble-turtlebot3-*
 ```
 
-### AI 模型 & 服务
+### AI 模型 & 服务 (2026年4月 SOTA)
 
 | 梯队 | 模型 | 适用场景 |
 |------|------|----------|
-| 第一梯队 | Claude Opus 4.5, Codex-5.1-max | 复杂架构设计、核心算法 |
-| 第二梯队 | Kimi K2, GLM-4.6, Gemini-3.0-pro | 常规代码生成、文档编写 |
-| 第三梯队 | Qwen3, SWE | 简单任务、补全 |
+| **第一梯队** | Claude 4.7 Opus / GPT-5.4 Pro / Gemini 3.1 Ultra / Kimi K3 / GLM-5 | 机器人架构设计、运动控制算法、导航规划、感知融合、多模态交互、仿真调试 |
+| **第二梯队** | Codex 5.5-max / Grok-3 / Qwen 3.5 / Doubao-Pro / Seed-Code 2.0 / DeepSeek V3.2 / Llama 4 | 节点代码生成、传感器驱动、控制器实现、SLAM算法、ROS2集成、边缘部署 |
+| **第三梯队** | Mistral Large 3 / Gemini 3.1 Flash / Minimax-M2.7 / Hunyuan-T1 / Ernie-4.5 / Qwen 3 MoE / DeepSeek-Coder-V3 / SWE-1-Max / Tongyi-Qwen-VL / Yi-VL | 视觉里程计、目标检测、图像分割、模型量化加速、代码补全、Bug修复 |
+
+> **2026年4月要点**: GPT-5 / Claude 4.7 Opus / Gemini 3 Ultra 引领多模态融合，Kimi K3 / GLM-5 / Qwen 3 在机器人开发场景达到国际第一梯队水平
 
 ---
 

@@ -6,14 +6,16 @@ This file defines one-click project bootstrap context for Copilot and Cursor age
 ## Required Loading Order
 1. agents/generated/context-index.md
 2. agents/generated/skill-index.md
-3. agents/skills/README.md
-4. i18n/zh-CN/AGENT_IMPORT_GUIDE.md
-5. i18n/en/AGENT_IMPORT_GUIDE.md
+3. agents/generated/skill-routing.md
+4. agents/skills/README.md
+5. i18n/zh-CN/AGENT_IMPORT_GUIDE.md
+6. i18n/en/AGENT_IMPORT_GUIDE.md
 
 ## Task Routing Rules
 - First decide robot type or edge platform type from user request.
 - Then decide functional domain (perception/localization/navigation/action/etc.).
 - Finally load the exact SKILL.md from agents/generated/skill-index.md.
+- If skill names collide, resolve with full taxonomy path from agents/generated/skill-routing.md.
 - If multiple skills are relevant, load all relevant SKILL.md files before coding.
 
 ## MCP Development Rules

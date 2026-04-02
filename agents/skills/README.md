@@ -9,6 +9,7 @@
 ```
 skills/
 ├── common/                    # 通用 ROS2 开发技能
+│   ├── agent-skill-bootstrap/
 │   ├── ros2-package-generator/
 │   ├── ros2-debugging/
 │   ├── arm64-cross-compile/
@@ -95,6 +96,16 @@ skills/
 ## 可用技能
 
 ### 通用技能 (common/)
+
+#### Agent 技能导入引导
+
+**路径**: `./common/agent-skill-bootstrap/SKILL.md`
+
+**功能**: 重建技能索引、路由技能路径、处理同名技能冲突、规范 `/create-skill` 后的刷新流程
+
+**触发词**: "导入技能" / "更新导入脚本" / "重建技能索引" / "create skill"
+
+---
 
 #### ROS2 包生成器
 

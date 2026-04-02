@@ -5,16 +5,25 @@ All notable changes to the English documentation are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased] - 2026-04-01
+## [Unreleased] - 2026-04-02
 
 ### Added
 
-- **Contributing Guide**: Added bilingual `CONTRIBUTING.md` contribution guide document
-- **Release Process Optimization**: Refactored `publish.sh` to support PR workflow
+- **sdf-xacro-model Skills**: Added SDF/Xacro model generation skills for humanoid, manipulator, quadruped, wheeled_vehicle, multi_rotor_uav
+- **simulator Skills Directory**: New simulator skills directory
+- **skill-routing.md**: New skill routing index file
+- **init-agent.sh Enhancement**: Support for both Copilot and Cursor IDE configuration generation
+
+### Changed
+
+- **Skills Refactoring**: Removed gazebo-harmonic, isaaclab, maniskill3, rviz2, unreal-engine simulation skills
+- **AGENT_IMPORT_GUIDE.md**: Updated AI agent import guide
+- **README.md**: Added embedded platform Debug (Container/Simulator → Real Machine) technical documentation
 
 ### Documentation Updates
 
-- **AGENT_IMPORT_GUIDE.md**: Added AI agent import guide explaining how to load skills and prompts
+- **Contributing Guide**: Added bilingual `CONTRIBUTING.md` contribution guide document
+- **Release Process Optimization**: Refactored `publish.sh` to support PR workflow
 
 ---
 
