@@ -469,6 +469,9 @@ processed = model.process_images(rgb_images)
 
 ## 另见
 
+- [manipulation-tasks](./manipulation-tasks/) - 操作任务
+- [environment-setup](./environment-setup/) - 环境配置
+- [dataset-playback](./dataset-playback/) - 数据回放
 - [IsaacLab](../isaaclab/) - Isaac Lab 仿真
 - [Gazebo Harmonic](../gazebo-harmonic/) - 仿真配置
 - [RViz2 开发技能](../rviz2/) - 可视化配置

@@ -526,6 +526,10 @@ def generate_launch_description():
 
 ## 另见
 
+- [display-configuration](./display-configuration/) - 显示配置
+- [plugin-development](./plugin-development/) - 插件开发
+- [marker-visualization](./marker-visualization/) - 标记可视化
+- [tf-visualization](./tf-visualization/) - TF 可视化
 - [Gazebo Harmonic](../gazebo-harmonic/) - 仿真配置
-- [ROS2 Launch Advanced](../ros2-launch-advanced/) - 启动配置
-- [ROS2 Topic Communication](../ros2-topic-communication/) - 话题通信
+- [ROS2 Launch Advanced](../../common/ros2-launch-advanced/) - 启动配置
+- [ROS2 Topic Communication](../../common/ros2-topic-communication/) - 话题通信

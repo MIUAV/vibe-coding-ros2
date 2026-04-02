@@ -442,6 +442,9 @@ env = make_env(
 
 ## 另见
 
+- [rl-training](./rl-training/) - 强化学习训练
+- [robot-sim](./robot-sim/) - 机器人仿真
+- [sensor-sim](./sensor-sim/) - 传感器仿真
 - [Gazebo Harmonic](../gazebo-harmonic/) - 仿真配置
 - [RViz2 开发技能](../rviz2/) - 可视化配置
-- [ManiSkill3](./maniskill3/) - 机器人操作技能
+- [ManiSkill3](../maniskill3/) - 机器人操作技能

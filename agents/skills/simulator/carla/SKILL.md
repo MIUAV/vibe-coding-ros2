@@ -566,6 +566,8 @@ for actor in world.get_actors().filter('sensor.*'):
 
 ## 另见
 
+- [vehicle-dynamics](./vehicle-dynamics/) - 车辆动力学
+- [sensor-config](./sensor-config/) - 传感器配置
 - [gazebo-harmonic](../gazebo-harmonic/) - Gazebo 仿真
 - [rviz2](../rviz2/) - RViz2 可视化
 - [unreal-engine](../unreal-engine/) - Unreal Engine
