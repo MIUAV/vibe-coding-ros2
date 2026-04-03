@@ -564,3 +564,50 @@ ros2 topic echo /chatter --qos-reliability reliable
 🚫 两个节点在同一机器通信正常，跨机器后失败
    → QoS 不匹配，或 ROS_DOMAIN_ID 不同
 ```
+
+---
+
+# 🔧 CMakeLists.txt/colcon build 错误速查
+
+> colcon build 报错 → 原因 → 解决
+
+| 报错信息 | 原因 | 解决 |
+|---------|------|------|
+| `Could not find a package configuration file` | find_package 遗漏 | 添加 `find_package(xxx REQUIRED)` |
+| `target link libraries without target` | ament_target_dependencies 位置错误 | 确保在 `add_library()`/`add_executable()` 之后 |
+| `ament_package() must be called once` | ament_package() 重复调用 | 删除重复的 ament_package() |
+| `No CMake file named "ament_cmake"` | 缺少 `find_package(ament_cmake REQUIRED)` | 在 CMakeLists.txt 第一行 find_package 后添加 |
+| `Unable to find package 'rclcpp'` | ROS2 环境未 source | `source /opt/ros/humble/setup.bash` |
+| `package 'xxx' not found in workspace` | colcon build 未执行或未成功 | `colcon build --packages-select xxx` |
+| `ament_target_dependencies: Cannot find target` | add_library/add_executable 在 ament_target_dependencies 之后 | 调换顺序 |
+| `Unknown CMake command "ament_find_package"` | ament_cmake 版本问题 | `find_package(ament_cmake REQUIRED)` |
+| `AMENT_DEPENDENCIES requires ament_cmake` | ament_target_dependencies 在 find_package 之前 | 重新排序 |
+| `Could not find the file ... install(TARGETS` | install 路径拼写错误 | 检查 ARCHIVE/LIBRARY/RUNTIME 拼写 |
+| `Failed to find module 'xxx'` | ROS2 包未安装 | `sudo apt install ros-humble-xxx` |
+| `error: package 'xxx' not found` | 包名拼写错误或大小写不匹配 | 检查 package.xml 中的包名 |
+
+## colcon build 正确顺序
+
+```
+1. cmake_minimum_required(VERSION 3.16)
+2. project(pkg_name)
+3. find_package(ament_cmake REQUIRED)
+4. find_package(rclcpp REQUIRED)
+5. find_package(其他依赖 REQUIRED)
+6. rosidl_generate_interfaces (如有自定义接口)
+7. add_library 或 add_executable
+8. ament_target_dependencies
+9. install(TARGETS ...)
+10. install(DIRECTORY ...)
+11. ament_package()
+```
+
+## package.xml ↔ CMakeLists.txt 依赖对应关系
+
+| package.xml | CMakeLists.txt |
+|------------|----------------|
+| `<depend>rclcpp</depend>` | `find_package(rclcpp REQUIRED)` |
+| `<depend>geometry_msgs</depend>` | `find_package(geometry_msgs REQUIRED)` |
+| `<depend>rosidl_default_runtime</depend>` | 无需单独 find_package |
+| `<exec_depend>xxx</exec_depend>` | 无需 find_package（运行时依赖） |
+| `<buildtool_depend>ament_cmake</buildtool_depend>` | `find_package(ament_cmake REQUIRED)` |
