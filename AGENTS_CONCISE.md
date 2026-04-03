@@ -6,72 +6,85 @@
 
 ## 核心规则（不可违背）
 
-### 接口先行（Interface First）
+### 执行顺序（强制）
 
 ```
-1. 定义 .msg / .srv / .action 文件（或确认使用标准类型）
-2. 在 package.xml 中声明 rosidl_generate_interfaces
-3. 生成节点代码
-4. 编写 launch 文件
-5. 编译验证
+1. 读 AGENTS_CONCISE.md（本文档）
+2. 读 ANTI_PATTERNS.md（C++/Python/QoS/并发规范）
+3. 读 examples/ 对应示例（看真实代码）
+4. 生成代码
+5. 自检清单
+6. 更新 memory-bank/ROS2_MEMORY.md
 ```
 
 ### 文件生成顺序（强制）
 
 ```
-package.xml → CMakeLists.txt → msg/srv → 节点代码 → launch → 编译
+接口定义(.msg/.srv) → package.xml → CMakeLists.txt → 节点代码 → launch → 编译
 ```
-
-### ROS2 发行版
-
-| 发行版 | 支持状态 |
-|--------|----------|
-| Humble | ✅ 推荐 |
-| Iron   | ✅ 支持 |
-| Jazzy  | ✅ 支持 |
-| Foxy   | ⚠️ 有限 |
 
 ---
 
-## Anti-Patterns（禁止）
+## Anti-Patterns 速查（禁止）
 
 ```
 🚫 CMakeLists.txt 遗漏 find_package(rclcpp REQUIRED)
-🚫 Python 节点混用 rclpy.init() + MultiThreadedExecutor 无关闭逻辑
-🚫 假设 install/setup.bash 已被 source（每次都要提醒用户）
-🚫 launch 文件缺少 launch_description = LaunchDescription([...])
-🚫 未在 package.xml 声明 <depend> 就使用某个包
-🚫 C++ 代码混用 rclcpp::Node 和 rclcpp::Node::SharedPtr
+🚫 CMakeLists.txt 遗漏 ament_target_dependencies
+🚫 CMakeLists.txt 遗漏 install(TARGETS)
+🚫 CMakeLists.txt 遗漏 ament_package()
+🚫 package.xml 遗漏 <depend> 就使用某个包
+🚫 package.xml 有 rosidl 但没有 rosidl_default_generators
+🚫 Python 混用 rclpy.init() 无 try/finally rclpy.shutdown()
+🚫 launch 缺少 LaunchDescription([...])
+🚫 C++ 裸指针（必须 SharedPtr）
+🚫 QoS 不匹配静默失败（sensor=best_effort, cmd=reliable）
+🚫 回调中 sleep / 阻塞 / rclcpp::shutdown()
+🚫 MultiThreadedExecutor 无 Mutex 保护
+🚫 服务调用无超时（必须 wait_for()）
+🚫 假设 install/setup.bash 已被 source
+```
+
+**完整规范 → ANTI_PATTERNS.md**
+
+---
+
+## 可运行的示例代码（直接参照）
+
+```
+examples/
+├── ros2-minimal/
+│   ├── cpp_publisher/      # C++ 发布者 + QoS + wall_timer
+│   └── py_subscriber/     # Python 订阅者 + rclpy 规范
+├── ros2-lifecycle/
+│   └── lifecycle_sensor/   # Lifecycle 节点状态机
+└── ros2-service/
+    └── add_two_ints/       # Service + Client + 超时保护
+```
+
+每个示例均可编译运行：
+```bash
+colcon build --packages-select <pkg> --symlink-install
+ros2 run <pkg> <node>
 ```
 
 ---
 
-## 输出格式模板
+## 节点代码模板
 
-### 接口定义（必须先生成）
-
-```
-## 接口设计
-- 话题: [标准类型] → 用途
-- 服务: MyService.srv → 内容：
----（服务定义）
----
-- 动作: 无（或自定义）
-```
-
-### 节点代码
+### C++（标准）
 
 ```cpp
-// C++ 必须结构
 #include <rclcpp/rclcpp.hpp>
 
 class MyNode : public rclcpp::Node {
 public:
   MyNode() : Node("my_node") {
-    // 1. 发布/订阅
-    // 2. 服务/动作
-    // 3. 定时器或回调
+    // ✅ SharedPtr
+    pub_ = create_publisher<std_msgs::msg::String>("/topic", 10);
+    RCLCPP_INFO(get_logger(), "Started");
   }
+private:
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr pub_;
 };
 
 int main(int argc, char** argv) {
@@ -82,47 +95,26 @@ int main(int argc, char** argv) {
 }
 ```
 
-### Launch 文件（必须结构）
+### Python
 
 ```python
-def generate_launch_description():
-    return LaunchDescription([
-        # Node(...)  必须用完整的 Node 参数
-        # 不省略任何参数
-    ])
+def main():
+    rclpy.init(args=args)
+    try:
+        rclpy.spin(node)
+    finally:
+        rclpy.shutdown()   # 必须有
+
+if __name__ == '__main__':
+    main()
 ```
 
 ---
 
-## 缩写速查
+## 内存约定
 
 ```
-msg = Message (接口定义)
-srv = Service (请求/响应)
-act = Action (异步目标/反馈/结果)
-ws  = workspace
-pkg = package
-dep = dependency (package.xml 中的 depend)
-KB  = Knowledge Base (skills/SKILL.md)
-FP  = Frontmatter (SKILL.md 开头的 YAML 块)
-```
-
----
-
-## 内存约定（每次会话读写）
-
-```
-文件: /tmp/vibe-ros2-memory.md
-格式:
-## 已实现模块
-- pkg_name: [功能简述]
-
-## 待办
-- [pkg_name]: [功能]
-
-## 已知问题
-- ...
-
+文件: /tmp/vibe-ros2-memory.md 或 memory-bank/ROS2_MEMORY.md
 每次开始: 读取
 每次完成模块: 更新
 ```
@@ -132,15 +124,17 @@ FP  = Frontmatter (SKILL.md 开头的 YAML 块)
 ## 质量自检清单
 
 ```
-□ package.xml 有 <depend> 声明
-□ CMakeLists.txt 有 find_package()
-□ launch 有 LaunchDescription()
-□ C++ 有 rclcpp::init/shutdown
-□ Python 有 rclpy.shutdown() 逻辑
-□ install/setup.bash 被提醒 source
-□ 代码经过编译测试
+□ package.xml 有所有 <depend>
+□ CMakeLists.txt: find_package + ament_target_dependencies + install + ament_package
+□ C++: SharedPtr（禁止裸指针 new/delete）
+□ QoS: sensor=best_effort, cmd=reliable
+□ Python: rclpy.shutdown() 在 try/finally 中
+□ launch: LaunchDescription() 结构完整
+□ 服务调用有超时 wait_for()
+□ 提醒 source install/setup.bash
+□ colcon build 通过
 ```
 
 ---
 
-*AGENTS_CONCISE.md — 精简版，如需完整指南见 AGENTS.md*
+*完整版 → AGENTS.md | 详细规范 → ANTI_PATTERNS.md*
