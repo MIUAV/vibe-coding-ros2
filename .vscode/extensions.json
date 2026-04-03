@@ -1,0 +1,12 @@
+{
+  "recommendations": [
+    "ms-vscode.cpptools",
+    "ms-vscode.cmake-tools",
+    "twilson63.ros",
+    "smilerobotics.urdf",
+    "ms-python.python",
+    "redhat.vscode-yaml",
+    "esbenp.prettier-vscode",
+    "foxundermoon.shell-format"
+  ]
+}
