@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<!--
+  示例4: ROS2 Service (带 .srv 接口定义)
+  功能: 加法服务 + 异步客户端调用
+  对应规范: ANTI_PATTERNS.md 服务超时规则
+-->
+<package format="3">
+  <name>add_two_ints</name>
+  <version>0.1.0</version>
+  <description>ROS2 Service 服务示例（含 .srv 接口定义）</description>
+  <maintainer email="dev@miuav.com">MIUAV Dev</maintainer>
+  <license>Apache-2.0</license>
+
+  <depend>rclcpp</depend>
+  <depend>example_interfaces</depend>
+
+  <!-- rosidl: 生成 .srv 接口 -->
+  <depend>rosidl_default_generators</depend>
+  <exec_depend>rosidl_default_runtime</exec_depend>
+
+  <member_of_group>rosidl_interface_packages</member_of_group>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>
