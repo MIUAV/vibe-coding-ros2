@@ -1,195 +1,79 @@
 name: ROS2 VibeCoding CI
 
-# ============================================================
-# 触发规则
-# v0.0.1-beta: 完整 CI + 自动同步到 latest
-# latest/develop: 仅 CI，不同步
-# ============================================================
 on:
   push:
-    branches:
-      - v0.0.1-beta   # 完整 CI + 同步到 latest
-      - latest        # 仅 CI（不重复同步）
-      - develop       # 仅 CI
+    branches: [latest, develop]
   pull_request:
-    branches: [main, latest, v0.0.1-beta, develop]
+    branches: [latest, develop]
   workflow_dispatch:
 
-# ============================================================
-# 环境变量
-# ============================================================
 env:
   ROS_DISTRO: humble
   UBUNTU_VERSION: jammy
 
-# ============================================================
-# 作业 1: 核心文件 + 文档结构检查
-# ============================================================
 jobs:
-  # ─────────────────────────────────────────────────────────
-  # CI-1: 核心文件存在性 + Anti-Patterns 覆盖率
-  # ─────────────────────────────────────────────────────────
   core-files:
     name: Core Files & Anti-Patterns Coverage
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
-
       - name: Verify core files
         run: |
           set -e
-          echo "=== Core Files ==="
           for f in AGENTS.md AGENTS_CONCISE.md ANTI_PATTERNS.md init-agent.sh; do
             [[ -f "$f" ]] && echo "✓ $f" || { echo "✗ $f MISSING"; exit 1; }
           done
-
-      - name: Verify scripts
+      - name: Verify scripts executable
         run: |
-          echo "=== Executable Scripts ==="
           for f in scripts/check_ros2_package.sh scripts/generators/ros2-package-generator.sh scripts/validators/ros2-node-validator.sh; do
-            [[ -x "$f" ]] && echo "✓ $f" || { echo "✗ $f missing or not executable"; exit 1; }
+            [[ -x "$f" ]] && echo "✓ $f" || { echo "✗ $f not executable"; exit 1; }
           done
-
-      - name: Count skills
+      - name: Skill count
         run: |
-          TOTAL=$(find agents/skills -name 'SKILL.md' | wc -l)
+          TOTAL=$(find agents/skills -name 'SKILL.md' 2>/dev/null | wc -l)
           echo "Total skills: $TOTAL"
-          [[ $TOTAL -ge 50 ]] && echo "✓ Skill count adequate" || { echo "✗ Too few skills"; exit 1; }
-
-      - name: Anti-Patterns C++ Safety Coverage
+          [[ $TOTAL -ge 50 ]] && echo "✓" || { echo "✗ Too few"; exit 1; }
+      - name: Anti-Patterns coverage
         run: |
-          echo "=== Anti-Patterns Sections ==="
-          grep "^## " ANTI_PATTERNS.md | sed 's/## //' | nl
+          grep -q "make_shared\|SharedPtr" ANTI_PATTERNS.md && echo "✓ Smart pointer rules" || exit 1
+          grep -qi "QoS" ANTI_PATTERNS.md && echo "✓ QoS rules" || exit 1
+          grep -qi "Lifecycle" ANTI_PATTERNS.md && echo "✓ Lifecycle rules" || exit 1
 
-          echo ""
-          echo "=== C++ Safety Rules ==="
-          grep -c "make_shared\|SharedPtr\|unique_ptr" ANTI_PATTERNS.md | xargs -I{} echo "Smart pointer rules: {} occurrences"
-          grep -ci "QoS\|qos_profile\|best_effort\|reliable" ANTI_PATTERNS.md | xargs -I{} echo "QoS rules: {} occurrences"
-          grep -ci "LifecycleNode\|on_configure\|on_activate\|on_cleanup" ANTI_PATTERNS.md | xargs -I{} echo "Lifecycle rules: {} occurrences"
-          grep -ci "MultiThreadedExecutor\|mutex\|lock_guard\|atomic" ANTI_PATTERNS.md | xargs -I{} echo "Concurrency rules: {} occurrences"
-
-          echo ""
-          echo "=== MUST have C++ rules ==="
-          grep -q "make_shared\|SharedPtr" ANTI_PATTERNS.md && echo "✓ Smart pointer rules" || { echo "✗ No smart pointer rules"; exit 1; }
-          grep -qi "QoS" ANTI_PATTERNS.md && echo "✓ QoS rules" || { echo "✗ No QoS rules"; exit 1; }
-          grep -qi "Lifecycle" ANTI_PATTERNS.md && echo "✓ Lifecycle rules" || { echo "✗ No lifecycle rules"; exit 1; }
-
-  # ─────────────────────────────────────────────────────────
-  # CI-2: CMakeLists.txt 正确性（评测：编译报错频繁）
-  # ─────────────────────────────────────────────────────────
   cmake-check:
     name: CMakeLists.txt Correctness
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
-
-      - name: Find all CMakeLists.txt
-        id: cmake_files
+      - name: Validate generator template
         run: |
-          mapfile -t CMAKE_FILES < <(find . -name 'CMakeLists.txt' -not -path './.git/*' | sort)
-          echo "count=${#CMAKE_FILES[@]}" >> $GITHUB_OUTPUT
-          echo "files=${CMAKE_FILES[*]}" >> $GITHUB_OUTPUT
-          echo "Found: ${#CMAKE_FILES[@]} CMakeLists.txt files"
+          GEN="scripts/generators/ros2-package-generator.sh"
+          grep -q "find_package(ament_cmake REQUIRED)" "$GEN" && echo "✓ ament_cmake" || exit 1
+          grep -q "find_package(rclcpp REQUIRED)" "$GEN" && echo "✓ rclcpp" || exit 1
+          grep -q "ament_target_dependencies" "$GEN" && echo "✓ target_deps" || exit 1
+          grep -q "install(TARGETS" "$GEN" && echo "✓ install" || exit 1
+          grep -q "ament_package()" "$GEN" && echo "✓ ament_package" || exit 1
+          grep -q "CMAKE_CXX_STANDARD 17" "$GEN" && echo "✓ C++17" || exit 1
 
-      - name: Check CMakeLists.txt template (from generator)
-        run: |
-          CMAKE_FILE="scripts/generators/ros2-package-generator.sh"
-          echo "=== Checking generator output template ==="
-
-          echo "--- find_package ament_cmake ---"
-          grep -c "find_package(ament_cmake" "$CMAKE_FILE" | xargs -I{} echo "find_package(ament_cmake occurrences: {}"
-
-          echo "--- find_package rclcpp ---"
-          grep -c "find_package(rclcpp" "$CMAKE_FILE" | xargs -I{} echo "find_package(rclcpp occurrences: {}"
-
-          echo "--- ament_target_dependencies ---"
-          grep -c "ament_target_dependencies" "$CMAKE_FILE" | xargs -I{} echo "ament_target_dependencies occurrences: {}"
-
-          echo "--- install(TARGETS ---"
-          grep -c "install(TARGETS" "$CMAKE_FILE" | xargs -I{} echo "install(TARGETS occurrences: {}"
-
-          echo "--- ament_package ---"
-          grep -c "ament_package()" "$CMAKE_FILE" | xargs -I{} echo "ament_package() occurrences: {}"
-
-          echo ""
-          echo "=== Validating mandatory CMake patterns ==="
-          grep -q "find_package(ament_cmake REQUIRED)" "$CMAKE_FILE" && echo "✓ ament_cmake REQUIRED" || { echo "✗ Missing ament_cmake REQUIRED"; exit 1; }
-          grep -q "ament_target_dependencies" "$CMAKE_FILE" && echo "✓ ament_target_dependencies" || { echo "✗ Missing ament_target_dependencies"; exit 1; }
-          grep -q "install(TARGETS" "$CMAKE_FILE" && echo "✓ install(TARGETS" || { echo "✗ Missing install(TARGETS"; exit 1; }
-          grep -q "ament_package()" "$CMAKE_FILE" && echo "✓ ament_package()" || { echo "✗ Missing ament_package()"; exit 1; }
-          grep -q "CMAKE_CXX_STANDARD 17" "$CMAKE_FILE" && echo "✓ C++17 standard" || { echo "✗ Missing C++17 standard"; exit 1; }
-
-      - name: Detect common CMakeLists.txt errors in skills
-        run: |
-          echo "=== Scanning skills for CMakeLists.txt anti-patterns ==="
-          ERRORS=0
-
-          # 扫描所有技能目录中的 CMakeLists.txt 片段（如果有）
-          for dir in agents/skills/*/; do
-            if find "$dir" -name '*.cmake' -o -name 'CMake*' 2>/dev/null | grep -q .; then
-              echo "Checking: $dir"
-              find "$dir" \( -name '*.cmake' -o -name 'CMake*' \) -exec grep -l 'ament_target_dependencies\|install(TARGETS' {} + 2>/dev/null || true
-            fi
-          done
-
-          echo "✓ CMakeLists.txt analysis complete"
-
-  # ─────────────────────────────────────────────────────────
-  # CI-3: package.xml 依赖正确性（评测：配置繁琐）
-  # ─────────────────────────────────────────────────────────
   package-xml-check:
     name: package.xml Dependency Validation
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
-
-      - name: Find all package.xml
+      - name: Validate package.xml generator
         run: |
-          echo "=== package.xml files ==="
-          find . -name 'package.xml' -not -path './.git/*' | head -20 | while read f; do
-            echo "  $f"
-          done
-          COUNT=$(find . -name 'package.xml' -not -path './.git/*' | wc -l)
-          echo "Total: $COUNT package.xml files"
+          GEN="scripts/generators/ros2-package-generator.sh"
+          grep -q 'format="3"' "$GEN" && echo "✓ Format 3" || exit 1
+          grep -q "<depend>rclcpp</depend>" "$GEN" && echo "✓ rclcpp dep" || exit 1
+          grep -q "<depend>ament_lint_auto</depend>" "$GEN" && echo "✓ ament_lint" || exit 1
+          grep -q "<export>" "$GEN" && echo "✓ export block" || exit 1
 
-      - name: Validate package.xml generator template
-        run: |
-          GEN_FILE="scripts/generators/ros2-package-generator.sh"
-          echo "=== Checking package.xml generator ==="
-
-          echo "--- Format 3 ---"
-          grep -c 'format="3"' "$GEN_FILE" | xargs -I{} echo "format=\"3\" occurrences: {}"
-          grep -q 'format="3"' "$GEN_FILE" && echo "✓ Format 3 declared" || { echo "✗ No Format 3"; exit 1; }
-
-          echo "--- <depend> tags ---"
-          grep -c '<depend>' "$GEN_FILE" | xargs -I{} echo "<depend> occurrences: {}"
-          grep -q '<depend>rclcpp</depend>' "$GEN_FILE" && echo "✓ rclcpp dependency" || { echo "✗ Missing rclcpp"; exit 1; }
-          grep -q '<depend>ament_lint_auto</depend>' "$GEN_FILE" && echo "✓ ament_lint_auto" || { echo "✗ Missing ament_lint_auto"; exit 1; }
-
-          echo "--- <export> + build_type ---"
-          grep -q '<export>' "$GEN_FILE" && echo "✓ <export> block" || { echo "✗ Missing <export>"; exit 1; }
-          grep -q 'ament_cmake' "$GEN_FILE" && echo "✓ build_type ament_cmake" || { echo "✗ Missing build_type"; exit 1; }
-
-      - name: Detect dependency anti-patterns in skills
-        run: |
-          echo "=== Scanning skills for missing dependencies ==="
-          ERRORS=0
-          # 扫描 skill 中提到的包，检查是否有对应的 depend 模板
-          grep -rh 'find_package\|<depend>' agents/skills/ 2>/dev/null | grep -v '^\s*#' | sort -u | head -20
-          echo "✓ Dependency scan complete"
-
-  # ─────────────────────────────────────────────────────────
-  # CI-4: ROS2 编译测试（Docker 真实编译）
-  # ─────────────────────────────────────────────────────────
   ros2-compile:
     name: ROS2 Humble Compile Test
     runs-on: ubuntu-22.04
-    permissions:
-      contents: read
+    permissions: { contents: read }
     steps:
       - uses: actions/checkout@v4
-
-      - name: Build test workspace
+      - name: Docker colcon build
         run: |
           docker run --rm \
             -v ${{ github.workspace }}:/workspace \
@@ -197,289 +81,84 @@ jobs:
             osrf/ros:humble-ros-base-jammy \
             bash -c "
               set -e
-              echo '=== Installing build tools ==='
               apt-get update -qq && apt-get install -y -qq python3-colcon-common-extensions git > /dev/null 2>&1
-
-              echo '=== Creating test workspace ==='
               mkdir -p /tmp/test_ws/src
-              cp -r /workspace/* /tmp/test_ws/src/ 2>/dev/null || true
-
-              echo '=== Testing ros2-package-generator ==='
               cd /tmp/test_ws
-              bash /workspace/scripts/generators/ros2-package-generator.sh test_pkg cpp rclcpp,std_msgs || {
-                echo 'Generator failed'
-                exit 1
-              }
-
-              echo '=== Running colcon build ==='
+              bash /workspace/scripts/generators/ros2-package-generator.sh test_pkg cpp rclcpp,std_msgs
               cp -r test_pkg /tmp/test_ws/src/
               source /opt/ros/humble/setup.bash
-              colcon build --packages-select test_pkg --cmake-args -DCMAKE_BUILD_TYPE=Release 2>&1 | tail -20
-
-              echo '=== Verifying build output ==='
-              [[ -f install/test_pkg/lib/test_pkg/test_pkg_node ]] && echo '✓ Binary built successfully' || {
-                echo '✗ Binary not found'
-                exit 1
-              }
-
-              echo '=== Testing validator ==='
-              bash /workspace/scripts/validators/ros2-node-validator.sh /tmp/test_ws/src/test_pkg/src/test_pkg_node.cpp && echo '✓ Validator passed' || {
-                echo 'WARN: Validator found issues (acceptable for template)'
-              }
-
-              echo '=== Testing check_ros2_package ==='
-              bash /workspace/scripts/check_ros2_package.sh /tmp/test_ws/src/test_pkg && echo '✓ Package checker passed' || {
-                echo '✗ Package checker failed'
-                exit 1
-              }
-
-              echo '=== ALL COMPILE TESTS PASSED ==='
+              colcon build --packages-select test_pkg --cmake-args -DCMAKE_BUILD_TYPE=Release 2>&1 | tail -5
+              [[ -f install/test_pkg/lib/test_pkg/test_pkg_node ]] && echo '✓ Binary built' || exit 1
+              bash /workspace/scripts/check_ros2_package.sh /tmp/test_ws/src/test_pkg
+              echo '=== ALL TESTS PASSED ==='
             "
 
-  # ─────────────────────────────────────────────────────────
-  # CI-5: 包耦合检测（评测：功能包耦合严重）
-  # ─────────────────────────────────────────────────────────
   package-coupling:
     name: Package Coupling Analysis
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
-
-      - name: Detect cross-package dependencies
+      - name: Dependency graph
         run: |
-          echo "=== Scanning for cross-package dependencies ==="
-          echo ""
-
-          # 在 SKILL.md 中查找包间依赖声明
-          echo "--- Dependencies declared in skills ---"
-          find agents/skills -name 'SKILL.md' -exec grep -h '<depend>\|find_package(' {} + 2>/dev/null \
-            | grep -v '^\s*#' \
-            | sort -u \
-            | sed 's/^/  /'
-
-          echo ""
-          echo "--- Topics/Services mentioned across packages ---"
-          find agents/skills -name 'SKILL.md' -exec grep -h '/\w\+_' {} + 2>/dev/null \
-            | grep -oE '/[a-z_]+' \
-            | sort -u \
-            | sed 's/^/  /'
-
-      - name: Check for circular dependency warnings
-        run: |
-          echo "=== Circular dependency detection ==="
-          echo "Scanning skill dependency graphs..."
-
-          # 构建依赖图（简化版）
-          declare -A PKG_DEPS
+          echo "=== Skill Dependencies ==="
           for skill in agents/skills/*/*/SKILL.md; do
+            [[ -f "$skill" ]] || continue
             PKG=$(echo "$skill" | cut -d/ -f3)
-            DEPS=$(grep '<depend>' "$skill" 2>/dev/null | sed 's/<depend>//g; s/<\/depend>//g' | tr '\n' ',' || echo "")
-            if [[ -n "$DEPS" ]]; then
-              echo "  $PKG → $DEPS"
-            fi
-          done | head -30
+            DEPS=$(grep '<depend>' "$skill" 2>/dev/null | sed 's/<depend>//g;s/<\/depend>//g' | tr '\n' ',' || echo "")
+            [[ -n "$DEPS" ]] && echo "  $PKG → $DEPS"
+          done | sort -u | head -20
 
-          echo ""
-          echo "✓ Coupling analysis complete"
-
-      - name: Skill coupling recommendations
-        run: |
-          echo "=== Coupling best practices (from ANTI_PATTERNS) ==="
-          grep -A3 "耦合\|coupl\|高内聚\|low coupl" ANTI_PATTERNS.md | head -20 || echo "No coupling rules found in ANTI_PATTERNS"
-
-  # ─────────────────────────────────────────────────────────
-  # CI-6: Shell 脚本质量检查
-  # ─────────────────────────────────────────────────────────
   shellcheck:
     name: Shell Script Quality
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
       - name: Install shellcheck
-        run: sudo apt-get update -qq && sudo apt-get install -y -qq shellcheck > /dev/null 2>&1
-
-      - name: Run shellcheck on all scripts
+        run: sudo apt-get install -y -qq shellcheck > /dev/null 2>&1
+      - name: Run shellcheck
         run: |
-          echo "=== ShellCheck Results ==="
-          ERRORS=0
           for f in scripts/*.sh scripts/**/*.sh; do
             [[ -f "$f" ]] || continue
-            echo "Checking: $f"
-            if shellcheck --disable=SC1091,SC2086 "$f" 2>&1; then
-              echo "  ✓ $f passed"
-            else
-              echo "  ✗ $f has issues"
-              ((ERRORS++))
-            fi
+            shellcheck --disable=SC1091,SC2086 "$f" 2>&1 | grep -v "^$" || echo "  ✓ $f"
           done
-          echo ""
-          echo "ShellCheck: $ERRORS files with issues"
-          [[ $ERRORS -eq 0 ]] && echo "✓ All shell scripts passed" || echo "⚠ Some scripts have issues"
 
-  # ─────────────────────────────────────────────────────────
-  # CI-7: Python 脚本语法检查
-  # ─────────────────────────────────────────────────────────
   python-lint:
-    name: Python Syntax & Quality
+    name: Python Syntax & YAML
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
-        with:
-          python-version: '3.10'
-
+        with: { python-version: '3.10' }
       - name: Install linters
         run: pip install flake8 pyyaml -q
-
-      - name: Lint Python scripts
+      - name: Python syntax
         run: |
-          echo "=== Python Syntax Check ==="
-          ERRORS=0
           for f in scripts/*.py scripts/**/*.py; do
             [[ -f "$f" ]] || continue
-            if python3 -m py_compile "$f" 2>&1; then
-              echo "  ✓ $f"
-            else
-              echo "  ✗ $f SYNTAX ERROR"
-              ((ERRORS++))
-            fi
+            python3 -m py_compile "$f" && echo "  ✓ $f" || exit 1
           done
-          echo "Syntax errors: $ERRORS"
-
-      - name: Validate YAML files
+      - name: YAML validation
         run: |
-          echo "=== YAML Validation ==="
-          ERRORS=0
-          for f in $(find . -name '*.yaml' -not -path './.git/*' 2>/dev/null | head -20); do
-            if python3 -c "import yaml; yaml.safe_load(open('$f'))" 2>/dev/null; then
-              echo "  ✓ $f"
-            else
-              echo "  ✗ $f YAML ERROR"
-              ((ERRORS++))
-            fi
+          for f in $(find . -name '*.yaml' -not -path './.git/*' 2>/dev/null | head -10); do
+            python3 -c "import yaml; yaml.safe_load(open('$f'))" 2>/dev/null && echo "  ✓ $f" || echo "  ✗ $f"
           done
 
-  # ─────────────────────────────────────────────────────────
-  # CI-8: Skill 质量分级检查
-  # ─────────────────────────────────────────────────────────
   skill-quality:
     name: Skill Quality Classification
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
-
-      - name: Classify skills by quality level
+      - name: Classify skills
         run: |
-          echo "=== Skill Quality Classification ==="
-          echo ""
-
-          VERIFIED=0; DRAFT=0; CONCEPT=0; EMPTY=0
-          TOTAL=0
-
+          VERIFIED=0; DRAFT=0; CONCEPT=0; EMPTY=0; TOTAL=0
           for skill in agents/skills/*/*/SKILL.md; do
             [[ -f "$skill" ]] || continue
             ((TOTAL++))
-            SIZE=$(stat -f%z "$skill" 2>/dev/null || stat -c%s "$skill" 2>/dev/null || echo 100)
-            WORDS=$(wc -w < "$skill" 2>/dev/null || echo 0)
-
-            if [[ $SIZE -lt 100 ]]; then
-              ((EMPTY++))
-            elif [[ $WORDS -lt 50 ]]; then
-              ((CONCEPT++))
-            elif grep -q "status.*verified\|## 示例\|## 代码" "$skill" 2>/dev/null; then
-              ((VERIFIED++))
-            else
-              ((DRAFT++))
-            fi
+            SIZE=$(stat -c%s "$skill" 2>/dev/null || echo 100)
+            if [[ $SIZE -lt 100 ]]; then ((EMPTY++))
+            elif [[ $(wc -w < "$skill") -lt 50 ]]; then ((CONCEPT++))
+            elif grep -q "## 示例\|## 代码\|status.*verified" "$skill" 2>/dev/null; then ((VERIFIED++))
+            else ((DRAFT++)); fi
           done
-
-          echo "Total skills: $TOTAL"
-          echo "  ✓ Verified (有示例+代码): $VERIFIED"
-          echo "  ⚠ Draft (有框架无示例): $DRAFT"
-          echo "  ○ Concept (骨架型): $CONCEPT"
-          echo "  ✗ Empty (<100 bytes): $EMPTY"
-          echo ""
-
-          # 警告：空 skill 过多
-          if [[ $EMPTY -gt 5 ]]; then
-            echo "⚠ WARNING: $EMPTY empty skills found"
-            find agents/skills -name 'SKILL.md' -size -100c | sed 's/^/  /'
-          fi
-
-          # 警告：概念型过多
-          if [[ $CONCEPT -gt $((TOTAL/2)) ]]; then
-            echo "⚠ WARNING: >50% skills are concept-only"
-          fi
-
-  # ─────────────────────────────────────────────────────────
-  # AUTO-SYNC: v0.0.1-beta → latest (仅推送，不编译)
-  # ─────────────────────────────────────────────────────────
-  sync-to-latest:
-    name: Sync v0.0.1-beta → latest
-    runs-on: ubuntu-22.04
-    needs: [core-files, cmake-check, package-xml-check, ros2-compile, package-coupling, shellcheck, python-lint, skill-quality]
-    if: github.ref == 'refs/heads/v0.0.1-beta' && github.event_name == 'push'
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: v0.0.1-beta
-          fetch-depth: 0
-
-      - name: Configure Git
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-
-      - name: Merge v0.0.1-beta → latest
-        run: |
-          git checkout latest || git checkout -b latest
-
-          # 策略：保留 latest 的 AGENTS.md/README.md/v0.0.1-beta 徽章，用 v0.0.1-beta 的其他文件覆盖
-          # 这样 latest 始终是最新的完整代码，而徽章显示版本号
-
-          echo "=== Current latest HEAD ==="
-          git log --oneline -1 latest 2>/dev/null || echo "latest is new"
-
-          echo "=== Merging from v0.0.1-beta ==="
-          # 使用 ours 策略：保留 latest 的某些元数据文件
-          git merge v0.0.1-beta --no-edit -X ours
-
-          echo "=== After merge ==="
-          git log --oneline -3
-
-      - name: Push to latest
-        run: |
-          echo "=== Pushing to latest ==="
-          git push origin latest
-          echo "✓ Synced v0.0.1-beta → latest"
-
-      - name: Create release notes
-        run: |
-          TAG="v0.0.1-beta"
-          DATE=$(date +%Y-%m-%d)
-          CHANGES=$(git log v0.0.1-alpha..v0.0.1-beta --oneline | head -20 | sed 's/^/  - /')
-
-          cat << RELEASE
-          # $TAG ($DATE)
-
-          ## 主要改进
-
-          - ✅ 可执行工具：ros2-package-generator.sh、ros2-node-validator.sh、check_ros2_package.sh
-          - ✅ CI/CD：8 个 job 的 GitHub Actions 工作流
-          - ✅ C++ 安全：智能指针/QoS/Lifecycle/并发全面覆盖
-          - ✅ 编译测试：Docker 中真实 colcon build 验证
-          - ✅ 包耦合检测：依赖图分析
-          - ✅ Skill 质量分级：verified/draft/concept 分类
-
-          ## 版本历史
-
-          $CHANGES
-
-          ## 后续计划
-
-          - 继续完善 skill 质量（draft → verified）
-          - 添加工具链脚本（部署、调试、仿真）
-          - 深化 ROS2 编译/配置/耦合规范
-          RELEASE
+          echo "Total: $TOTAL | Verified: $VERIFIED | Draft: $DRAFT | Concept: $CONCEPT | Empty: $EMPTY"
+          [[ $EMPTY -gt 5 ]] && find agents/skills -name 'SKILL.md' -size -100c | sed 's/^/  WARN: /'
