@@ -1,455 +1,194 @@
 ---
 name: gazebo-simulation-env
-description: Gazebo 仿真环境开发技能 - 地形创建、气象条件、障碍物设置、多机器人仿真场景
-argument-hint: "创建仿真环境" / "地形建模" / "风力仿真" / "障碍物场景"
+description: Gazebo 仿真环境创建技能 - 世界文件、地形、障碍物、气象条件、多机器人场景配置
+argument-hint: "Gazebo仿真环境" / "创建仿真世界" / "地形建模" / "gazebo环境配置"
 user-invocable: true
 ---
 
-# Gazebo Simulation Environment Skill
+# Gazebo 仿真环境创建技能
 
-> 用于创建 Gazebo 仿真环境和场景配置
+> 用于在 Gazebo Harmonic 中创建高质量仿真环境，包括地形、障碍物、多机器人场景和气象条件
 
 ---
 
 ## 何时使用
 
 当需要以下帮助时使用此技能：
-- 创建各种地形环境
-- 配置气象条件（风、雨、温度）
-- 添加静态和动态障碍物
-- 设置多机器人仿真场景
-- 配置光照和时间
+- 创建 Gazebo 世界文件（.world）
+- 构建地形和障碍物
+- 配置多机器人仿真场景
+- 设置气象条件（光照、雨雪）
+- 导入真实环境扫描地图
 
 ---
 
-## 快速参考
+## 世界文件结构
 
-```
-环境类型:
-- 室内环境     - 办公室、工厂
-- 室外环境     - 道路、山地
-- 特殊环境     - 水下、空中
+### 最小 Gazebo Harmonic 世界
+
+```xml
+<?xml version="1.0"?>
+<sdf version="1.9">
+  <world name="empty_world">
+    <!-- 物理插件 -->
+    <physics name="physics" type="ode">
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+      <real_time_update_rate>1000</real_time_update_rate>
+    </physics>
+
+    <!-- 场景 -->
+    <scene>
+      <ambient>0.5 0.5 0.5 1</ambient>
+      <shadows>true</shadows>
+      <grid>false</grid>
+    </scene>
+
+    <!-- 光照 -->
+    <light type="directional" name="sun">
+      <cast_shadows>true</cast_shadows>
+      <pose>0 0 10 0 0 0</pose>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+      <specular>0.1 0.1 0.1 1</specular>
+      <attenuation><range>1000</range><constant>0.9</constant><linear>0.01</linear><quadratic>0.001</quadratic></attenuation>
+      <direction>-0.5 0.1 -0.9</direction>
+    </light>
+
+    <!-- 地面 -->
+    <平面>
+      <geometry>
+        <plane>
+          <size>100 100</size>
+          <normal>0 0 1</normal>
+        </plane>
+      </geometry>
+      <material>
+        <ambient>0.5 0.5 0.5 1</ambient>
+        <diffuse>0.7 0.7 0.7 1</diffuse>
+        <specular>0.01 0.01 0.01 1</specular>
+      </material>
+    </平面>
+
+    <!-- 包含机器人 -->
+    <include>
+      <uri>model://my_robot</uri>
+      <name>robot1</name>
+      <pose>0 0 0 0 0 0</pose>
+    </include>
+  </world>
+</sdf>
 ```
 
 ---
 
 ## 地形创建
 
-### 室内环境
+### 高度图地形
 
 ```xml
-<?xml version="1.0" ?>
-<sdf version="1.11">
-  <world name="indoor_env">
-    <!-- 物理引擎 -->
-    <physics name="physics" default="true">
-      <max_step_size>0.001</max_step_size>
-      <real_time_factor>1</real_time_factor>
-      <real_time_update_rate>1000</real_time_update_rate>
-    </physics>
-    
-    <!-- 地面 -->
-    <model name="floor">
-      <static>true</static>
-      <link name="link">
-        <pose>0 0 0 0 0 0</pose>
-        <collision name="collision">
-          <geometry>
-            <plane>
-              <normal>0 0 1</normal>
-              <size>20 20</size>
-            </plane>
-          </geometry>
-          <surface>
-            <friction>
-              <ode>
-                <mu>0.5</mu>
-                <mu2>0.5</mu2>
-              </ode>
-            </friction>
-          </surface>
-        </collision>
-        <visual name="visual">
-          <geometry>
-            <plane>
-              <normal>0 0 1</normal>
-              <size>20 20</size>
-            </plane>
-          </geometry>
-          <material>
-            <ambient>0.5 0.5 0.5 1</ambient>
-            <diffuse>0.5 0.5 0.5 1</diffuse>
-            <specular>0.1 0.1 0.1 1</specular>
-          </material>
-        </visual>
-      </link>
-    </model>
-    
-    <!-- 墙壁 -->
-    <model name="wall_north">
-      <static>true</static>
-      <link name="link">
-        <pose>0 10 1.5 0 0 0</pose>
-        <collision name="collision">
-          <geometry>
-            <box>
-              <size>20 0.2 3</size>
-            </box>
-          </geometry>
-        </collision>
-        <visual name="visual">
-          <geometry>
-            <box>
-              <size>20 0.2 3</size>
-            </box>
-          </geometry>
-          <material>
-            <ambient>0.8 0.8 0.8 1</ambient>
-          </material>
-        </visual>
-      </link>
-    </model>
-    
-    <!-- 柱子 -->
-    <model name="pillar_1">
-      <static>true</static>
-      <link name="link">
-        <pose>5 5 1.5 0 0 0</pose>
-        <collision name="collision">
-          <geometry>
-            <box>
-              <size>0.3 0.3 3</size>
-            </box>
-          </geometry>
-        </collision>
-        <visual name="visual">
-          <geometry>
-            <box>
-              <size>0.3 0.3 3</size>
-            </box>
-          </geometry>
-          <material>
-            <ambient>0.6 0.6 0.6 1</ambient>
-          </material>
-        </visual>
-      </link>
-    </model>
-  </world>
-</sdf>
-```
-
-### 室外道路环境
-
-```xml
-<?xml version="1.0" ?>
-<sdf version="1.11">
-  <world name="outdoor_env">
-    <!-- 道路 -->
-    <model name="road">
-      <static>true</static>
-      <link name="link">
-        <collision name="collision">
-          <geometry>
-            <plane>
-              <normal>0 0 1</normal>
-              <size>100 10</size>
-            </plane>
-          </geometry>
-          <surface>
-            <friction>
-              <ode>
-                <mu>0.9</mu>
-                <mu2>0.9</mu2>
-              </ode>
-            </friction>
-          </surface>
-        </collision>
-        <visual name="visual">
-          <geometry>
-            <plane>
-              <normal>0 0 1</normal>
-              <size>100 10</size>
-            </plane>
-          </geometry>
-          <material>
-            <ambient>0.3 0.3 0.3 1</ambient>
-            <diffuse>0.3 0.3 0.3 1</diffuse>
-          </material>
-        </visual>
-        
-        <!-- 道路标记 -->
-        <visual name="center_line">
-          <pose>0 0 0.001 0 0 0</pose>
-          <geometry>
-            <plane>
-              <normal>0 0 1</normal>
-              <size>100 0.15</size>
-            </plane>
-          </geometry>
-          <material>
-            <ambient>1 1 0 1</ambient>
-          </material>
-        </visual>
-        
-        <visual name="edge_line">
-          <pose>4.5 0 0.001 0 0 0</pose>
-          <geometry>
-            <plane>
-              <normal>0 0 1</normal>
-              <size>100 0.1</size>
-            </plane>
-          </geometry>
-          <material>
-            <ambient>1 1 1 1</ambient>
-          </material>
-        </visual>
-      </link>
-    </model>
-    
-    <!-- 路边建筑 -->
-    <model name="building_1">
-      <static>true</static>
-      <link name="link">
-        <pose>-8 8 3 0 0 0</pose>
-        <visual name="visual">
-          <geometry>
-            <box>
-              <size>6 6 6</size>
-            </box>
-          </geometry>
-          <material>
-            <ambient>0.7 0.6 0.5 1</ambient>
-          </material>
-        </visual>
-      </link>
-    </model>
-    
-    <!-- 路灯 -->
-    <model name="street_lamp">
-      <static>true</static>
-      <link name="pole">
-        <pose>-5 5.5 0 0 0 0</pose>
-        <visual name="visual">
-          <geometry>
-            <cylinder radius="0.05" height="4"/>
-          </geometry>
-          <material>
-            <ambient>0.4 0.4 0.4 1</ambient>
-          </material>
-        </visual>
-      </link>
-      <link name="light">
-        <pose>-5 5 4.2 0 0 0</pose>
-        <visual name="visual">
-          <geometry>
-            <box size="0.3 0.3 0.1"/>
-          </geometry>
-          <material>
-            <emissive>1 1 0.9 1</emissive>
-          </material>
-        </visual>
-      </link>
-    </model>
-  </world>
-</sdf>
-```
-
-### 山地地形
-
-```xml
-<?xml version="1.0" ?>
-<sdf version="1.11">
-  <world name="mountain_env">
-    <!-- 高度地图地形 -->
-    <model name="terrain">
-      <static>true</static>
-      <link name="link">
-        <visual name="visual">
-          <geometry>
-            <heightmap>
-              <uri>file://media/heights/mountain.png</uri>
-              <size>50 50 10</size>
-              <position>0 0 0</position>
-            </heightmap>
-          </geometry>
-          <material>
-            <ambient>0.4 0.5 0.3 1</ambient>
-            <diffuse>0.4 0.5 0.3 1</diffuse>
-          </material>
-        </visual>
-        <collision name="collision">
-          <geometry>
-            <heightmap>
-              <uri>file://media/heights/mountain.png</uri>
-              <size>50 50 10</size>
-              <position>0 0 0</position>
-            </heightmap>
-          </geometry>
-          <surface>
-            <friction>
-              <ode>
-                <mu>0.8</mu>
-                <mu2>0.8</mu2>
-              </ode>
-            </friction>
-          </surface>
-        </collision>
-      </link>
-    </model>
-    
-    <!-- 树木 -->
-    <model name="tree_1">
-      <static>true</static>
-      <link name="trunk">
-        <pose>10 10 0 0 0 0</pose>
-        <visual name="visual">
-          <geometry>
-            <cylinder radius="0.2" height="3"/>
-          </geometry>
-          <material>
-            <ambient>0.4 0.25 0.1 1</ambient>
-          </material>
-        </visual>
-      </link>
-      <link name="foliage">
-        <pose>10 10 3.5 0 0 0</pose>
-        <visual name="visual">
-          <geometry>
-            <sphere radius="1.5"/>
-          </geometry>
-          <material>
-            <ambient>0.2 0.5 0.2 1</ambient>
-          </material>
-        </visual>
-      </link>
-    </model>
-  </world>
-</sdf>
-```
-
----
-
-## 气象条件
-
-### 风力仿真
-
-```xml
-<!-- 恒定风力 -->
-<plugin filename="gz-sim-wind-system" name="gz::sim::systems::Wind">
-  <frame_id>world</frame_id>
-  <namespace>wind</namespace>
-  
-  <!-- 风向 (北偏东) -->
-  <direction>
-    <x>0.7</x>
-    <y>0.7</y>
-    <z>0</z>
-  </direction>
-  
-  <!-- 基础风速 -->
-  <magnitude>
-    <type>constant</type>
-    <value>5.0</value>
-  </magnitude>
-</plugin>
-
-<!-- 阵风系统 -->
-<plugin filename="gz-sim-wind-gust-system" name="gz::sim::systems::WindGust">
-  <start_time>10.0</start_time>
-  <duration>5.0</duration>
-  <direction>
-    <x>1</x>
-    <y>0</y>
-    <z>0.2</z>
-  </direction>
-  <magnitude>
-    <type>pulse</type>
-    <min_value>3.0</min_value>
-    <max_value>12.0</max_value>
-    <period>2.0</period>
-  </magnitude>
-</plugin>
-
-<!-- 随机湍流 -->
-<plugin filename="gz-sim-wind-random-system" name="gz::sim::systems::Wind">
-  <turbulence>
-    <type>gaussian</type>
-    <scale>1.5</scale>
-    <cutoff_frequency>0.5</cutoff_frequency>
-  </turbulence>
-</plugin>
-```
-
-### 雨雪天气
-
-```xml
-<!-- 降雨系统 -->
-<plugin filename="gz-sim-rain-system" name="gz::sim::systems::Rain">
-  <update_period>0.01</update_period>
-  <(rows>500</rows>
-  <cols>500</cols>
-  <particle_size>0.02</particle_size>
-  <fall_speed>9.8</fall_speed>
-  <intensity>0.5</intensity>
-</plugin>
-
-<!-- 降雪系统 -->
-<plugin filename="gz-sim-snow-system" name="gz::sim::systems::Snow">
-  <update_period>0.02</update_period>
-  <particle_size>0.01</particle_size>
-  <fall_speed>1.0</fall_speed>
-  <intensity>0.3</intensity>
-</plugin>
-```
-
----
-
-## 障碍物设置
-
-### 静态障碍物
-
-```xml
-<!-- 箱子障碍物 -->
-<model name="obstacle_box">
+<!-- 高度图地形 -->
+<model name="heightmap_terrain">
   <static>true</static>
-  <link name="link">
-    <pose>2 1 0.25 0 0 0.2</pose>
+  <link name="terrain_link">
     <collision name="collision">
       <geometry>
-        <box>
-          <size>0.5 0.5 0.5</size>
-        </box>
+        <heightmap>
+          <use_terrain_paging>false</use_terrain_paging>
+          <sdf_filename>terrain.dem</sdf_filename>
+          <texture>
+            <size>10</size>
+            <diffuse>file://media/materials/textures/terrain/dirt_diffuse.png</diffuse>
+            <normal>file://media/materials/textures/terrain/dirt_normal.png</normal>
+          </texture>
+          <blur>1.5</blur>
+          <primitives>3</primitives>
+          <view_primitives>false</view_primitives>
+          <cell_height>0.5</cell_height>
+        </heightmap>
       </geometry>
     </collision>
     <visual name="visual">
       <geometry>
-        <box>
-          <size>0.5 0.5 0.5</size>
-        </box>
+        <heightmap>
+          <sdf_filename>terrain.dem</sdf_filename>
+          <texture>
+            <diffuse>file://media/materials/textures/terrain/dirt_diffuse.png</diffuse>
+            <normal>file://media/materials/textures/terrain/dirt_normal.png</normal>
+          </texture>
+        </heightmap>
+      </geometry>
+    </visual>
+  </link>
+</model>
+```
+
+### 程序化不平整地面
+
+```python
+import numpy as np
+
+def generate_rough_terrain(size=20, amplitude=0.1):
+    """生成粗糙地面高度数据"""
+    x = np.linspace(-size/2, size/2, 100)
+    y = np.linspace(-size/2, size/2, 100)
+    X, Y = np.meshgrid(x, y)
+
+    # 基础地形 + 噪声
+    Z = amplitude * np.sin(X * 0.5) * np.cos(Y * 0.5)
+    Z += 0.05 * np.random.randn(100, 100)
+    return Z
+```
+
+---
+
+## 障碍物配置
+
+### 静态障碍物
+
+```xml
+<!-- 墙壁 -->
+<model name="wall_1">
+  <static>true</static>
+  <link name="wall_link">
+    <pose>5 0 1.25 0 0 0</pose>
+    <collision name="wall_collision">
+      <geometry>
+        <box><size>0.2 5 2.5</size></box>
+      </geometry>
+    </collision>
+    <visual name="wall_visual">
+      <geometry>
+        <box><size>0.2 5 2.5</size></box>
       </geometry>
       <material>
-        <ambient>0.8 0.3 0.2 1</ambient>
+        <diffuse>0.6 0.6 0.6 1</diffuse>
       </material>
     </visual>
   </link>
 </model>
 
 <!-- 圆柱障碍物 -->
-<model name="obstacle_cylinder">
+<model name="cylinder_obstacle">
   <static>true</static>
-  <link name="link">
-    <pose>3 -1 0.5 0 0 0</pose>
+  <link name="cylinder_link">
+    <pose>3 3 0.5 0 0 0</pose>
     <collision name="collision">
       <geometry>
-        <cylinder radius="0.3" height="1"/>
+        <cylinder>
+          <radius>0.3</radius>
+          <length>1.0</length>
+        </cylinder>
       </geometry>
     </collision>
     <visual name="visual">
       <geometry>
-        <cylinder radius="0.3" height="1"/>
+        <cylinder>
+          <radius>0.3</radius>
+          <length>1.0</length>
+        </cylinder>
       </geometry>
       <material>
-        <ambient>0.3 0.3 0.8 1</ambient>
+        <diffuse>0.8 0.2 0.2 1</diffuse>
       </material>
     </visual>
   </link>
@@ -459,286 +198,254 @@ user-invocable: true
 ### 动态障碍物
 
 ```xml
-<!-- 移动障碍物 - 行人 -->
-<model name="pedestrian">
+<!-- 移动的人 -->
+<model name="walking_person">
   <static>false</static>
   <link name="body">
     <pose>0 0 0.9 0 0 0</pose>
-    <inertial>
-      <mass>70</mass>
-    </inertial>
-    <visual name="visual">
-      <geometry>
-        <cylinder radius="0.2" height="1.8"/>
-      </geometry>
-    </visual>
-  </link>
-  
-  <!-- 移动插件 -->
-  <plugin filename="gz-sim-random-walk-system" name="gz::sim::systems::RandomWalk">
-    <update_period>0.1</update_period>
-    <velocity>
-      <mean>1.2</mean>
-      <min>0.5</min>
-      <max>2.0</max>
-    </velocity>
-    <direction_change>
-      <mean>5.0</mean>
-      <min>2.0</min>
-      <max>10.0</max>
-    </direction_change>
-  </plugin>
-</model>
-
-<!-- 车辆障碍物 -->
-<model name="moving_car">
-  <static>false</static>
-  <link name="body">
-    <pose>0 0 0.5 0 0 0</pose>
-    <inertial>
-      <mass>1500</mass>
-    </inertial>
-    <visual name="visual">
-      <geometry>
-        <box size="4 2 1.5"/>
-      </geometry>
-    </visual>
-  </link>
-  
-  <plugin filename="gz-sim-waypoint-system" name="gz::sim::systems::WaypointFollower">
-    <velocity>5.0</velocity>
-    <waypoints>
-      <point>0 0</point>
-      <point>50 0</point>
-      <point>50 20</point>
-      <point>0 20</point>
-    </waypoints>
-    <loop>true</loop>
-  </plugin>
-</model>
-```
-
-### 交通锥
-
-```xml
-<model name="traffic_cone">
-  <static>true</static>
-  <link name="link">
-    <pose>1 0 0 0 0 0</pose>
     <collision name="collision">
       <geometry>
-        <cone radius_bottom="0.15" radius_top="0.03" height="0.3"/>
+        <cylinder><radius>0.3</radius><length>1.8</length></cylinder>
       </geometry>
     </collision>
-    <visual name="visual">
-      <geometry>
-        <cone radius_bottom="0.15" radius_top="0.03" height="0.3"/>
-      </geometry>
-      <material>
-        <ambient>1 0.3 0 1</ambient>
-      </material>
-    </visual>
+    <!-- 使用.actor 实现动画移动 -->
+    <plugin name="actor_plugin" filename="libActorPlugin.so">
+      <model>
+        <walking>
+          <pose>-5 0 0 0 0 0</pose>
+          <keyframe>
+            <time>0</time>
+            <pose>-5 0 0 0 0 0</pose>
+          </keyframe>
+          <keyframe>
+            <time>2</time>
+            <pose>5 0 0 0 0 0</pose>
+          </keyframe>
+          <keyframe>
+            <time>4</time>
+            <pose>-5 0 0 0 0 0</pose>
+          </keyframe>
+        </walking>
+      </model>
+    </plugin>
   </link>
 </model>
 ```
 
 ---
 
-## 光照配置
+## 传感器仿真
 
-### 太阳光
-
-```xml
-<!-- 定向光 - 太阳 -->
-<light type="directional" name="sun">
-  <pose>0 0 10 0 0 0</pose>
-  <diffuse>1 0.98 0.9 1</diffuse>
-  <specular>0.8 0.8 0.8 1</specuse>
-  <cast_shadows>true</cast_shadows>
-  <intensity>1.0</intensity>
-  <direction>-0.5 -0.5 -1</direction>
-  <shadow>
-    <map_size>2048</map_size>
-    <bias>0.00005</bias>
-  </shadow>
-</light>
-```
-
-### 环境光
+### 激光雷达
 
 ```xml
-<!-- 环境光 -->
-<scene>
-  <ambient>0.3 0.3 0.3 1</ambient>
-  <background>0.5 0.7 1.0 1</background>
-  <shadows>true</shadows>
-  <grid>false</grid>
-  <origin_visual>false</origin_visual>
-</scene>
-```
-
----
-
-## 多机器人仿真
-
-### 多机器人场景
-
-```xml
-<?xml version="1.0" ?>
-<sdf version="1.11">
-  <world name="multi_robot_env">
-    <!-- 机器人1 -->
-    <model name="robot_1">
-      <include>
-        <uri>model://diff_drive_robot</uri>
-      </include>
-      <pose>0 0 0 0 0 0</pose>
-    </model>
-    
-    <!-- 机器人2 -->
-    <model name="robot_2">
-      <include>
-        <uri>model://diff_drive_robot</uri>
-      </include>
-      <pose>2 2 0 0 0 1.57</pose>
-    </model>
-    
-    <!-- 机器人3 -->
-    <model name="robot_3">
-      <include>
-        <uri>model://quadrotor</uri>
-      </include>
-      <pose>4 0 1 0 0 0</pose>
-    </model>
-    
-    <!-- 交通规则区域 -->
-    <model name="speed_limit_zone">
-      <static>true</static>
-      <link name="link">
-        <pose>5 0 0.1 0 0 0</pose>
-        <visual name="visual">
-          <geometry>
-            <box size="2 10 0.01"/>
-          </geometry>
-          <material>
-            <ambient>1 1 0 0.3</ambient>
-            <transparency>0.7</transparency>
-          </material>
-        </visual>
-      </link>
-    </model>
-  </world>
-</sdf>
-```
-
-### 机器人间距控制
-
-```xml
-<gazebo>
-  <plugin filename="gz-sim-collision-detector" name="gz::sim::systems::CollisionDetector">
-    <robotNamespace>multi_robot</robotNamespace>
-    <check_interval>0.05</check_interval>
-    <min_separation_distance>0.5</min_separation_distance>
-    <warn_distance>1.0</warn_distance>
-  </plugin>
-</gazebo>
-```
-
----
-
-## 时间与天气
-
-### 动态时间
-
-```xml
-<!-- 太阳轨迹 -->
-<plugin filename="gz-sim-sun-system" name="gz::sim::systems::Sun">
-  <update_period>60</update_period>
-  <sunrise_time>6:00</sunrise_time>
-  <sunset_time>18:00</sunset_time>
-  <day_night_cycle>true</day_night_cycle>
-</plugin>
-```
-
-### 雾效
-
-```xml
-<!-- 雾 -->
-<scene>
-  <fog>
-    <type>linear</type>
-    <color>0.8 0.8 0.8 1</color>
-    <density>0.05</density>
-    <start>10</start>
-    <end>50</end>
-  </fog>
-</scene>
-```
-
----
-
-## 传感器环境干扰
-
-### 灰尘/烟雾
-
-```xml
-<gazebo reference="laser_sensor">
-  <sensor>
+<plugin name="gazebo::ros::Rayscan" name="gazebo_ros_laser">
+  <ros>
+    <namespace>/robot1</namespace>
+    <remapping>~/out:=scan</remapping>
+  </ros>
+  <frame_name>laser_link</frame_name>
+  <publish_intensities>false</publish_intensities>
+  <publish_channels>true</publish_channels>
+  <update_rate>10</update_rate>
+  <ray>
+    <scan>
+      <horizontal>
+        <samples>720</samples>
+        <resolution>1</resolution>
+        <min_angle>-3.14159</min_angle>
+        <max_angle>3.14159</max_angle>
+      </horizontal>
+    </scan>
+    <range>
+      <min>0.08</min>
+      <max>30.0</max>
+      <resolution>0.01</resolution>
+    </range>
     <noise>
       <type>gaussian</type>
       <mean>0.0</mean>
-      <stddev>0.02</stddev>
+      <stddev>0.01</stddev>
     </noise>
-  </sensor>
-</gazebo>
+  </ray>
+</plugin>
+```
 
-<gazebo reference="camera_sensor">
-  <sensor>
-    <distortion>
-      <k1>0.001</k1>
-      <k2>0.001</k2>
-      <p1>0.0</p1>
-      <p2>0.0</p2>
-    </distortion>
-  </sensor>
-</gazebo>
+### RGB-D 相机
+
+```xml
+<sensor name="depth_camera" type="depth">
+  <camera name="depth">
+    <horizontal_fov>1.047</horizontal_fov>
+    <image>
+      <width>640</width>
+      <height>480</height>
+      <format>R8G8B8</format>
+    </image>
+    <clip>
+      <near>0.1</near>
+      <far>10</far>
+    </clip>
+  </camera>
+  <plugin name="gazebo_ros_camera" filename="libgazebo_ros_camera.so">
+    <ros>
+      <namespace>/robot1</namespace>
+      <remapping>image_raw:=camera/image_raw</remapping>
+      <remapping>camera_info:=camera/camera_info</remapping>
+    </ros>
+    <camera_name>depth</camera_name>
+    <frame_name>camera_link</frame_name>
+  </plugin>
+</sensor>
 ```
 
 ---
 
-## 常见问题
+## 气象条件
 
-### 问题 1: 地形加载失败
+```xml
+<!-- 天气效果 -->
+<scene>
+  <fog>
+    <type>exponential</type>
+    <color>0.9 0.9 0.9 1</color>
+    <density>0.01</density>
+  </fog>
+  <sky>
+    <clouds>
+      <speed>10</speed>
+      <direction>1 0 -1</direction>
+      <humidity>30</humidity>
+    </clouds>
+  </sky>
+</scene>
 
-**解决方案**：
-- 检查高度图格式 (PNG/JPG)
-- 验证文件路径
-- 确认大小参数
-
-### 问题 2: 风力影响异常
-
-**解决方案**：
-- 调整风力系数
-- 检查机器人质量
-- 验证阻力参数
-
-### 问题 3: 多机器人碰撞
-
-**解决方案**：
-- 增加安全距离
-- 启用碰撞检测
-- 设置避障行为
+<!-- 雨效果（通过粒子系统） -->
+<model name="rain">
+  <static>true</static>
+  <link name="rain_link">
+    <plugin name="ParticleEffect" name="rain">
+      <filename>particle/rain.dae</filename>
+      <start_time>0</start_time>
+      <end_time>-1</end_time>
+      <update_rate>30</update_rate>
+      <particle_scatter_ratio>-1</particle_scatter_ratio>
+    </plugin>
+  </link>
+</model>
+```
 
 ---
 
-## 相关资源
+## 多机器人场景
 
-- [Gazebo Worlds](https://gazebosim.org/models)
-- [Heightmap Demo](https://gazebosim.org/docs/harmonic/heightmap)
-- [Weather Systems](https://gazebosim.org/docs/harmonic/weather)
+```python
+# launch/multi_robot_gazebo.launch.py
+from launch import LaunchDescription
+from launch_ros.actions import Node
+from launch.actions import DeclareLaunchArgument
+import math
+
+def generate_robot_pose(i, total):
+    angle = 2 * math.pi * i / total
+    r = 2.0
+    x = r * math.cos(angle)
+    y = r * math.sin(angle)
+    return f"{x} {y} 0 0 0 {angle}"
+
+def generate_multi_robot_launch(num_robots=3):
+    robots = []
+    for i in range(num_robots):
+        ns = f"robot{i+1}"
+        robots.append(
+            DeclareLaunchArgument(f'{ns}_pose', default_value=generate_robot_pose(i, num_robots)),
+            Node(
+                package='gazebo_ros',
+                executable='spawn_entity.py',
+                arguments=[
+                    '-entity', f'robot_{i+1}',
+                    '-topic', f'robot_description_{i+1}',
+                    '-namespace', ns,
+                    '-x', str(2 * math.cos(2 * math.pi * i / num_robots)),
+                    '-y', str(2 * math.sin(2 * math.pi * i / num_robots)),
+                ],
+                output='screen',
+            ),
+        )
+    return LaunchDescription(robots)
+```
 
 ---
 
-## 另见
+## ROS2 launch 整合
 
-- [sdf-xacro-model/../wheeled_vehicle/) - 轮式车辆模型
+```python
+# launch/robot_gazebo.launch.py
+import os
+from ament_index_python.packages import get_package_share_directory
+from launch import LaunchDescription
+from launch_ros.actions import Node
+from launch.actions import IncludeLaunchDescription
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+
+def generate_launch_description():
+    pkg_share = get_package_share_directory('my_robot_description')
+    world_file = os.path.join(pkg_share, 'worlds', 'warehouse.world')
+
+    return LaunchDescription([
+        # Gazebo
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(
+                os.path.join(get_package_share_directory('gazebo_ros'), 'launch', 'gazebo.launch.py')
+            ),
+            launch_arguments={'world': world_file}.items(),
+        ),
+        # 机器人描述
+        Node(
+            package='robot_state_publisher',
+            executable='robot_state_publisher',
+            name='robot_state_publisher',
+            parameters=[{'robot_description': open(os.path.join(pkg_share, 'urdf', 'robot.urdf')).read()}],
+        ),
+    ])
+```
+
+---
+
+## 故障排查
+
+| 问题 | 原因 | 解决方案 |
+|------|------|----------|
+| Gazebo 启动黑屏 | GPU 驱动问题 | `export LIBGL_ALWAYS_SOFTWARE=1` |
+| 模型加载失败 | URI 路径错误 | 确认 `GAZEBO_MODEL_PATH` 包含模型目录 |
+| 激光雷达无数据 | 插件未加载 | 检查 `gz topic -l` 确认插件已启动 |
+| 物理不稳定 | dt 太大 | 减小 `max_step_size` |
+| 纹理缺失 | 材质路径错误 | 设置 `GAZEBO_RESOURCE_PATH` |
+
+### 调试命令
+
+```bash
+# 查看可用话题
+gz topic -l
+
+# 查看模型列表
+gz model -l
+
+# 移动模型
+gz model -m robot1 -x 1 -y 2 -z 0
+
+# 查看传感器数据
+gz topic -e /robot1/lidar/scan
+
+# 重置世界
+gz world -w empty_world -r
+```
+
+---
+
+## 相关技能
+
+- `simulator/gazebo-harmonic/robot-modeling` — Gazebo 机器人建模
+- `simulator/gazebo-harmonic/sensor-integration` — Gazebo 传感器集成
+- `simulator/gazebo-harmonic/plugin-development` — Gazebo 插件开发
+- `navigation/nav2-integration` — Nav2 导航集成
