@@ -5,7 +5,7 @@ All notable changes to the English documentation are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased] - 2026-04-02
+## [Unreleased] - 2026-04-03
 
 ### Added
 
@@ -13,6 +13,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **simulator Skills Directory**: New simulator skills directory
 - **skill-routing.md**: New skill routing index file
 - **init-agent.sh Enhancement**: Support for both Copilot and Cursor IDE configuration generation
+
+- **Agent Directories**: New dedicated Agent directories
+  - `motion-control-agent/`: Motion control agent
+  - `navigation-agent/`: Navigation agent
+  - `perception-agent/`: Perception agent
+  - `simulation-agent/`: Simulation agent
+  - `system-integration-agent/`: System integration agent
+
+- **Function Domain Skills Directories**: New skills organized by function domain
+  - `motion-control/`: Motion control (biped-control, collaborative-control, force-control, kinematics, trajectory)
+  - `navigation/`: Navigation (map-building, nav2-integration, obstacle-avoidance, path-planning, slam)
+  - `perception/`: Perception (calibration, edge-inference, lidar-perception, sensor-fusion, vision-perception)
+  - `simulation/`: Simulation (gazebo, isaac-sim, mujoco, physics-simulation, robot-modeling)
+  - `system-integration/`: System integration (debugging-optimization, edge-deployment, lifecycle-management, ros2-communication, system-architecture)
 
 ### Changed
 
