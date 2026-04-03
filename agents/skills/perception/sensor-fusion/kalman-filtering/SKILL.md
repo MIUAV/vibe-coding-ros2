@@ -1,5 +1,5 @@
 ---
-name: perception-kalman-filtering
+name: kalman-filtering
 description: 卡尔曼滤波技能 - 线性KF、扩展EKF、无迹UKF、粒子滤波、ROS2机器人状态估计
 argument-hint: 卡尔曼滤波 OR EKF OR UKF OR 粒子滤波 OR 状态估计 OR Kalman filter
 user-invocable: true

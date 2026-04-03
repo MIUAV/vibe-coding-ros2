@@ -1,5 +1,5 @@
 ---
-name: simulation-soft-body-simulation
+name: soft-body-simulation
 description: 软体仿真技能 - MuJoCo/Isaac Gym 软体物理、绳索/布料/软体抓取、仿真训练迁移
 argument-hint: 软体仿真 OR soft body OR 绳索仿真 OR 布料仿真 OR MuJoCo
 user-invocable: true

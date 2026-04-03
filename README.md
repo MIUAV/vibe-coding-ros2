@@ -114,17 +114,6 @@ bash scripts/debugger/ros2-debug.sh all
 bash scripts/debugger/ros2-debug.sh qos   # 仅 QoS 检查
 ```
 
-### 可运行的示例代码（v0.0.1-beta 新增）
-
-| 示例 | 内容 | 编译命令 |
-|------|------|----------|
-| `examples/ros2-minimal/cpp_publisher/` | C++ 发布者 + QoS + wall_timer | `colcon build --packages-select cpp_publisher --symlink-install` |
-| `examples/ros2-minimal/py_subscriber/` | Python 订阅者 + rclpy 规范 | `colcon build --packages-select py_subscriber --symlink-install` |
-| `examples/ros2-lifecycle/lifecycle_sensor/` | Lifecycle 节点（状态机） | `colcon build --packages-select lifecycle_sensor --symlink-install` |
-| `examples/ros2-service/add_two_ints/` | Service + Client + 超时保护 | `colcon build --packages-select add_two_ints --symlink-install` |
-
-> 所有示例均包含完整注释和 Anti-Patterns 规范检查
-
 ### 嵌入式平台 Debug（容器/仿真 → 实机部署）
 
 | 阶段 | 环境 | Debug 手段 |

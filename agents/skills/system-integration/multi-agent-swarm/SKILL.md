@@ -1,5 +1,5 @@
 ---
-name: system-integration-multi-agent-swarm
+name: multi-agent-swarm
 description: 多智能体协同技能 - 蜂群机器人、分布式感知、协同规划、任务分配、ROS2 多机通信
 argument-hint: 多智能体 OR 蜂群 OR swarm OR 协同规划 OR multi-agent OR 多机协同
 user-invocable: true

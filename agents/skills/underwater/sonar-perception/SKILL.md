@@ -1,5 +1,5 @@
 ---
-name: underwater-sonar-perception
+name: sonar-perception
 description: 声呐感知技能 - 前视声呐、侧扫声呐、多波束声呐、目标检测、SLAM、ROS2 集成
 argument-hint: 声呐 OR sonar OR 水下感知 OR 前视声呐 OR 多波束 OR AUV
 user-invocable: true
