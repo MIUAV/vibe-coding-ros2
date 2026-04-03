@@ -1,7 +1,7 @@
 ---
 name: gazebo-sensor-plugin
 description: Gazebo 传感器插件技能 - 激光雷达、相机、IMU、深度相机插件配置
-argument-hint: "Gazebo传感器" / "laser" / "camera" / "imu" / "sensor plugin"
+argument-hint: Gazebo传感器 OR laser OR camera OR imu OR sensor plugin
 user-invocable: true
 ---
 

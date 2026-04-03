@@ -1,7 +1,7 @@
 ---
 name: rockchip-rknn
 description: 瑞芯微RKNN开发 - 模型转换 NPU推理 相机驱动
-argument-hint: "瑞芯微" / "RKNN" / "RK3588" / "NPU"
+argument-hint: 瑞芯微 OR RKNN OR RK3588 OR NPU
 user-invocable: true
 ---
 

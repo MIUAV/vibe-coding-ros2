@@ -1,7 +1,7 @@
 ---
 name: robot-control
 description: PyBullet 机器人控制技能 - 关节控制、力控制、运动学
-argument-hint: "PyBullet控制" / "关节控制" / "力控制"
+argument-hint: PyBullet控制 OR 关节控制 OR 力控制
 user-invocable: true
 ---
 

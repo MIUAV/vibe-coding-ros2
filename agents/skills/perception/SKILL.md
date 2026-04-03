@@ -1,7 +1,7 @@
 ---
 name: perception
 description: 机器人感知系统技能库 - 视觉感知、激光雷达感知、传感器融合、边缘推理、标定
-argument-hint: "感知" / "视觉" / "激光雷达" / "sensor fusion" / "perception"
+argument-hint: 感知 OR 视觉 OR 激光雷达 OR sensor fusion OR perception
 user-invocable: true
 ---
 

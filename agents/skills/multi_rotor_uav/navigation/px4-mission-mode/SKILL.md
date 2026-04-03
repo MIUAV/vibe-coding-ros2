@@ -1,7 +1,7 @@
 ---
 name: px4-mission-mode
 description: PX4 任务模式技能 - 执行预设航线任务，支持航点、航点动作、条件跳转等
-argument-hint: "任务模式" / "Mission Mode" / "航线规划" / "自主飞行"
+argument-hint: 任务模式 OR Mission Mode OR 航线规划 OR 自主飞行
 user-invocable: true
 ---
 

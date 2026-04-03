@@ -1,7 +1,7 @@
 ---
 name: rl-policy-gradient
 description: 策略梯度强化学习技能 - PPO、A3C、SAC、TRPO 算法实现与机器人应用
-argument-hint: "PPO" / "A3C" / "SAC" / "策略梯度" / "policy gradient"
+argument-hint: PPO OR A3C OR SAC OR 策略梯度 OR policy gradient
 user-invocable: true
 ---
 

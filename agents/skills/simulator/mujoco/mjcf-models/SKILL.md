@@ -1,7 +1,7 @@
 ---
 name: mjcf-models
 description: MuJoCo MJCF 模型技能 - 创建机器人模型、关节、接触配置
-argument-hint: "MuJoCo MJCF" / "模型创建" / "关节配置"
+argument-hint: MuJoCo MJCF OR 模型创建 OR 关节配置
 user-invocable: true
 ---
 

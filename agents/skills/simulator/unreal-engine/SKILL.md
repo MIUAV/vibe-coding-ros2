@@ -1,7 +1,7 @@
 ---
 name: unreal-engine
 description: Unreal Engine 机器人仿真开发技能 - 高保真仿真、物理引擎集成、传感器模拟
-argument-hint: "unreal仿真" / "UE机器人" / "创建仿真场景" / "虚幻引擎"
+argument-hint: unreal仿真 OR UE机器人 OR 创建仿真场景 OR 虚幻引擎
 user-invocable: true
 ---
 

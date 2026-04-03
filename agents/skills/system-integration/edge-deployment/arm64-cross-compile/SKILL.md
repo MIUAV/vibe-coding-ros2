@@ -1,7 +1,7 @@
 ---
 name: arm64-cross-compile
 description: ARM64 交叉编译技能 - aarch64 交叉编译工具链、ROS2 交叉编译、Docker 交叉编译
-argument-hint: "ARM64" / "交叉编译" / "aarch64" / "cross compile" / "toolchain"
+argument-hint: ARM64 OR 交叉编译 OR aarch64 OR cross compile OR toolchain
 user-invocable: true
 ---
 

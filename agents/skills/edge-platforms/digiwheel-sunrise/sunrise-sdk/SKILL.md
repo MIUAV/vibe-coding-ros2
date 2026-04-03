@@ -1,7 +1,7 @@
 ---
 name: sunrise-sdk
 description: 旭日SDK开发 - BPU SDK环境 工具链安装 模型部署
-argument-hint: "旭日SDK" / "BPU开发" / "工具链" / "DDK"
+argument-hint: 旭日SDK OR BPU开发 OR 工具链 OR DDK
 user-invocable: true
 ---
 

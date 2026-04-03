@@ -1,7 +1,7 @@
 ---
 name: sunrise-robotics
 description: 旭日机器人应用 - 机械臂控制 移动机器人 导航避障
-argument-hint: "机器人控制" / "机械臂" / "导航" / "旭日机器人"
+argument-hint: 机器人控制 OR 机械臂 OR 导航 OR 旭日机器人
 user-invocable: true
 ---
 

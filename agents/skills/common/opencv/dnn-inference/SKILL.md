@@ -1,8 +1,8 @@
 ---
-name: opencv-dnn-inference
+name: dnn-inference
 description: OpenCV4 DNN 模块技能 - 神经网络推理、模型加载、ONNX、TFLite、Darknet 支持
 user-invocable: true
-argument-hint: "dnn" / "深度学习推理" / "onnx" / "tflite" / "tensorflow" / "darknet"
+argument-hint: dnn OR 深度学习推理 OR onnx OR tflite OR tensorflow OR darknet
 ---
 
 # OpenCV4 DNN Inference Skill

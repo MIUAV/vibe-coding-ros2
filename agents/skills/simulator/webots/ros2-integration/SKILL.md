@@ -1,7 +1,7 @@
 ---
 name: ros2-integration
 description: Webots ROS2 集成技能 - webots_ros2 包、话题订阅、服务调用
-argument-hint: "Webots ROS2" / "ROS2集成" / "话题通信"
+argument-hint: Webots ROS2 OR ROS2集成 OR 话题通信
 user-invocable: true
 ---
 

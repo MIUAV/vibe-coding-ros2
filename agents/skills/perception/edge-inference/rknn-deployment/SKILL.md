@@ -1,7 +1,7 @@
 ---
 name: rknn-deployment
 description: RKNN 部署技能 - RKNN-Toolkit2、RK3588 NPU、模型转换、ROS2 部署
-argument-hint: "RKNN" / "RK3588" / "瑞芯微" / "NPU" / "rknn deployment"
+argument-hint: RKNN OR RK3588 OR 瑞芯微 OR NPU OR rknn deployment
 user-invocable: true
 ---
 

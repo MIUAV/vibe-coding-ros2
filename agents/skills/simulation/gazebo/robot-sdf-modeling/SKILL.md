@@ -1,7 +1,7 @@
 ---
 name: robot-sdf-modeling
 description: 机器人 SDF 建模技能 - SDF 模型结构、链接关节、摩擦阻尼、ROS2 gazebo_ros
-argument-hint: "SDF建模" / "sdf" / "robot model" / "link" / "joint"
+argument-hint: SDF建模 OR sdf OR robot model OR link OR joint
 user-invocable: true
 ---
 

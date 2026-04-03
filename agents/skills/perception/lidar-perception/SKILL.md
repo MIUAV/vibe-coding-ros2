@@ -1,7 +1,7 @@
 ---
 name: lidar-perception
 description: 激光雷达感知技能集合 - 点云处理、3D检测、地面分割
-argument-hint: "激光雷达" / "lidar" / "pointcloud" / "点云" / "PCL"
+argument-hint: 激光雷达 OR lidar OR pointcloud OR 点云 OR PCL
 user-invocable: true
 ---
 

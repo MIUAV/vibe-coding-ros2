@@ -1,7 +1,7 @@
 ---
 name: rknn-inference-runtime
 description: 瑞芯微RKNN推理运行时 - 模型加载 推理执行 结果获取
-argument-hint: "RKNN推理" / "NPU运行" / "模型部署"
+argument-hint: RKNN推理 OR NPU运行 OR 模型部署
 user-invocable: true
 ---
 

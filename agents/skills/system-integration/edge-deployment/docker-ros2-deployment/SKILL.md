@@ -1,7 +1,7 @@
 ---
 name: docker-ros2-deployment
 description: Docker ROS2 部署技能 - Docker Compose、ROS2 容器化、设备映射、多机器人部署
-argument-hint: "Docker" / "ROS2" / "容器化" / "docker-compose" / "deployment"
+argument-hint: Docker OR ROS2 OR 容器化 OR docker-compose OR deployment
 user-invocable: true
 ---
 

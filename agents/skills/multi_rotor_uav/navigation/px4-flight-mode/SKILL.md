@@ -1,7 +1,7 @@
 ---
 name: px4-flight-mode
 description: PX4 飞行模式与任务规划 - 手动、姿态、自稳、定点、任务、Offboard等模式配置
-argument-hint: "飞行模式" / "px4 mode" / "任务规划" / "Offboard模式"
+argument-hint: 飞行模式 OR px4 mode OR 任务规划 OR Offboard模式
 user-invocable: true
 ---
 

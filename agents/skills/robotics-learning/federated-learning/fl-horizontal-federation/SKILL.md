@@ -1,7 +1,7 @@
 ---
 name: fl-horizontal-federation
 description: 水平联邦学习技能 - 样本划分、特征对齐、分布式数据
-argument-hint: "水平联邦" / "horizontal federation" / "样本划分" / "数据并行"
+argument-hint: 水平联邦 OR horizontal federation OR 样本划分 OR 数据并行
 user-invocable: true
 ---
 

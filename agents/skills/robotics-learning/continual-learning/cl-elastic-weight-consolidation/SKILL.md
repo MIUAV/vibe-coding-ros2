@@ -1,7 +1,7 @@
 ---
 name: cl-elastic-weight-consolidation
 description: 弹性权重巩固技能 - EWC、SI、RWalk 算法实现
-argument-hint: "EWC" / "弹性权重巩固" / "elastic weight consolidation" / "Synaptic Intelligence"
+argument-hint: EWC OR 弹性权重巩固 OR elastic weight consolidation OR Synaptic Intelligence
 user-invocable: true
 ---
 

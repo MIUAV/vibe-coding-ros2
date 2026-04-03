@@ -1,7 +1,7 @@
 ---
 name: yolo-detection
 description: YOLO 目标检测 ROS2 部署技能 - YOLOv5/v8/v11 TensorRT/OpenVINO/RKNN 部署
-argument-hint: "YOLO" / "目标检测" / "TensorRT" / "yolov8" / "object detection"
+argument-hint: YOLO OR 目标检测 OR TensorRT OR yolov8 OR object detection
 user-invocable: true
 ---
 

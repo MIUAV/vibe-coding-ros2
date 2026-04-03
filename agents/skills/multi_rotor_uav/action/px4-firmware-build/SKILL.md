@@ -1,7 +1,7 @@
 ---
 name: px4-firmware-build
 description: PX4 固件编译与烧录 - 支持 NuttX/Pixhawk 系列飞控的固件构建和上传
-argument-hint: "编译PX4" / "px4 build" / "烧录固件" / "构建飞控"
+argument-hint: 编译PX4 OR px4 build OR 烧录固件 OR 构建飞控
 user-invocable: true
 ---
 

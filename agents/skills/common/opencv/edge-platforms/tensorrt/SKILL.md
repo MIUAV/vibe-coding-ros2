@@ -1,8 +1,8 @@
 ---
-name: opencv-tensorrt
+name: tensorrt
 description: OpenCV4 TensorRT 加速技能 - GPU 加速推理、INT8 量化、Engine 优化、YOLO 部署
 user-invocable: true
-argument-hint: "tensorrt" / "trt" / "int8" / "fp16" / "gpu加速" / "cuda"
+argument-hint: tensorrt OR trt OR int8 OR fp16 OR gpu加速 OR cuda
 ---
 
 # OpenCV4 TensorRT Acceleration Skill

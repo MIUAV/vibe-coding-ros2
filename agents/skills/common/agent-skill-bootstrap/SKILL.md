@@ -1,7 +1,7 @@
 ---
 name: agent-skill-bootstrap
 description: "智能体技能导入引导技能 - 用于重建 skill-index/skill-routing、按分类路由加载技能、处理同名技能冲突，并规范新增技能(create-skill)后的索引更新"
-argument-hint: "导入技能 OR 重建索引 OR create skill OR skill routing"
+argument-hint: 导入技能 OR 重建索引 OR create skill OR skill routing
 user-invocable: true
 ---
 

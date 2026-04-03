@@ -1,7 +1,7 @@
 ---
 name: tf-visualization
 description: RViz2 TF 可视化技能 - 坐标变换显示、帧调试、时间轴可视化
-argument-hint: "rviz tf" / "坐标变换" / "tf调试"
+argument-hint: rviz tf OR 坐标变换 OR tf调试
 user-invocable: true
 ---
 

@@ -1,7 +1,7 @@
 ---
 name: robot-integration
 description: Unreal Engine 机器人集成技能 - 导入机器人模型、物理设置、控制接口
-argument-hint: "Unreal机器人" / "导入模型" / "物理设置"
+argument-hint: Unreal机器人 OR 导入模型 OR 物理设置
 user-invocable: true
 ---
 

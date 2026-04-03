@@ -1,7 +1,7 @@
 ---
 name: robot-modeling
 description: 机器人建模技能集合 - URDF/Xacro、 SDF/Gazebo
-argument-hint: "机器人建模" / "URDF" / "xacro" / "建模"
+argument-hint: 机器人建模 OR URDF OR xacro OR 建模
 user-invocable: true
 ---
 

@@ -1,7 +1,7 @@
 ---
 name: fl-vertical-federation
 description: 垂直联邦学习技能 - 特征划分、隐私集合交集、嵌入共享
-argument-hint: "垂直联邦" / "vertical federation" / "特征划分" / "PSI"
+argument-hint: 垂直联邦 OR vertical federation OR 特征划分 OR PSI
 user-invocable: true
 ---
 

@@ -1,7 +1,7 @@
 ---
 name: rl-value-based
 description: 值函数强化学习技能 - DQN、Double DQN、PER、Dueling DQN 算法实现
-argument-hint: "DQN" / "Double DQN" / "PER" / "值函数" / "value based"
+argument-hint: DQN OR Double DQN OR PER OR 值函数 OR value based
 user-invocable: true
 ---
 

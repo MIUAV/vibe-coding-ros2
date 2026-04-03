@@ -1,7 +1,7 @@
 ---
 name: perception
 description: 四足机器人感知系统 - 视觉识别、深度相机、激光雷达、触觉传感器配置
-argument-hint: "四足感知" / "机器人视觉" / "深度相机" / "激光雷达"
+argument-hint: 四足感知 OR 机器人视觉 OR 深度相机 OR 激光雷达
 user-invocable: true
 ---
 

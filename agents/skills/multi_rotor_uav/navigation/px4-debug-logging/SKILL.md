@@ -1,7 +1,7 @@
 ---
 name: px4-debug-logging
 description: PX4 调试与日志分析 - 使用 uORB、Flight Review、日志分析工具排查飞控问题
-argument-hint: "PX4调试" / "px4 debug" / "日志分析" / "排查问题"
+argument-hint: PX4调试 OR px4 debug OR 日志分析 OR 排查问题
 user-invocable: true
 ---
 

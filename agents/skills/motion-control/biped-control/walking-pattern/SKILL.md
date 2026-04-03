@@ -1,7 +1,7 @@
 ---
 name: walking-pattern
 description: 行走模式生成技能 - ZMP、CPG、步态周期、预观控制、ROS2 walk接口
-argument-hint: "行走模式" / "ZMP" / "CPG" / "步态" / "walking pattern"
+argument-hint: 行走模式 OR ZMP OR CPG OR 步态 OR walking pattern
 user-invocable: true
 ---
 

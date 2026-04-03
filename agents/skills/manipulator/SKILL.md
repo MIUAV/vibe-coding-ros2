@@ -1,7 +1,7 @@
 ---
 name: manipulator
 description: 机械臂控制与运动规划 - 逆运动学、轨迹规划、力控、抓取
-argument-hint: "机械臂控制" / "逆运动学" / "轨迹规划" / "抓取"
+argument-hint: 机械臂控制 OR 逆运动学 OR 轨迹规划 OR 抓取
 user-invocable: true
 ---
 

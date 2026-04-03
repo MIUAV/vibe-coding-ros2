@@ -1,7 +1,7 @@
 ---
 name: lua-scripts
 description: CoppeliaSim Lua 脚本技能 - 场景脚本、-child 脚本、远程 API
-argument-hint: "CoppeliaSim Lua" / "场景脚本" / "远程API"
+argument-hint: CoppeliaSim Lua OR 场景脚本 OR 远程API
 user-invocable: true
 ---
 

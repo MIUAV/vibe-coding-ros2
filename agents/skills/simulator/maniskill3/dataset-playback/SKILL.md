@@ -1,7 +1,7 @@
 ---
 name: dataset-playback
 description: ManiSkill3 数据回放技能 - 演示数据加载、重放、轨迹分析
-argument-hint: "ManiSkill3数据" / "演示回放" / "轨迹分析"
+argument-hint: ManiSkill3数据 OR 演示回放 OR 轨迹分析
 user-invocable: true
 ---
 

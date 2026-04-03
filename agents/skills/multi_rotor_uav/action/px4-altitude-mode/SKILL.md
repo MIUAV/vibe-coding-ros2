@@ -1,7 +1,7 @@
 ---
 name: px4-altitude-mode
 description: PX4 高度保持模式技能 - 水平方向手动控制，垂直方向自动保持设定高度
-argument-hint: "高度模式" / "Altitude Mode" / "定高模式" / "PX4高度"
+argument-hint: 高度模式 OR Altitude Mode OR 定高模式 OR PX4高度
 user-invocable: true
 ---
 

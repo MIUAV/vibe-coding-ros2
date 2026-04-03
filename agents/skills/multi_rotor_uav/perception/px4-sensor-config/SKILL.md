@@ -1,7 +1,7 @@
 ---
 name: px4-sensor-config
 description: PX4 传感器配置与校准 - 陀螺仪、加速度计、磁罗盘、GPS、光流等传感器设置
-argument-hint: "传感器校准" / "px4 sensor" / "配置传感器" / "GPS配置"
+argument-hint: 传感器校准 OR px4 sensor OR 配置传感器 OR GPS配置
 user-invocable: true
 ---
 

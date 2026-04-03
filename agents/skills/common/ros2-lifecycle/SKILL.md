@@ -2,7 +2,7 @@
 name: ros2-lifecycle
 description: ROS2 生命周期管理技能 - Managed Nodes、状态转换、配置/激活/去激活
 user-invocable: true
-argument-hint: "生命周期" / "lifecycle" / "managed node" / "状态机" / "configure activate"
+argument-hint: 生命周期 OR lifecycle OR managed node OR 状态机 OR configure activate
 ---
 
 # ROS2 Lifecycle Skill

@@ -1,7 +1,7 @@
 ---
 name: qgc-ground-station
 description: QGC地面站故障排查 - MAVLink连接问题、串口/网络配置、视频流问题、参数同步失败
-argument-hint: "QGC故障" / "QGC连接" / "地面站排查" / "MP连接问题"
+argument-hint: QGC故障 OR QGC连接 OR 地面站排查 OR MP连接问题
 user-invocable: true
 ---
 

@@ -1,7 +1,7 @@
 ---
 name: navigation
 description: 轮式车辆导航系统 - 全局路径规划、局部路径规划、轨迹跟踪、动态避障
-argument-hint: "车辆导航" / "路径规划" / "轨迹跟踪" / "动态避障"
+argument-hint: 车辆导航 OR 路径规划 OR 轨迹跟踪 OR 动态避障
 user-invocable: true
 ---
 

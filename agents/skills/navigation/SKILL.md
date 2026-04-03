@@ -1,7 +1,7 @@
 ---
 name: navigation
 description: 机器人导航技能库 - SLAM、路径规划、地图构建、Navigation2、避障
-argument-hint: "导航" / "slam" / "路径规划" / "navigation" / "map"
+argument-hint: 导航 OR slam OR 路径规划 OR navigation OR map
 user-invocable: true
 ---
 

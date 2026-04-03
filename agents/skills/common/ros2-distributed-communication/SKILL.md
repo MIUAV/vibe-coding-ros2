@@ -2,7 +2,7 @@
 name: ros2-distributed-communication
 description: ROS2 分布式通讯技能 - DDS/RMW 配置、多机器通讯、网络优化、跨域配置
 user-invocable: true
-argument-hint: "分布式通讯" / "dds" / "rmw" / "多机器" / "跨域" / "network"
+argument-hint: 分布式通讯 OR dds OR rmw OR 多机器 OR 跨域 OR network
 ---
 
 # ROS2 Distributed Communication Skill

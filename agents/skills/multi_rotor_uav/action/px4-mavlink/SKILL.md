@@ -1,7 +1,7 @@
 ---
 name: px4-mavlink
 description: PX4 MAVLink 通信配置 - 地面站连接、数传配置、参数设置、消息订阅
-argument-hint: "MAVLink配置" / "px4 mavlink" / "数传配置" / "QGC连接"
+argument-hint: MAVLink配置 OR px4 mavlink OR 数传配置 OR QGC连接
 user-invocable: true
 ---
 

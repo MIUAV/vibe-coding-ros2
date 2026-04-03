@@ -1,7 +1,7 @@
 ---
 name: carla
 description: CARLA 自动驾驶仿真开发技能 - 车辆动力学、传感器模拟、交通仿真、ROS2 集成
-argument-hint: "carla仿真" / "自动驾驶" / "车辆仿真" / "传感器模拟"
+argument-hint: carla仿真 OR 自动驾驶 OR 车辆仿真 OR 传感器模拟
 user-invocable: true
 ---
 

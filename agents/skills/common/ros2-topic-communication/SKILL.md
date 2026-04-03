@@ -2,7 +2,7 @@
 name: ros2-topic-communication
 description: ROS2 Topic 通讯技能 - 发布者/订阅者实现、QoS 策略、数据同步与过滤
 user-invocable: true
-argument-hint: "创建 topic" / "ros2 topic" / "发布订阅" / "publisher subscriber"
+argument-hint: 创建 topic OR ros2 topic OR 发布订阅 OR publisher subscriber
 ---
 
 # ROS2 Topic Communication Skill

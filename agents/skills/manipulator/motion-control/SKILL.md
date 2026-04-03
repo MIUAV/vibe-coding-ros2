@@ -1,7 +1,7 @@
 ---
 name: motion-control
 description: 机械臂运动控制 - 逆运动学、轨迹规划、力控、协作控制
-argument-hint: "机械臂控制" / "轨迹规划" / "力控" / "协作"
+argument-hint: 机械臂控制 OR 轨迹规划 OR 力控 OR 协作
 user-invocable: true
 ---
 

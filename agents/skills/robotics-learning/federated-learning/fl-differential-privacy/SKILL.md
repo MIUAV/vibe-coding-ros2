@@ -1,7 +1,7 @@
 ---
 name: fl-differential-privacy
 description: 差分隐私技能 - DP-SGD、隐私预算、梯度扰动、ROS2安全通讯
-argument-hint: "差分隐私" / "differential privacy" / "DP-SGD" / "隐私预算"
+argument-hint: 差分隐私 OR differential privacy OR DP-SGD OR 隐私预算
 user-invocable: true
 ---
 

@@ -1,7 +1,7 @@
 ---
 name: behavior-tree-nav
 description: 行为树导航技能 - BehaviorTree.CPP、Nav2 BT、自定义行为节点
-argument-hint: "行为树" / "BehaviorTree" / "BT navigator" / "nav2 BT"
+argument-hint: 行为树 OR BehaviorTree OR BT navigator OR nav2 BT
 user-invocable: true
 ---
 

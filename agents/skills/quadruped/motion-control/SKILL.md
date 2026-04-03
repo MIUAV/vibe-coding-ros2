@@ -1,7 +1,7 @@
 ---
 name: motion-control
 description: 四足机器人运动控制 - 步态规划、平衡控制、力控、关节控制
-argument-hint: "四足运动控制" / "步态控制" / "平衡" / "力控"
+argument-hint: 四足运动控制 OR 步态控制 OR 平衡 OR 力控
 user-invocable: true
 ---
 

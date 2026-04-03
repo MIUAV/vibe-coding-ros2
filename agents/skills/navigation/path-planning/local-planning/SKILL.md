@@ -1,7 +1,7 @@
 ---
 name: local-planning
 description: 局部路径规划技能 - DWA、TEB、MPC、轨迹跟踪、ROS2 局部规划器
-argument-hint: "局部规划" / "DWA" / "TEB" / "MPC" / "local planning"
+argument-hint: 局部规划 OR DWA OR TEB OR MPC OR local planning
 user-invocable: true
 ---
 

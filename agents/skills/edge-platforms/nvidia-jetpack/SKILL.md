@@ -1,7 +1,7 @@
 ---
 name: nvidia-jetpack
 description: 英伟达JetPack开发 - Jetson环境配置 DeepStream TensorRT
-argument-hint: "JetPack" / "Jetson" / "DeepStream" / "TensorRT"
+argument-hint: JetPack OR Jetson OR DeepStream OR TensorRT
 user-invocable: true
 ---
 

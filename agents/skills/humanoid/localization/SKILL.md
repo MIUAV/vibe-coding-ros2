@@ -1,7 +1,7 @@
 ---
 name: localization
 description: 人形机器人定位系统 - SLAM、IMU融合、EKF、GPS/RTK定位
-argument-hint: "人形定位" / "人形SLAM" / "位置估计"
+argument-hint: 人形定位 OR 人形SLAM OR 位置估计
 user-invocable: true
 ---
 

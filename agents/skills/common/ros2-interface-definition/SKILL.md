@@ -2,7 +2,7 @@
 name: ros2-interface-definition
 description: ROS2 接口定义技能 - MSG/SRV/Action 自定义类型、字段类型、嵌套定义、依赖管理
 user-invocable: true
-argument-hint: "创建 msg" / "创建 srv" / "创建 action" / "自定义消息" / "interface definition"
+argument-hint: 创建 msg OR 创建 srv OR 创建 action OR 自定义消息 OR interface definition
 ---
 
 # ROS2 Interface Definition Skill

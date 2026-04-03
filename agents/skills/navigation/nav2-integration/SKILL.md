@@ -1,7 +1,7 @@
 ---
 name: navigation-nav2-integration
 description: 导航2 (Nav2) 集成技能 - Nav2 配置、行为树、路径规划、避障、定位适配
-argument-hint: "Nav2配置" / "导航集成" / "行为树导航" / "Nav2避障"
+argument-hint: Nav2配置 OR 导航集成 OR 行为树导航 OR Nav2避障
 user-invocable: true
 ---
 

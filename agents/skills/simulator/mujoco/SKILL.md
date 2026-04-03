@@ -1,7 +1,7 @@
 ---
 name: mujoco
 description: MuJoCo 物理仿真开发技能 - 高性能物理引擎、强化学习环境、MJCF 模型、GPU 加速
-argument-hint: "mujoco仿真" / "强化学习" / "MJCF模型" / "机器人控制"
+argument-hint: mujoco仿真 OR 强化学习 OR MJCF模型 OR 机器人控制
 user-invocable: true
 ---
 

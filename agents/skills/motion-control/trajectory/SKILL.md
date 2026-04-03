@@ -1,7 +1,7 @@
 ---
 name: trajectory
 description: 轨迹规划技能 - 关节空间规划、笛卡尔空间规划、插值算法、时间最优轨迹
-argument-hint: "轨迹规划" / "trajectory" / "插值" / "path planning" / "时间最优"
+argument-hint: 轨迹规划 OR trajectory OR 插值 OR path planning OR 时间最优
 user-invocable: true
 ---
 

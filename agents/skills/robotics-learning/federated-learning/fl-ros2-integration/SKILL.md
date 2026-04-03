@@ -1,7 +1,7 @@
 ---
 name: fl-ros2-integration
 description: 联邦学习 ROS2 集成技能 - 多机器人协同、模型同步、安全通讯
-argument-hint: "联邦学习 ROS2" / "FL ROS2" / "多机器人协同" / "federated ros2"
+argument-hint: 联邦学习 ROS2 OR FL ROS2 OR 多机器人协同 OR federated ros2
 user-invocable: true
 ---
 

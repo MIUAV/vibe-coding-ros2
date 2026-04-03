@@ -1,7 +1,7 @@
 ---
 name: rl-multi-agent
 description: 多智能体强化学习技能 - MADDPG、QMIX、COMA、MAPPO 实现
-argument-hint: "多智能体" / "MADDPG" / "QMIX" / "MARL" / "multi-agent"
+argument-hint: 多智能体 OR MADDPG OR QMIX OR MARL OR multi-agent
 user-invocable: true
 ---
 

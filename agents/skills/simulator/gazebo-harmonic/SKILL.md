@@ -1,7 +1,7 @@
 ---
 name: gazebo-harmonic
 description: Gazebo Harmonic 仿真器开发技能 - 机器人建模、仿真世界创建、传感器集成、插件开发
-argument-hint: "创建gazebo仿真" / "添加传感器" / "编写gazebo插件"
+argument-hint: 创建gazebo仿真 OR 添加传感器 OR 编写gazebo插件
 user-invocable: true
 ---
 

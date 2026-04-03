@@ -1,7 +1,7 @@
 ---
 name: px4-module-dev
 description: PX4 模块/应用程序开发 - 创建自定义飞控模块、订阅 uORB 话题、发布数据
-argument-hint: "开发PX4模块" / "px4 module" / "创建应用" / "uORB编程"
+argument-hint: 开发PX4模块 OR px4 module OR 创建应用 OR uORB编程
 user-invocable: true
 ---
 

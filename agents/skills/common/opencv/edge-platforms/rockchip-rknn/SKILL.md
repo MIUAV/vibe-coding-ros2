@@ -1,8 +1,8 @@
 ---
-name: opencv-rockchip-rknn
+name: rockchip-rknn
 description: OpenCV4 Rockchip RKNN 部署技能 - RK3588/RK3399Pro、RKNN-Toolkit2、NPU 加速
 user-invocable: true
-argument-hint: "rockchip" / "rknn" / "rk3588" / "rk3399" / "npu" / "边缘部署"
+argument-hint: rockchip OR rknn OR rk3588 OR rk3399 OR npu OR 边缘部署
 ---
 
 # OpenCV4 Rockchip RKNN Deployment Skill

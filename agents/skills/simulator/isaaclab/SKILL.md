@@ -1,7 +1,7 @@
 ---
 name: isaaclab
 description: NVIDIA Isaac Lab 仿真开发技能 - 强化学习训练、GPU 加速仿真、机器人控制
-argument-hint: "isaaclab仿真" / "强化学习训练" / "GPU仿真" / "机器人学习"
+argument-hint: isaaclab仿真 OR 强化学习训练 OR GPU仿真 OR 机器人学习
 user-invocable: true
 ---
 

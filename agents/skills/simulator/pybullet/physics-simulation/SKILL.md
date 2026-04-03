@@ -1,7 +1,7 @@
 ---
 name: physics-simulation
 description: PyBullet 物理仿真技能 - 刚体动力学、碰撞检测、约束配置
-argument-hint: "PyBullet物理" / "碰撞检测" / "约束配置"
+argument-hint: PyBullet物理 OR 碰撞检测 OR 约束配置
 user-invocable: true
 ---
 

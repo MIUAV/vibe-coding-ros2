@@ -1,7 +1,7 @@
 ---
 name: forward-inverse-kinematics
 description: 正逆运动学技能 - 解析法、雅可比迭代、数值IK、ROS2 IK服务器
-argument-hint: "逆运动学" / "IK" / "数值IK" / "雅可比" / "inverse kinematics"
+argument-hint: 逆运动学 OR IK OR 数值IK OR 雅可比 OR inverse kinematics
 user-invocable: true
 ---
 

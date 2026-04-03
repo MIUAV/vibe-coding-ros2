@@ -1,7 +1,7 @@
 ---
 name: time-optimal-trajectory
 description: 时间最优轨迹技能 - SQP 优化、可行速度规划、动态约束、TOPP-RA
-argument-hint: "时间最优" / "time-optimal" / "TOPP" / "SQP" / "optimal trajectory"
+argument-hint: 时间最优 OR time-optimal OR TOPP OR SQP OR optimal trajectory
 user-invocable: true
 ---
 

@@ -1,7 +1,7 @@
 ---
 name: project-setup
 description: Unreal Engine 项目设置技能 - 项目创建、插件安装、渲染配置
-argument-hint: "Unreal Engine项目" / "项目配置" / "渲染设置"
+argument-hint: Unreal Engine项目 OR 项目配置 OR 渲染设置
 user-invocable: true
 ---
 

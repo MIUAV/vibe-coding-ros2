@@ -1,7 +1,7 @@
 ---
 name: 3d-object-detection
 description: 3D 目标检测技能 - PointPillars、PointRCNN、LaserNet++ ROS2 部署
-argument-hint: "3D检测" / "PointPillars" / "pointcloud" / "3D detection" / "物体检测"
+argument-hint: 3D检测 OR PointPillars OR pointcloud OR 3D detection OR 物体检测
 user-invocable: true
 ---
 

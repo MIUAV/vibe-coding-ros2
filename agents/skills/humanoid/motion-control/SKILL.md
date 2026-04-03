@@ -1,7 +1,7 @@
 ---
-name: humanoid-motion-control
+name: motion-control
 description: 人形机器人运动控制技能 - 步态规划、逆运动学、ZMP平衡控制、全身协调、关节力控
-argument-hint: "人形运动控制" / "双足步态" / "IK控制" / "ZMP平衡" / "力控"
+argument-hint: 人形运动控制 OR 双足步态 OR IK控制 OR ZMP平衡 OR 力控
 user-invocable: true
 ---
 

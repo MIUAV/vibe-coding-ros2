@@ -1,7 +1,7 @@
 ---
 name: vehicle-dynamics
 description: CARLA 车辆动力学技能 - 物理控制、轮胎模型、动力传动
-argument-hint: "CARLA车辆" / "车辆动力学" / "物理控制"
+argument-hint: CARLA车辆 OR 车辆动力学 OR 物理控制
 user-invocable: true
 ---
 

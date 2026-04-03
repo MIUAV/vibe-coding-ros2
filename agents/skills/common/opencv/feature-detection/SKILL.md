@@ -1,8 +1,8 @@
 ---
-name: opencv-feature-detection
+name: feature-detection
 description: OpenCV4 特征检测技能 - SIFT、SURF、ORB、AKAZE、FAST、BRISK 特征提取与匹配
 user-invocable: true
-argument-hint: "特征检测" / "SIFT" / "ORB" / "特征匹配" / "图像拼接"
+argument-hint: 特征检测 OR SIFT OR ORB OR 特征匹配 OR 图像拼接
 ---
 
 # OpenCV4 Feature Detection Skill

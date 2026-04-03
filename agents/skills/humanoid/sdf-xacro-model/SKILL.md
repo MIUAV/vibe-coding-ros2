@@ -1,7 +1,7 @@
 ---
 name: sdf-xacro-model
 description: 人形机器人 SDF/XACRO 模型开发技能 - 双足机器人模型、全身关节配置、平衡控制、环境交互
-argument-hint: "创建人形机器人" / "双足机器人" / "人形" / "仿人机器人"
+argument-hint: 创建人形机器人 OR 双足机器人 OR 人形 OR 仿人机器人
 user-invocable: true
 ---
 

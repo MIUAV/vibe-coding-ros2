@@ -1,8 +1,8 @@
 ---
-name: opencv-video-analysis
+name: video-analysis
 description: OpenCV4 视频分析技能 - 视频读取/保存、光流、背景分离、帧差分、运动检测
 user-invocable: true
-argument-hint: "视频分析" / "光流" / "背景分离" / "运动检测" / "视频处理"
+argument-hint: 视频分析 OR 光流 OR 背景分离 OR 运动检测 OR 视频处理
 ---
 
 # OpenCV4 Video Analysis Skill

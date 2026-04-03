@@ -1,7 +1,7 @@
 ---
 name: modular-architecture
 description: 模块化架构技能 - 组件化设计、接口定义、配置管理、ROS2 组件容器
-argument-hint: "模块化" / "modular" / "component" / "接口" / "plugin"
+argument-hint: 模块化 OR modular OR component OR 接口 OR plugin
 user-invocable: true
 ---
 

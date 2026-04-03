@@ -1,7 +1,7 @@
 ---
 name: manipulator-impedance-control
 description: 机械臂阻抗控制技能 - 位置控制、力控制、混合力位控制、柔顺控制、碰撞检测
-argument-hint: "机械臂力控" / "阻抗控制" / "力位混合" / "柔顺控制" / "impedance control"
+argument-hint: 机械臂力控 OR 阻抗控制 OR 力位混合 OR 柔顺控制 OR impedance control
 user-invocable: true
 ---
 

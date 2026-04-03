@@ -1,8 +1,8 @@
 ---
-name: opencv-basics
+name: basics
 description: OpenCV4 基础技能 - 图像读取、显示、保存、绘制、色彩空间转换
 user-invocable: true
-argument-hint: "opencv 基础" / "图像读取" / "imread imshow" / "色彩空间"
+argument-hint: opencv基础 OR 图像读取 OR imread OR imshow OR 色彩空间
 ---
 
 # OpenCV4 Basics Skill

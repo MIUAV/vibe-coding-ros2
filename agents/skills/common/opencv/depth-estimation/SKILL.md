@@ -1,8 +1,8 @@
 ---
-name: opencv-depth-estimation
+name: depth-estimation
 description: OpenCV4 深度估计技能 - 单目深度估计、立体深度估计、ToF、LiDAR 融合、结构光
 user-invocable: true
-argument-hint: "深度估计" / "深度学习" / "单目" / "立体匹配" / "ToF" / "LiDAR" / "3D点云"
+argument-hint: 深度估计 OR 深度学习 OR 单目 OR 立体匹配 OR ToF OR LiDAR OR 3D点云
 ---
 
 # OpenCV4 Depth Estimation Skill

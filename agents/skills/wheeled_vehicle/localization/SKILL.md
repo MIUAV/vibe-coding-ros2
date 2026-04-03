@@ -1,7 +1,7 @@
 ---
 name: localization
 description: 轮式车辆定位系统 - GNSS/RTK、SLAM、IMU融合、里程计
-argument-hint: "车辆定位" / "GPS定位" / "车辆SLAM" / "RTK"
+argument-hint: 车辆定位 OR GPS定位 OR 车辆SLAM OR RTK
 user-invocable: true
 ---
 

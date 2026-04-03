@@ -1,7 +1,7 @@
 ---
 name: robotics-sim2real
 description: Sim2Real 迁移技能 - 域随机化、域适应、系统识别、现实差距弥合、ROS2 部署
-argument-hint: "Sim2Real" / "域随机化" / "domain randomization" / "sim-to-real" / "迁移"
+argument-hint: Sim2Real OR 域随机化 OR domain randomization OR sim-to-real OR 迁移
 user-invocable: true
 ---
 

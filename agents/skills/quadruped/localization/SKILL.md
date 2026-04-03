@@ -1,7 +1,7 @@
 ---
 name: localization
 description: 四足机器人定位 - SLAM建图、IMU融合、EKF定位、UWB定位
-argument-hint: "四足定位" / "SLAM" / "IMU融合" / "定位"
+argument-hint: 四足定位 OR SLAM OR IMU融合 OR 定位
 user-invocable: true
 ---
 

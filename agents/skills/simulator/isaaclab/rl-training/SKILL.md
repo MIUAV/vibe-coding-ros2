@@ -1,7 +1,7 @@
 ---
 name: rl-training
 description: Isaac Lab 强化学习训练技能 - RL 策略训练、奖励函数设计、环境配置
-argument-hint: "Isaac Lab RL" / "强化学习训练" / "策略训练"
+argument-hint: Isaac Lab RL OR 强化学习训练 OR 策略训练
 user-invocable: true
 ---
 

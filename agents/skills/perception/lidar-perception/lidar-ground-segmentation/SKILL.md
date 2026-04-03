@@ -1,7 +1,7 @@
 ---
 name: lidar-ground-segmentation
 description: 激光雷达地面分割技能 - 高度阈值、平面拟合、Ray casting、ROS2地面检测
-argument-hint: "地面分割" / "ground segmentation" / "lidar" / "地面检测"
+argument-hint: 地面分割 OR ground segmentation OR lidar OR 地面检测
 user-invocable: true
 ---
 

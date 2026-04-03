@@ -1,7 +1,7 @@
 ---
 name: mujoco
 description: Mujoco 仿真技能集合 - Mujoco 建模
-argument-hint: "Mujoco" / "mujoco" / "物理仿真"
+argument-hint: Mujoco OR mujoco OR 物理仿真
 user-invocable: true
 ---
 

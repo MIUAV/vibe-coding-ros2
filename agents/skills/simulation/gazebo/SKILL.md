@@ -1,7 +1,7 @@
 ---
 name: gazebo
 description: Gazebo 仿真技能集合 - SDF建模、物理配置、传感器插件
-argument-hint: "Gazebo" / "sdf" / "gazebo" / "仿真"
+argument-hint: Gazebo OR sdf OR gazebo OR 仿真
 user-invocable: true
 ---
 

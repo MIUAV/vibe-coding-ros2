@@ -1,7 +1,7 @@
 ---
 name: coppeliasim
 description: CoppeliaSim 机器人仿真开发技能 - 远程 API、视觉脚本、碰撞检测、ROS/ROS2 集成
-argument-hint: "coppeliasim仿真" / "coppelia机器人" / "远程API" / "视觉脚本"
+argument-hint: coppeliasim仿真 OR coppelia机器人 OR 远程API OR 视觉脚本
 user-invocable: true
 ---
 

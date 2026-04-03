@@ -1,7 +1,7 @@
 ---
 name: tl-domain-adaptation
 description: 域适应技能 - DANN、ADR、CORAL、域混淆、特征对齐
-argument-hint: "域适应" / "domain adaptation" / "DANN" / "CORAL" / "域迁移"
+argument-hint: 域适应 OR domain adaptation OR DANN OR CORAL OR 域迁移
 user-invocable: true
 ---
 

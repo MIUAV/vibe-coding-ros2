@@ -1,7 +1,7 @@
 ---
 name: manipulator-force-position-hybrid
 description: 机械臂力位混合控制技能 - 任务空间选择矩阵、力/位置并行控制、装配应用、ROS2实现
-argument-hint: "力位混合" / "hybrid force position" / "任务空间" / "力控制" / "装配"
+argument-hint: 力位混合 OR hybrid force position OR 任务空间 OR 力控制 OR 装配
 user-invocable: true
 ---
 

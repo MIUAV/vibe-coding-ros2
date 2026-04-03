@@ -1,7 +1,7 @@
 ---
 name: contact-dynamics
 description: 接触动力学技能 - 碰撞检测、摩擦模型、接触力计算、栖体仿真
-argument-hint: "接触动力学" / "collision" / "friction" / "contact" / "dynamics"
+argument-hint: 接触动力学 OR collision OR friction OR contact OR dynamics
 user-invocable: true
 ---
 

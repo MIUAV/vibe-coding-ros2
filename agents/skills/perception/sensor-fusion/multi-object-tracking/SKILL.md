@@ -1,7 +1,7 @@
 ---
 name: multi-object-tracking
 description: 多目标跟踪技能 - SORT、DeepSORT、ByteTrack、ROS2 跟踪节点
-argument-hint: "多目标跟踪" / "MOT" / "SORT" / "DeepSORT" / "tracking"
+argument-hint: 多目标跟踪 OR MOT OR SORT OR DeepSORT OR tracking
 user-invocable: true
 ---
 

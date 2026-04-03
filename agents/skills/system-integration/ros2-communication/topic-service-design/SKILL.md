@@ -1,7 +1,7 @@
 ---
 name: topic-service-design
 description: 话题服务设计技能 - 话题命名、消息设计、服务 vs 话题、Action 设计
-argument-hint: "话题设计" / "topic" / "service" / "命名规范" / "message design"
+argument-hint: 话题设计 OR topic OR service OR 命名规范 OR message design
 user-invocable: true
 ---
 

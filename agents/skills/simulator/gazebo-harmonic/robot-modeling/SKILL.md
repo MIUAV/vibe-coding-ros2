@@ -1,7 +1,7 @@
 ---
 name: robot-modeling
 description: Gazebo 机器人建模技能 - SDF 模型结构、链接、关节、惯性配置
-argument-hint: "gazebo机器人模型" / "SDF建模" / "创建机器人"
+argument-hint: gazebo机器人模型 OR SDF建模 OR 创建机器人
 user-invocable: true
 ---
 

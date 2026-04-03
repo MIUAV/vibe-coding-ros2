@@ -1,7 +1,7 @@
 ---
 name: dds-qos-configuration
 description: DDS QoS 配置技能 - QoS 策略、可靠性、持久性、 Deadline、Lifespan
-argument-hint: "QoS" / "DDS" / "reliability" / "durability" / "deadline"
+argument-hint: QoS OR DDS OR reliability OR durability OR deadline
 user-invocable: true
 ---
 

@@ -1,7 +1,7 @@
 ---
 name: system-integration
 description: 系统集成技能库 - 系统架构、ROS2通信、生命周期管理、边缘部署、调试优化
-argument-hint: "系统集成" / "system" / "architecture" / "integration" / "ROS2"
+argument-hint: 系统集成 OR system OR architecture OR integration OR ROS2
 user-invocable: true
 ---
 

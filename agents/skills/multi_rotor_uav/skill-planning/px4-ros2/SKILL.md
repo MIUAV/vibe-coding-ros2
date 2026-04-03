@@ -1,7 +1,7 @@
 ---
 name: px4-ros2
 description: PX4 ROS2 集成与控制 - MAVROS/mavros2 配置、Offboard 控制、话题订阅发布
-argument-hint: "PX4 ROS2" / "MAVROS" / "Offboard控制" / "无人机ROS"
+argument-hint: PX4 ROS2 OR MAVROS OR Offboard控制 OR 无人机ROS
 user-invocable: true
 ---
 

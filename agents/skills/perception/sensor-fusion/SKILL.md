@@ -1,7 +1,7 @@
 ---
 name: sensor-fusion
 description: 传感器融合技能集合 - 时空同步、激光-相机融合、多目标跟踪
-argument-hint: "传感器融合" / "sensor fusion" / "多传感器" / "fusion"
+argument-hint: 传感器融合 OR sensor fusion OR 多传感器 OR fusion
 user-invocable: true
 ---
 

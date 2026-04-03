@@ -1,7 +1,7 @@
 ---
 name: il-ros2-integration
 description: 增量学习 ROS2 集成技能 - 动态类别更新、在线学习、模型热插拔
-argument-hint: "增量学习 ROS2" / "IL ROS2" / "在线学习" / "incremental ros2"
+argument-hint: 增量学习 ROS2 OR IL ROS2 OR 在线学习 OR incremental ros2
 user-invocable: true
 ---
 

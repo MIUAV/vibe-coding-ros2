@@ -1,7 +1,7 @@
 ---
 name: marker-visualization
 description: RViz2 标记可视化技能 - Marker、MarkerArray、交互式标记配置
-argument-hint: "rviz标记" / "可视化标记" / "MarkerArray"
+argument-hint: rviz标记 OR 可视化标记 OR MarkerArray
 user-invocable: true
 ---
 

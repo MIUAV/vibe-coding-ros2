@@ -2,7 +2,7 @@
 name: ros2-service-communication
 description: ROS2 Service 通讯技能 - 服务端/客户端实现、同步/异步调用、常见服务类型
 user-invocable: true
-argument-hint: "创建 service" / "ros2 service" / "服务端客户端" / "server client"
+argument-hint: 创建 service OR ros2 service OR 服务端客户端 OR server client
 ---
 
 # ROS2 Service Communication Skill

@@ -1,7 +1,7 @@
 ---
 name: 3d-pointcloud-map
 description: 3D 点云地图技能 - OctoMap、TSDF、语义点云、稠密重建
-argument-hint: "3D地图" / "OctoMap" / "TSDF" / "点云地图" / "semantic map"
+argument-hint: 3D地图 OR OctoMap OR TSDF OR 点云地图 OR semantic map
 user-invocable: true
 ---
 

@@ -1,7 +1,7 @@
 ---
 name: sensor-config
 description: CARLA 传感器配置技能 - 相机、雷达、LiDAR、IMU 配置
-argument-hint: "CARLA传感器" / "相机配置" / "雷达配置"
+argument-hint: CARLA传感器 OR 相机配置 OR 雷达配置
 user-invocable: true
 ---
 

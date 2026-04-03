@@ -1,7 +1,7 @@
 ---
 name: spatial-temporal-sync
 description: 时空同步技能 - 硬件同步、软件同步、时间戳对齐、外参标定
-argument-hint: "时间同步" / "hardware sync" / "temporal sync" / "spatial sync"
+argument-hint: 时间同步 OR hardware sync OR temporal sync OR spatial sync
 user-invocable: true
 ---
 

@@ -1,7 +1,7 @@
 ---
 name: ros2-integration
 description: Jetson ROS2集成 - v4l2_camera isaac_ros 机器人框架
-argument-hint: "Jetson ROS2" / "v4l2" / "isaac_ros" / "机器人集成"
+argument-hint: Jetson ROS2 OR v4l2 OR isaac_ros OR 机器人集成
 user-invocable: true
 ---
 

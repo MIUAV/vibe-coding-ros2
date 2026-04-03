@@ -1,7 +1,7 @@
 ---
 name: display-configuration
 description: RViz2 显示配置技能 - 机器人模型、传感器显示、地图可视化配置
-argument-hint: "rviz显示配置" / "添加显示" / "配置面板"
+argument-hint: rviz显示配置 OR 添加显示 OR 配置面板
 user-invocable: true
 ---
 

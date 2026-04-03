@@ -1,7 +1,7 @@
 ---
 name: plugin-development
 description: RViz2 插件开发技能 - 自定义显示类型、工具插件、面板插件
-argument-hint: "rviz插件开发" / "自定义显示" / "工具插件"
+argument-hint: rviz插件开发 OR 自定义显示 OR 工具插件
 user-invocable: true
 ---
 

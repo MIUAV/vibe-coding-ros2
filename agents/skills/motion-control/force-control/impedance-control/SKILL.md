@@ -1,7 +1,7 @@
 ---
 name: impedance-control
 description: 阻抗控制技能 - 导纳控制、阻抗调节、力跟踪、ROS2 力控接口
-argument-hint: "阻抗控制" / "impedance" / "admittance" / "force control"
+argument-hint: 阻抗控制 OR impedance OR admittance OR force control
 user-invocable: true
 ---
 

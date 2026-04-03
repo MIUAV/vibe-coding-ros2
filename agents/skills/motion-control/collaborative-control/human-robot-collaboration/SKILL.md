@@ -1,7 +1,7 @@
 ---
 name: human-robot-collaboration
 description: 人机协作技能 - 直接示教、安全监控、力限接触、协作空间、ROS2 CSR
-argument-hint: "人机协作" / "HRC" / "direct teaching" / "collaborative" / "human-robot"
+argument-hint: 人机协作 OR HRC OR direct teaching OR collaborative OR human-robot
 user-invocable: true
 ---
 

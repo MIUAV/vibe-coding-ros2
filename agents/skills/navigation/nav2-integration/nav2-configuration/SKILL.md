@@ -1,7 +1,7 @@
 ---
 name: nav2-configuration
 description: Navigation2 配置技能 - param 文件、launch 编写、控制器调参、生命周期管理
-argument-hint: "Navigation2" / "nav2 param" / "配置" / "nav2 configuration"
+argument-hint: Navigation2 OR nav2 param OR 配置 OR nav2 configuration
 user-invocable: true
 ---
 

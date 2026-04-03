@@ -1,7 +1,7 @@
 ---
 name: il-task-incremental
 description: 任务增量学习技能 - 任务专属参数、渐进网络、动态架构
-argument-hint: "任务增量" / "task incremental" / "task-aware" / "渐进扩展"
+argument-hint: 任务增量 OR task incremental OR task-aware OR 渐进扩展
 user-invocable: true
 ---
 

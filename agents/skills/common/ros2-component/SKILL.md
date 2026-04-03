@@ -2,7 +2,7 @@
 name: ros2-component
 description: ROS2 组件技能 - Composable Nodes、组件加载器、组件容器、跨进程通讯
 user-invocable: true
-argument-hint: "组件" / "component" / "composable node" / "组件容器" / "dlopen"
+argument-hint: 组件 OR component OR composable node OR 组件容器 OR dlopen
 ---
 
 # ROS2 Component Skill

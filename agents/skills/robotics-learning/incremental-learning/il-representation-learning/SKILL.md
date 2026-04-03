@@ -1,7 +1,7 @@
 ---
 name: il-representation-learning
 description: 表示学习技能 - 特征空间稳定、可塑性、表示压缩、对比学习
-argument-hint: "表示学习" / "representation learning" / "特征保持" / "对比学习"
+argument-hint: 表示学习 OR representation learning OR 特征保持 OR 对比学习
 user-invocable: true
 ---
 

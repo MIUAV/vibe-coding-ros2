@@ -1,7 +1,7 @@
 ---
 name: slam
 description: SLAM 算法技能 - LaserSLAM、VisualSLAM、RTAB-Map、Cartographer、GMapping
-argument-hint: "SLAM" / "slam" / "地图构建" / "laser slam" / "visual slam" / "同步定位与建图"
+argument-hint: SLAM OR slam OR 地图构建 OR laser slam OR visual slam OR 同步定位与建图
 user-invocable: true
 ---
 

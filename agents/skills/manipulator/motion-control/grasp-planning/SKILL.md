@@ -1,7 +1,7 @@
 ---
 name: manipulator-grasp-planning
 description: 机械臂抓取规划技能 - 6-DOF抓取、点云感知、MoveIt GraspGenerator、深度学习抓取检测
-argument-hint: "机械臂抓取" / "grasp planning" / "抓取规划" / "6-DOF" / "MoveIt Grasp"
+argument-hint: 机械臂抓取 OR grasp planning OR 抓取规划 OR 6-DOF OR MoveIt Grasp
 user-invocable: true
 ---
 

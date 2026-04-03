@@ -1,7 +1,7 @@
 ---
 name: openvino-deployment
 description: OpenVINO 部署技能 - 模型优化、IR 转换、GPU/CPU/VPU 推理、ROS2 部署
-argument-hint: "OpenVINO" / "IE" / "IR" / "Intel" / "openvino deployment"
+argument-hint: OpenVINO OR IE OR IR OR Intel OR openvino deployment
 user-invocable: true
 ---
 

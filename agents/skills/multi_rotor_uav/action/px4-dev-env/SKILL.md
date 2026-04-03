@@ -1,7 +1,7 @@
 ---
 name: px4-dev-env
 description: PX4 开发环境配置 - Ubuntu/WSL工具链安装、VSCode配置、Docker开发环境
-argument-hint: "配置PX4开发环境" / "安装工具链" / "VSCode PX4" / "Docker开发"
+argument-hint: 配置PX4开发环境 OR 安装工具链 OR VSCode PX4 OR Docker开发
 user-invocable: true
 ---
 

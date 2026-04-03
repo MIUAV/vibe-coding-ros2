@@ -1,7 +1,7 @@
 ---
 name: remote-api
 description: CoppeliaSim 远程 API 技能 - Python/C++ 远程控制、传感器读取、仿真控制
-argument-hint: "CoppeliaSim API" / "远程控制" / "Python API"
+argument-hint: CoppeliaSim API OR 远程控制 OR Python API
 user-invocable: true
 ---
 

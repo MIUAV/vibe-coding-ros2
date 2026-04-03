@@ -1,7 +1,7 @@
 ---
 name: debugging-optimization
 description: 调试优化技能集合 - ROS2 调试工具、性能分析
-argument-hint: "调试" / "debugging" / "profiling" / "optimization" / "ROS2"
+argument-hint: 调试 OR debugging OR profiling OR optimization OR ROS2
 user-invocable: true
 ---
 

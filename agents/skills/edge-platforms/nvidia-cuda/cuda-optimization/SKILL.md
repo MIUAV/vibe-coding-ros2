@@ -1,7 +1,7 @@
 ---
 name: cuda-optimization
 description: CUDA性能优化 - 内存合并 循环展开 占用率优化
-argument-hint: "CUDA优化" / "内存合并" / "occupancy" / "性能调优"
+argument-hint: CUDA优化 OR 内存合并 OR occupancy OR 性能调优
 user-invocable: true
 ---
 

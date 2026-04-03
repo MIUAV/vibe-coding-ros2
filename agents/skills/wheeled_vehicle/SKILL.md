@@ -1,7 +1,7 @@
 ---
 name: wheeled_vehicle
 description: 轮式车辆导航与控制 - 差速/阿克曼/麦克纳姆轮运动控制、路径规划
-argument-hint: "轮式车辆" / "差速驱动" / "阿克曼" / "麦克纳姆轮"
+argument-hint: 轮式车辆 OR 差速驱动 OR 阿克曼 OR 麦克纳姆轮
 user-invocable: true
 ---
 

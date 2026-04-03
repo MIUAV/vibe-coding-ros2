@@ -1,7 +1,7 @@
 ---
 name: global-planning
 description: 全局路径规划技能 - A*、Dijkstra、RRT*、混合A*、ROS2 全局规划器
-argument-hint: "全局规划" / "A*" / "Dijkstra" / "RRT*" / "global planning"
+argument-hint: 全局规划 OR A* OR Dijkstra OR RRT* OR global planning
 user-invocable: true
 ---
 

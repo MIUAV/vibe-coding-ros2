@@ -1,7 +1,7 @@
 ---
 name: tl-cross-robot-transfer
 description: 跨机器人知识迁移技能 - 形态无关特征、领域泛化、策略蒸馏
-argument-hint: "跨机器人迁移" / "robot transfer" / "形态迁移" / "policy distillation"
+argument-hint: 跨机器人迁移 OR robot transfer OR 形态迁移 OR policy distillation
 user-invocable: true
 ---
 

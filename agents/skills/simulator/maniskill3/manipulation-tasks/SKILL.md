@@ -1,7 +1,7 @@
 ---
 name: manipulation-tasks
 description: ManiSkill3 操作任务技能 - 抓取、放置、装配任务配置
-argument-hint: "ManiSkill3任务" / "机器人抓取" / "操作任务"
+argument-hint: ManiSkill3任务 OR 机器人抓取 OR 操作任务
 user-invocable: true
 ---
 

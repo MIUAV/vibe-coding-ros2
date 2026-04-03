@@ -1,7 +1,7 @@
 ---
 name: vision-perception
 description: 视觉感知技能集合 - 目标检测、语义分割、立体匹配、3D检测、边缘部署
-argument-hint: "视觉感知" / "目标检测" / "语义分割" / "vision perception"
+argument-hint: 视觉感知 OR 目标检测 OR 语义分割 OR vision perception
 user-invocable: true
 ---
 

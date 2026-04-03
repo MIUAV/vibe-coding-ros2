@@ -1,7 +1,7 @@
 ---
 name: perception
 description: 机械臂感知系统 - 视觉引导、深度感知、力矩感知、触觉反馈
-argument-hint: "机械臂感知" / "视觉引导" / "力矩感知" / "触觉"
+argument-hint: 机械臂感知 OR 视觉引导 OR 力矩感知 OR 触觉
 user-invocable: true
 ---
 

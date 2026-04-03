@@ -1,7 +1,7 @@
 ---
 name: gazebo-physics-config
 description: Gazebo 物理配置技能 - ODE/ Bullet/DART 物理引擎、接触参数、步长设置
-argument-hint: "Gazebo物理" / "physics" / "ODE" / "Bullet" / "contact"
+argument-hint: Gazebo物理 OR physics OR ODE OR Bullet OR contact
 user-invocable: true
 ---
 

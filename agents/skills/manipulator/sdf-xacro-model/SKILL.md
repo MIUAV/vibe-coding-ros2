@@ -1,7 +1,7 @@
 ---
 name: sdf-xacro-model
 description: 机械臂 SDF/XACRO 模型开发技能 - 关节臂模型、末端执行器、碰撞检测、轨迹规划配置
-argument-hint: "创建机械臂" / "机械臂模型" / "关节臂" / "末端执行器"
+argument-hint: 创建机械臂 OR 机械臂模型 OR 关节臂 OR 末端执行器
 user-invocable: true
 ---
 

@@ -1,7 +1,7 @@
 ---
 name: ros2-communication
 description: ROS2 通信技能集合 - 话题服务设计、DDS QoS、跨机器通信
-argument-hint: "ROS2通信" / "topic" / "service" / "QoS" / "DDS"
+argument-hint: ROS2通信 OR topic OR service OR QoS OR DDS
 user-invocable: true
 ---
 

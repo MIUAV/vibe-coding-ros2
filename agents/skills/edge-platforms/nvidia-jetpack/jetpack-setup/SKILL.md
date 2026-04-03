@@ -1,7 +1,7 @@
 ---
 name: jetpack-setup
 description: JetPack环境配置 - SDK Manager 系统镜像 驱动安装
-argument-hint: "JetPack安装" / "SDK Manager" / "Jetson系统" / "镜像烧录"
+argument-hint: JetPack安装 OR SDK Manager OR Jetson系统 OR 镜像烧录
 user-invocable: true
 ---
 

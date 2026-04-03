@@ -1,7 +1,7 @@
 ---
 name: rl-model-based
 description: 模型-based 强化学习技能 - World Models、MPC、PlaNet、MuZero 实现
-argument-hint: "World Models" / "MPC" / "PlaNet" / "模型学习" / "model based RL"
+argument-hint: World Models OR MPC OR PlaNet OR 模型学习 OR model based RL
 user-invocable: true
 ---
 

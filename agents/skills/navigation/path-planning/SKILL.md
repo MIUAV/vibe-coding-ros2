@@ -1,7 +1,7 @@
 ---
 name: path-planning
 description: 全局路径规划技能 - A*/RRT*/Dijkstra/Hybrid A*、代价地图配置、nav2 planner插件开发
-argument-hint: "路径规划" / "path planning" / "全局规划" / "planner" / "A*" / "RRT"
+argument-hint: 路径规划 OR path planning OR 全局规划 OR planner OR A* OR RRT
 user-invocable: true
 ---
 

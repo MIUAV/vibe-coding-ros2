@@ -1,7 +1,7 @@
 ---
-name: rknn-model-conversion
+name: model-conversion
 description: 瑞芯微RKNN模型转换 - ONNX PyTorch TensorFlow转RKNN
-argument-hint: "模型转换" / "RKNN转换" / "量化"
+argument-hint: 模型转换 OR RKNN转换 OR 量化
 user-invocable: true
 ---
 

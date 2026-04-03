@@ -1,7 +1,7 @@
 ---
 name: cl-memory-replay
 description: 记忆回放技能 - Experience Replay、Generative Replay、Constrained Optimization
-argument-hint: "记忆回放" / "experience replay" / "generative replay" / "MEGA"
+argument-hint: 记忆回放 OR experience replay OR generative replay OR MEGA
 user-invocable: true
 ---
 

@@ -1,7 +1,7 @@
 ---
 name: system-integration-cloud-robotics
 description: 云机器人技能 - 边缘云协同、云端规划、远程操控、数字孪生、ROS2 云桥接
-argument-hint: "云机器人" / "cloud robotics" / "边缘计算" / "digital twin" / "云边协同"
+argument-hint: 云机器人 OR cloud robotics OR 边缘计算 OR digital twin OR 云边协同
 user-invocable: true
 ---
 

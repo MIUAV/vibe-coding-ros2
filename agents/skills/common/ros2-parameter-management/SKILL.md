@@ -2,7 +2,7 @@
 name: ros2-parameter-management
 description: ROS2 参数管理技能 - 参数声明、获取、设置、类型验证、动态参数
 user-invocable: true
-argument-hint: "参数管理" / "ros2 param" / "动态参数" / "parameter" / "参数配置"
+argument-hint: 参数管理 OR ros2 param OR 动态参数 OR parameter OR 参数配置
 ---
 
 # ROS2 Parameter Management Skill

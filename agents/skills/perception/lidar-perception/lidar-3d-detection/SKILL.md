@@ -1,7 +1,7 @@
 ---
 name: lidar-3d-detection
 description: 激光雷达 3D 检测技能 - PointPillars、PointRCNN、Clustering、NMS
-argument-hint: "lidar 3D检测" / "PointPillars" / "点云检测" / "clustering"
+argument-hint: lidar 3D检测 OR PointPillars OR 点云检测 OR clustering
 user-invocable: true
 ---
 

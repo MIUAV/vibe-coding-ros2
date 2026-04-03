@@ -1,7 +1,7 @@
 ---
 name: px4-manual-mode
 description: PX4 手动模式技能 - 遥控器直接控制，电机输出无稳定辅助，用于调试和极限飞行
-argument-hint: "手动模式" / "Manual Mode" / "遥控器控制" / "PX4手动"
+argument-hint: 手动模式 OR Manual Mode OR 遥控器控制 OR PX4手动
 user-invocable: true
 ---
 

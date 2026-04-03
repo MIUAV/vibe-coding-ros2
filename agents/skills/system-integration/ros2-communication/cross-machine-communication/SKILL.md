@@ -1,7 +1,7 @@
 ---
 name: cross-machine-communication
 description: 跨机器通信技能 - 网络配置、Discovery 加速、安全通信
-argument-hint: "跨机器" / "网络" / "discovery" / "security" / "cross machine"
+argument-hint: 跨机器 OR 网络 OR discovery OR security OR cross machine
 user-invocable: true
 ---
 

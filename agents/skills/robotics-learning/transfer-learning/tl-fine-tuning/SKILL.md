@@ -1,7 +1,7 @@
 ---
 name: tl-fine-tuning
 description: 模型微调技能 - 渐进微调、特征冻结、层间迁移、学习率调度
-argument-hint: "微调" / "fine-tuning" / "模型微调" / "transfer learning"
+argument-hint: 微调 OR fine-tuning OR 模型微调 OR transfer learning
 user-invocable: true
 ---
 

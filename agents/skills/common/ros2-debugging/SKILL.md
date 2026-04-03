@@ -1,6 +1,8 @@
 ---
 name: ros2-debugging
 description: ROS2 调试技能 - 节点调试、话题分析、bag 回放、rqt 工具使用
+argument-hint: ros2调试 OR 话题分析 OR bag回放 OR rqt OR 节点调试
+user-invocable: true
 ---
 
 # ROS2 Debugging Skill

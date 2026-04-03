@@ -1,7 +1,7 @@
 ---
 name: cuda-libraries
 description: CUDA常用库 - cuBLAS cuDNN cuFFT NPP性能加速库
-argument-hint: "cuBLAS" / "cuDNN" / "cuFFT" / "NPP" / "CUDA库"
+argument-hint: cuBLAS OR cuDNN OR cuFFT OR NPP OR CUDA库
 user-invocable: true
 ---
 

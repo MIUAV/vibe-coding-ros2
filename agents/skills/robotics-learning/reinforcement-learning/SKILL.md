@@ -1,7 +1,7 @@
 ---
 name: reinforcement-learning
 description: 强化学习技能集合 - 策略梯度、值函数、模型-based、多智能体、超参数调优、ROS2集成
-argument-hint: "强化学习" / "RL" / "PPO" / "DQN" / "policy gradient" / "value function"
+argument-hint: 强化学习 OR RL OR PPO OR DQN OR policy gradient OR value function
 user-invocable: true
 ---
 

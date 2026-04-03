@@ -1,7 +1,7 @@
 ---
 name: maniskill3
 description: ManiSkill3 机器人操作技能开发 - 高保真操作任务、GPU 加速学习、丰富数据集
-argument-hint: "maniskill3仿真" / "机器人操作" / "操作技能训练" / "抓取任务"
+argument-hint: maniskill3仿真 OR 机器人操作 OR 操作技能训练 OR 抓取任务
 user-invocable: true
 ---
 

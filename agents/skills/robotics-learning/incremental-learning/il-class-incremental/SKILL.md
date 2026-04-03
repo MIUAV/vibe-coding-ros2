@@ -1,7 +1,7 @@
 ---
 name: il-class-incremental
 description: 类别增量学习技能 - iCaRL、EEIL、LwF、蒸馏损失
-argument-hint: "类别增量" / "class incremental" / "iCaRL" / "EEIL" / "LwF"
+argument-hint: 类别增量 OR class incremental OR iCaRL OR EEIL OR LwF
 user-invocable: true
 ---
 

@@ -1,7 +1,7 @@
 ---
 name: perception-lidar-camera-fusion
 description: 激光-相机融合技能 - 深度学习融合、几何投影融合、3D检测、ROS2标定与同步
-argument-hint: "激光相机融合" / "lidar camera fusion" / "深度学习融合" / "3D检测" / "多传感器融合"
+argument-hint: 激光相机融合 OR lidar camera fusion OR 深度学习融合 OR 3D检测 OR 多传感器融合
 user-invocable: true
 ---
 

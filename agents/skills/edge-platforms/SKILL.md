@@ -1,7 +1,7 @@
 ---
 name: edge-platforms
 description: 边缘计算开发板平台开发知识 - RKNN CUDA JetPack 旭日平台
-argument-hint: "边缘计算" / "瑞芯微" / "英伟达" / "地瓜机器人" / "旭日"
+argument-hint: 边缘计算 OR 瑞芯微 OR 英伟达 OR 地瓜机器人 OR 旭日
 user-invocable: true
 ---
 

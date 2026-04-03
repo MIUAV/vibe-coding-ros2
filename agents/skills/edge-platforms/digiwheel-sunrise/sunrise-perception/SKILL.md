@@ -1,7 +1,7 @@
 ---
 name: sunrise-perception
 description: 旭日视觉感知 - 目标检测 语义分割 实例分割
-argument-hint: "视觉感知" / "目标检测" / "语义分割" / "旭日AI"
+argument-hint: 视觉感知 OR 目标检测 OR 语义分割 OR 旭日AI
 user-invocable: true
 ---
 

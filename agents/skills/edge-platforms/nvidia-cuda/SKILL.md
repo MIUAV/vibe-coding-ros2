@@ -1,7 +1,7 @@
 ---
 name: nvidia-cuda
 description: 英伟达CUDA开发 - GPU编程 性能优化 CUDA库
-argument-hint: "CUDA" / "GPU编程" / "NVIDIA" / "并行计算"
+argument-hint: CUDA OR GPU编程 OR NVIDIA OR 并行计算
 user-invocable: true
 ---
 

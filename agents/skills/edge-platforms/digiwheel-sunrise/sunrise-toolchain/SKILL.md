@@ -1,7 +1,7 @@
 ---
 name: sunrise-toolchain
 description: 旭日交叉编译工具链 - aarch64 交叉编译 ARM开发
-argument-hint: "交叉编译" / "aarch64" / "ARM" / "toolchain"
+argument-hint: 交叉编译 OR aarch64 OR ARM OR toolchain
 user-invocable: true
 ---
 

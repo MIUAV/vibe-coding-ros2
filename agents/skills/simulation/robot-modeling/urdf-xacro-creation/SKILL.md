@@ -1,7 +1,7 @@
 ---
 name: urdf-xacro-creation
 description: URDF/Xacro 创建技能 - URDF 语法、宏定义、传输配置、ROS2 控制器
-argument-hint: "URDF" / "xacro" / "robot_description" / "URDF创建"
+argument-hint: URDF OR xacro OR robot_description OR URDF创建
 user-invocable: true
 ---
 

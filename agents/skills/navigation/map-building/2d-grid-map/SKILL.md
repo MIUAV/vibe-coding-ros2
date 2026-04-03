@@ -1,7 +1,7 @@
 ---
 name: 2d-grid-map
 description: 2D 栅格地图技能 - 占据栅格地图、SLAM 建图、地图管理、ROS2 map_server
-argument-hint: "2D地图" / "grid map" / "占据栅格" / "occupancy grid"
+argument-hint: 2D地图 OR grid map OR 占据栅格 OR occupancy grid
 user-invocable: true
 ---
 

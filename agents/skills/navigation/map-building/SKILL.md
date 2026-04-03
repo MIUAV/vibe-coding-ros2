@@ -1,7 +1,7 @@
 ---
 name: map-building
 description: 地图构建技能 - SLAM实时建图、地图保存与加载、动态地图更新
-argument-hint: "建图" / "SLAM" / "地图" / "map building" / "slam"
+argument-hint: 建图 OR SLAM OR 地图 OR map building OR slam
 user-invocable: true
 ---
 

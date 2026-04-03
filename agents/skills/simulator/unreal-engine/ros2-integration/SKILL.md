@@ -1,7 +1,7 @@
 ---
 name: ros2-integration
 description: Unreal Engine ROS2 集成技能 - ROS2 桥接、话题通信、动作接口
-argument-hint: "Unreal ROS2" / "ROS2桥接" / "话题通信"
+argument-hint: Unreal ROS2 OR ROS2桥接 OR 话题通信
 user-invocable: true
 ---
 

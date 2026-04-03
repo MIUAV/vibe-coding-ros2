@@ -1,7 +1,7 @@
 ---
 name: skill-planning
 description: 人形机器人技能规划 - 行为树、状态机、强化学习、双手协调
-argument-hint: "人形技能" / "行为树" / "双手协调" / "强化学习"
+argument-hint: 人形技能 OR 行为树 OR 双手协调 OR 强化学习
 user-invocable: true
 ---
 

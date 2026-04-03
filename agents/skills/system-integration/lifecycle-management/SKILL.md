@@ -1,7 +1,7 @@
 ---
 name: lifecycle-management
 description: 生命周期管理技能集合 - 托管节点设计、状态机转换
-argument-hint: "生命周期" / "lifecycle" / "managed node" / "state machine"
+argument-hint: 生命周期 OR lifecycle OR managed node OR state machine
 user-invocable: true
 ---
 

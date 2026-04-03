@@ -1,7 +1,7 @@
 ---
 name: rknn-npu-profiling
 description: 瑞芯微NPU性能分析 - 算力监控 性能瓶颈分析 优化建议
-argument-hint: "NPU性能" / "算力分析" / "性能优化" / "Profiling"
+argument-hint: NPU性能 OR 算力分析 OR 性能优化 OR Profiling
 user-invocable: true
 ---
 

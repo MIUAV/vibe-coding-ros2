@@ -1,7 +1,7 @@
 ---
 name: semantic-segmentation
 description: 语义分割技能 - DeepLabV3、UNet、SegFormer ROS2 部署
-argument-hint: "语义分割" / "DeepLabV3" / "UNet" / "semantic segmentation" / "分割"
+argument-hint: 语义分割 OR DeepLabV3 OR UNet OR semantic segmentation OR 分割
 user-invocable: true
 ---
 

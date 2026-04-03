@@ -1,7 +1,7 @@
 ---
 name: humanoid
 description: 人形机器人导航堆栈 - 双足行走控制、平衡算法、全身运动规划
-argument-hint: "人形机器人导航" / "双足行走" / "人形步态"
+argument-hint: 人形机器人导航 OR 双足行走 OR 人形步态
 user-invocable: true
 ---
 

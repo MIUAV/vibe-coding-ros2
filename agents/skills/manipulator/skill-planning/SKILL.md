@@ -1,7 +1,7 @@
 ---
 name: skill-planning
 description: 机械臂技能规划 - 任务规划、抓取规划、行为树、模仿学习
-argument-hint: "机械臂任务" / "抓取规划" / "行为树" / "模仿学习"
+argument-hint: 机械臂任务 OR 抓取规划 OR 行为树 OR 模仿学习
 user-invocable: true
 ---
 

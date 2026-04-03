@@ -1,7 +1,7 @@
 ---
 name: cmake-configuration
 description: CMakeLists.txt 和 package.xml 配置技能 - ROS2 CMake 复杂配置、依赖管理、组件架构、插件系统、跨平台编译
-argument-hint: "CMakeLists" / "package.xml" / "CMake配置" / "colcon编译" / "ROS2构建"
+argument-hint: CMakeLists OR package.xml OR CMake配置 OR colcon编译 OR ROS2构建
 user-invocable: true
 ---
 

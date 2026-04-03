@@ -1,7 +1,7 @@
 ---
 name: laser-slam
 description: 激光 SLAM 技能 - Cartographer、FAST-LIO、Karto、ROS2 SLAM 节点
-argument-hint: "激光SLAM" / "Cartographer" / "FAST-LIO" / "laser slam"
+argument-hint: 激光SLAM OR Cartographer OR FAST-LIO OR laser slam
 user-invocable: true
 ---
 

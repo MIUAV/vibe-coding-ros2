@@ -1,7 +1,7 @@
 ---
 name: robot-sim
 description: Isaac Lab 机器人仿真技能 - 机器人配置、关节控制、物理模拟
-argument-hint: "Isaac Lab机器人" / "机器人仿真" / "关节控制"
+argument-hint: Isaac Lab机器人 OR 机器人仿真 OR 关节控制
 user-invocable: true
 ---
 

@@ -1,7 +1,7 @@
 ---
 name: rl-ros2-integration
 description: 强化学习 ROS2 集成技能 - Gazebo/Isaac Gym 训练环境、ROS2 消息、行动服务器
-argument-hint: "RL ROS2" / "Gazebo RL" / "Isaac Gym" / "ros2 reinforcement"
+argument-hint: RL ROS2 OR Gazebo RL OR Isaac Gym OR ros2 reinforcement
 user-invocable: true
 ---
 

@@ -1,7 +1,7 @@
 ---
 name: state-machine-transition
 description: 状态机转换技能 - 状态机设计、转换逻辑、层级状态机、ROS2 状态机
-argument-hint: "状态机" / "state machine" / "transition" / "hierarchical"
+argument-hint: 状态机 OR state machine OR transition OR hierarchical
 user-invocable: true
 ---
 

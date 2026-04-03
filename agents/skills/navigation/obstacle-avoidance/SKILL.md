@@ -1,7 +1,7 @@
 ---
 name: obstacle-avoidance
 description: 动态避障技能 - DWA/Teb/ORCA算法、局部路径规划、障碍物预测
-argument-hint: "避障" / "obstacle" / "avoidance" / "局部规划" / "DWA" / "TEB"
+argument-hint: 避障 OR obstacle OR avoidance OR 局部规划 OR DWA OR TEB
 user-invocable: true
 ---
 

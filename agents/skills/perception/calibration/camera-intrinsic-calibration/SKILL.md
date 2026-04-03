@@ -1,7 +1,7 @@
 ---
 name: camera-intrinsic-calibration
 description: 相机内参标定技能 - Kalibr、ROS2 标定工具、单目/双目标定
-argument-hint: "相机标定" / "intrinsic" / "Kalibr" / "单目标定" / "双目标定"
+argument-hint: 相机标定 OR intrinsic OR Kalibr OR 单目标定 OR 双目标定
 user-invocable: true
 ---
 

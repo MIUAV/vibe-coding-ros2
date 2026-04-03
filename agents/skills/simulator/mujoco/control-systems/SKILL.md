@@ -1,7 +1,7 @@
 ---
 name: control-systems
 description: MuJoCo 控制系统技能 - PD 控制器、阻抗控制、轨迹跟踪
-argument-hint: "MuJoCo控制" / "PD控制" / "阻抗控制"
+argument-hint: MuJoCo控制 OR PD控制 OR 阻抗控制
 user-invocable: true
 ---
 

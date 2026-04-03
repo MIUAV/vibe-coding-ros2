@@ -1,7 +1,7 @@
 ---
 name: digiwheel-sunrise
 description: 地瓜机器人旭日系列 - X3M X5 BPU 机器人开发
-argument-hint: "地瓜机器人" / "旭日" / "X3M" / "X5" / "BPU"
+argument-hint: 地瓜机器人 OR 旭日 OR X3M OR X5 OR BPU
 user-invocable: true
 ---
 

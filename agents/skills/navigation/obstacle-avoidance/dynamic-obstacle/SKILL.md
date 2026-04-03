@@ -1,7 +1,7 @@
 ---
 name: dynamic-obstacle
 description: 动态障碍物检测技能 - 移动物体跟踪、预测、碰撞预测、ROS2 避障
-argument-hint: "动态避障" / "移动物体" / "collision prediction" / "dynamic obstacle"
+argument-hint: 动态避障 OR 移动物体 OR collision prediction OR dynamic obstacle
 user-invocable: true
 ---
 

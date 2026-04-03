@@ -1,7 +1,7 @@
 ---
 name: localization
 description: 机械臂定位系统 - 末端执行器定位、工作空间标定、手眼标定
-argument-hint: "机械臂定位" / "手眼标定" / "末端定位"
+argument-hint: 机械臂定位 OR 手眼标定 OR 末端定位
 user-invocable: true
 ---
 

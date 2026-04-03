@@ -1,7 +1,7 @@
 ---
 name: continual-learning
 description: 持续学习技能集合 - 灾难性遗忘、弹性权重巩固、渐进网络、记忆回放、ROS2集成
-argument-hint: "持续学习" / "continual learning" / "catastrophic forgetting" / "EWC"
+argument-hint: 持续学习 OR continual learning OR catastrophic forgetting OR EWC
 user-invocable: true
 ---
 

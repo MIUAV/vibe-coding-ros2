@@ -1,7 +1,7 @@
 ---
 name: cuda-programming
 description: CUDA编程基础 - 线程模型 内存管理 kernel编写
-argument-hint: "CUDA编程" / "thread" / "memory" / "kernel"
+argument-hint: CUDA编程 OR thread OR memory OR kernel
 user-invocable: true
 ---
 

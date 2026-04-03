@@ -1,7 +1,7 @@
 ---
 name: robot-controllers
 description: Webots 机器人控制器技能 - Python/C++ 控制器、电机控制、传感器读取
-argument-hint: "Webots控制器" / "电机控制" / "传感器读取"
+argument-hint: Webots控制器 OR 电机控制 OR 传感器读取
 user-invocable: true
 ---
 

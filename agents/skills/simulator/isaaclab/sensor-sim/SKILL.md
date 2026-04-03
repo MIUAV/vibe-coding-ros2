@@ -1,7 +1,7 @@
 ---
 name: sensor-sim
 description: Isaac Lab 传感器仿真技能 - 相机、深度传感器、IMU、激光雷达配置
-argument-hint: "Isaac Lab传感器" / "相机仿真" / "深度传感器"
+argument-hint: Isaac Lab传感器 OR 相机仿真 OR 深度传感器
 user-invocable: true
 ---
 

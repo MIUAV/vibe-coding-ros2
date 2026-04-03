@@ -1,7 +1,7 @@
 ---
 name: skill-planning
 description: 四足机器人技能规划 - 任务规划、行为树、强化学习、模仿学习
-argument-hint: "四足技能" / "任务规划" / "行为树" / "强化学习"
+argument-hint: 四足技能 OR 任务规划 OR 行为树 OR 强化学习
 user-invocable: true
 ---
 

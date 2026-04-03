@@ -2,7 +2,7 @@
 name: px4-airsim-ros2-bridge
 description: PX4 AirSim 与 ROS2 桥接技能 - SITL/HITL 集成、无人机控制、传感器数据同步、多机协同
 user-invocable: true
-argument-hint: "PX4 AirSim桥接" / "PX4 ros2桥接" / "无人机仿真" / "airsim多机" / " SITL HITL"
+argument-hint: PX4 AirSim桥接 OR PX4 ros2桥接 OR 无人机仿真 OR airsim多机 OR  SITL HITL
 ---
 
 # PX4 AirSim ROS2 Bridge Skill

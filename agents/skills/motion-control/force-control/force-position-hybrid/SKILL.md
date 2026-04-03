@@ -1,7 +1,7 @@
 ---
 name: force-position-hybrid
 description: 力-位置混合控制技能 - 混合控制框架、力/位置分解、任务优先、零空间控制
-argument-hint: "混合控制" / "hybrid" / "force-position" / "task priority" / "null space"
+argument-hint: 混合控制 OR hybrid OR force-position OR task priority OR null space
 user-invocable: true
 ---
 

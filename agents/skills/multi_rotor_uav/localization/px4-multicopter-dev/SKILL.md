@@ -1,7 +1,7 @@
 ---
 name: px4-multicopter-dev
 description: PX4 软件在环仿真 (SITL) 环境设置与运行 - 支持 Gazebo、jMAVSim、SIH 仿真器
-argument-hint: "PX4仿真" / "px4 sitl" / "启动仿真" / "仿真多旋翼"
+argument-hint: PX4仿真 OR px4 sitl OR 启动仿真 OR 仿真多旋翼
 user-invocable: true
 ---
 

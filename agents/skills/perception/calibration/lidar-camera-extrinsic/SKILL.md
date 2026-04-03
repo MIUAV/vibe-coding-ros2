@@ -1,7 +1,7 @@
 ---
 name: lidar-camera-extrinsic
 description: 激光-相机外参标定技能 - 自动标定、手眼标定、标定板法、ROS2 标定
-argument-hint: "外参标定" / "extrinsic" / "手眼标定" / "lidar camera calibration"
+argument-hint: 外参标定 OR extrinsic OR 手眼标定 OR lidar camera calibration
 user-invocable: true
 ---
 

@@ -1,7 +1,7 @@
 ---
 name: navigation
 description: 四足机器人导航 - 路径规划、动态避障、导航2配置、地形适应导航
-argument-hint: "四足导航" / "路径规划" / "避障" / "导航"
+argument-hint: 四足导航 OR 路径规划 OR 避障 OR 导航
 user-invocable: true
 ---
 

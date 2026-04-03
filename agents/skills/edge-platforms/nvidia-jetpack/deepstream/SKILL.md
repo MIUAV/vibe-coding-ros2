@@ -1,7 +1,7 @@
 ---
 name: deepstream
 description: DeepStream视频分析框架 - 管道构建 插件使用 目标检测追踪
-argument-hint: "DeepStream" / "视频分析" / "目标检测" / "多路视频"
+argument-hint: DeepStream OR 视频分析 OR 目标检测 OR 多路视频
 user-invocable: true
 ---
 

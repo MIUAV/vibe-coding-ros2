@@ -1,7 +1,7 @@
 ---
 name: perception
 description: 轮式车辆感知系统 - 视觉感知、激光雷达、深度学习、传感器融合
-argument-hint: "轮式感知" / "车辆视觉" / "障碍物检测" / "车道线"
+argument-hint: 轮式感知 OR 车辆视觉 OR 障碍物检测 OR 车道线
 user-invocable: true
 ---
 

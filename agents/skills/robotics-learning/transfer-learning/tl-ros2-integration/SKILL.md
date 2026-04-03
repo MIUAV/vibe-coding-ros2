@@ -1,7 +1,7 @@
 ---
 name: tl-ros2-integration
 description: 迁移学习 ROS2 集成技能 - 仿真到现实、模型导入导出、跨平台部署
-argument-hint: "迁移学习 ROS2" / "sim2real" / "domain randomization" / "迁移部署"
+argument-hint: 迁移学习 ROS2 OR sim2real OR domain randomization OR 迁移部署
 user-invocable: true
 ---
 

@@ -1,7 +1,7 @@
 ---
-name: common-ros2-package-generator-enhanced
+name: ros2-package-generator-enhanced
 description: ROS2包生成增强技能 - workspace管理、overlay开发、colcon元构建、包模板生成、metapackage、大型项目管理
-argument-hint: "创建ROS2包" / "workspace管理" / "overlay开发" / "colcon" / "metapackage" / "包生成"
+argument-hint: 创建ROS2包 OR workspace管理 OR overlay开发 OR colcon OR metapackage OR 包生成
 user-invocable: true
 ---
 

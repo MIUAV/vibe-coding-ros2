@@ -1,7 +1,7 @@
 ---
 name: px4-mc-tuning
 description: PX4 多旋翼调参 - 姿态/位置PID参数调节、Autotune 自动调参、飞行性能优化
-argument-hint: "多旋翼调参" / "px4 tuning" / "PID调节" / "自动调参"
+argument-hint: 多旋翼调参 OR px4 tuning OR PID调节 OR 自动调参
 user-invocable: true
 ---
 

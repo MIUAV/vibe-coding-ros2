@@ -1,7 +1,7 @@
 ---
 name: sdf-xacro-model
 description: 轮式车辆 SDF/XACRO 模型开发技能 - 差速驱动车、阿克曼车、履带车模型创建与仿真配置
-argument-hint: "创建轮式车辆模型" / "差速驱动" / "阿克曼模型" / "履带车"
+argument-hint: 创建轮式车辆模型 OR 差速驱动 OR 阿克曼模型 OR 履带车
 user-invocable: true
 ---
 

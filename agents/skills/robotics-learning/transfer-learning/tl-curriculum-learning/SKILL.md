@@ -1,7 +1,7 @@
 ---
 name: tl-curriculum-learning
 description: 课程学习技能 - 难度渐进、Self-Paced Learning、先验知识整合
-argument-hint: "课程学习" / "curriculum learning" / "难度渐进" / "self-paced"
+argument-hint: 课程学习 OR curriculum learning OR 难度渐进 OR self-paced
 user-invocable: true
 ---
 

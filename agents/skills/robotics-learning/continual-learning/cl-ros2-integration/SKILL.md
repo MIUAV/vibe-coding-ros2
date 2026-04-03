@@ -1,7 +1,7 @@
 ---
 name: cl-ros2-integration
 description: 持续学习 ROS2 集成技能 - 任务切换、经验存储、知识迁移
-argument-hint: "CL ROS2" / "持续学习 ROS2" / "continual learning ros2"
+argument-hint: CL ROS2 OR 持续学习 ROS2 OR continual learning ros2
 user-invocable: true
 ---
 

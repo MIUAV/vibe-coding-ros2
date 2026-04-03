@@ -2,7 +2,7 @@
 name: ros2-time-management
 description: ROS2 时间管理技能 - 时钟源、Time/Duration、时间同步、模拟时间
 user-invocable: true
-argument-hint: "时间" / "clock" / "time" / "模拟时间" / "sim time" / "duration"
+argument-hint: 时间 OR clock OR time OR 模拟时间 OR sim time OR duration
 ---
 
 # ROS2 Time Management Skill

@@ -1,7 +1,7 @@
 ---
 name: px4-vision-nav
 description: PX4 视觉导航与避障 - 光流定位、深度相机、激光雷达融合、视觉里程计
-argument-hint: "视觉导航" / "px4 vision" / "视觉避障" / "光流定位"
+argument-hint: 视觉导航 OR px4 vision OR 视觉避障 OR 光流定位
 user-invocable: true
 ---
 

@@ -1,7 +1,7 @@
 ---
 name: managed-node-design
 description: 托管节点设计技能 - LifecycleNode、状态回调、Configure/Activate、ROS2 生命周期
-argument-hint: "LifecycleNode" / "managed" / "configure" / "activate" / "deactivate"
+argument-hint: LifecycleNode OR managed OR configure OR activate OR deactivate
 user-invocable: true
 ---
 

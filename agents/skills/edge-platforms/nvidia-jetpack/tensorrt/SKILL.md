@@ -1,7 +1,7 @@
 ---
 name: tensorrt
 description: TensorRT推理优化 - 模型转换 引擎构建 INT8量化
-argument-hint: "TensorRT" / "模型优化" / "INT8量化" / "引擎生成"
+argument-hint: TensorRT OR 模型优化 OR INT8量化 OR 引擎生成
 user-invocable: true
 ---
 

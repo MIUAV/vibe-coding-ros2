@@ -1,7 +1,7 @@
 ---
 name: fl-fedavg
 description: FedAvg 联邦平均技能 - 分布式训练、模型聚合、ROS2多机器人协同
-argument-hint: "FedAvg" / "联邦平均" / "federated averaging" / "分布式训练"
+argument-hint: FedAvg OR 联邦平均 OR federated averaging OR 分布式训练
 user-invocable: true
 ---
 

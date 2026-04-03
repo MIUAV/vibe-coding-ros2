@@ -1,7 +1,7 @@
 ---
 name: edge-deployment
 description: 边缘部署技能集合 - ARM64 交叉编译、Docker ROS2 部署
-argument-hint: "边缘部署" / "ARM64" / "Docker" / "交叉编译" / "edge deployment"
+argument-hint: 边缘部署 OR ARM64 OR Docker OR 交叉编译 OR edge deployment
 user-invocable: true
 ---
 

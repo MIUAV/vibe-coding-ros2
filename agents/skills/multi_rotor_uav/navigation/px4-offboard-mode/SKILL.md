@@ -1,7 +1,7 @@
 ---
 name: px4-offboard-mode
 description: PX4 Offboard 模式技能 - 外部计算机通过 ROS2/MicroXRCE-DDS 或 MAVLink 实现实时轨迹、速度和姿态控制
-argument-hint: "Offboard" / "外部控制" / "ROS2控制" / "自主导航"
+argument-hint: Offboard OR 外部控制 OR ROS2控制 OR 自主导航
 user-invocable: true
 ---
 

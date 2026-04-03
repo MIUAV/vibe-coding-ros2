@@ -1,7 +1,7 @@
 ---
 name: navigation
 description: 人形机器人导航系统 - 路径规划、双足行走导航、动态避障、地形适应
-argument-hint: "人形导航" / "双足路径规划" / "动态避障"
+argument-hint: 人形导航 OR 双足路径规划 OR 动态避障
 user-invocable: true
 ---
 

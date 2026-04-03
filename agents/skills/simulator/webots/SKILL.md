@@ -1,7 +1,7 @@
 ---
 name: webots
 description: Webots 机器人仿真开发技能 - 机器人建模、控制器开发、传感器配置、ROS/ROS2 集成
-argument-hint: "webots仿真" / "webots机器人" / "创建控制器" / "传感器配置"
+argument-hint: webots仿真 OR webots机器人 OR 创建控制器 OR 传感器配置
 user-invocable: true
 ---
 

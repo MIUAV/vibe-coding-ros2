@@ -1,8 +1,8 @@
 ---
-name: opencv-image-processing
+name: image-processing
 description: OpenCV4 图像处理技能 - 几何变换、滤波、形态学、阈值处理、边缘检测
 user-invocable: true
-argument-hint: "图像处理" / "滤波" / "形态学" / "边缘检测" / "几何变换"
+argument-hint: 图像处理 OR 滤波 OR 形态学 OR 边缘检测 OR 几何变换
 ---
 
 # OpenCV4 Image Processing Skill

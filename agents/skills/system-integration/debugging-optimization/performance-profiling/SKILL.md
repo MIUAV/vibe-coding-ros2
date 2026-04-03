@@ -1,7 +1,7 @@
 ---
 name: performance-profiling
 description: 性能分析技能 - 延迟分析、CPU/内存分析、跟踪工具、性能优化
-argument-hint: "性能分析" / "profiling" / "latency" / "perf" / "optimization"
+argument-hint: 性能分析 OR profiling OR latency OR perf OR optimization
 user-invocable: true
 ---
 

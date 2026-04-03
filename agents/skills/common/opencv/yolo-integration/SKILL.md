@@ -1,8 +1,8 @@
 ---
-name: opencv-yolo-integration
+name: yolo-integration
 description: OpenCV4 YOLO 集成技能 - Ultralytics YOLOv5/v8/v11、目标检测、分割、分类、姿态估计
 user-invocable: true
-argument-hint: "yolo" / "ultralytics" / "目标检测" / "实例分割" / "姿态估计" / "目标追踪"
+argument-hint: yolo OR ultralytics OR 目标检测 OR 实例分割 OR 姿态估计 OR 目标追踪
 ---
 
 # OpenCV4 YOLO Integration Skill

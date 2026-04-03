@@ -1,7 +1,7 @@
 ---
 name: costmap-configuration
 description: 成本图配置技能 - 层级配置、膨胀半径、障碍物阈值、动态更新
-argument-hint: "costmap" / "成本图" / "inflation" / "costmap configuration"
+argument-hint: costmap OR 成本图 OR inflation OR costmap configuration
 user-invocable: true
 ---
 

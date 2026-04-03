@@ -1,7 +1,7 @@
 ---
 name: visual-slam
 description: 视觉 SLAM 技能 - ORB-SLAM3、VINS-Fusion、RTAB-Map、ROS2 视觉里程计
-argument-hint: "视觉SLAM" / "ORB-SLAM3" / "VINS" / "visual slam"
+argument-hint: 视觉SLAM OR ORB-SLAM3 OR VINS OR visual slam
 user-invocable: true
 ---
 

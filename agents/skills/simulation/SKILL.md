@@ -1,7 +1,7 @@
 ---
 name: simulation
 description: 机器人仿真技能库 - Gazebo、Isaac Sim、Mujoco、机器人建模、物理仿真
-argument-hint: "仿真" / "simulation" / "Gazebo" / "Isaac Sim" / "Mujoco"
+argument-hint: 仿真 OR simulation OR Gazebo OR Isaac Sim OR Mujoco
 user-invocable: true
 ---
 

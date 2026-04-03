@@ -1,7 +1,7 @@
 ---
 name: px4-airframe
 description: PX4 机架配置与电机映射 - 多旋翼机型选择、电调校准、输出通道配置
-argument-hint: "机架配置" / "px4 airframe" / "电机配置" / "电调校准"
+argument-hint: 机架配置 OR px4 airframe OR 电机配置 OR 电调校准
 user-invocable: true
 ---
 

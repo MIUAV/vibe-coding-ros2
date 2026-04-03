@@ -1,7 +1,9 @@
 ---
 name: ros2-package-generator
 description: ROS2 功能包生成器 - 生成完整的 ROS2 包结构，包含 CMakeLists.txt、package.xml、节点代码、消息定义、Launch 文件
-trigger: "创建一个 ROS2 包" / "generate ros2 package" / "创建功能包"
+trigger: 创建一个 ROS2 包 OR generate ros2 package OR 创建功能包
+argument-hint: 创建ROS2包 OR generate ros2 package OR ros2 package generator OR 创建功能包
+user-invocable: true
 ---
 
 # ROS2 Package Generator Skill

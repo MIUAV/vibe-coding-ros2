@@ -1,7 +1,7 @@
 ---
 name: manipulator-collision-avoidance
 description: 机械臂碰撞避免技能 - 任务空间障碍规避、人工势场、动态障碍响应、ROS2避障节点
-argument-hint: "碰撞避免" / "障碍规避" / "碰撞检测" / "路径重规划" / "collision avoidance"
+argument-hint: 碰撞避免 OR 障碍规避 OR 碰撞检测 OR 路径重规划 OR collision avoidance
 user-invocable: true
 ---
 

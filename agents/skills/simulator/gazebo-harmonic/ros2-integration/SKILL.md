@@ -1,7 +1,7 @@
 ---
 name: ros2-integration
 description: Gazebo ROS2 集成技能 - ros_gz 桥接、控制器启动、launch 文件配置
-argument-hint: "gazebo ros2集成" / "ros_gz桥接" / "控制器配置"
+argument-hint: gazebo ros2集成 OR ros_gz桥接 OR 控制器配置
 user-invocable: true
 ---
 

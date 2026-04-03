@@ -1,7 +1,7 @@
 ---
 name: px4-rtl-mode
 description: PX4 RTL (Return to Launch) 返航模式技能 - 自动返回起飞点并降落，保障飞行安全
-argument-hint: "RTL" / "返航" / "Return to Launch" / "一键返航"
+argument-hint: RTL OR 返航 OR Return to Launch OR 一键返航
 user-invocable: true
 ---
 

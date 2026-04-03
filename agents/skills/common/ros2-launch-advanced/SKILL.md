@@ -2,7 +2,7 @@
 name: ros2-launch-advanced
 description: ROS2 Launch 进阶技能 - Python Launch、多 launch 嵌套、事件处理、条件启动、参数替换
 user-invocable: true
-argument-hint: "launch 文件" / "launch advanced" / "python launch" / "事件处理" / "条件启动"
+argument-hint: launch 文件 OR launch advanced OR python launch OR 事件处理 OR 条件启动
 ---
 
 # ROS2 Launch Advanced Skill

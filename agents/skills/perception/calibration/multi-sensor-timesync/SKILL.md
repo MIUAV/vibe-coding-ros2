@@ -1,7 +1,7 @@
 ---
 name: multi-sensor-timesync
 description: 多传感器时间同步技能 - 硬件同步、软同步、NTP、ROS2 时间同步
-argument-hint: "时间同步" / "hardware sync" / "NTP" / "timesync"
+argument-hint: 时间同步 OR hardware sync OR NTP OR timesync
 user-invocable: true
 ---
 

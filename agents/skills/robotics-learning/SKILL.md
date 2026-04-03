@@ -1,7 +1,7 @@
 ---
 name: robotics-learning
 description: 机器人学习技能库 - 强化学习、持续学习、迁移学习、联邦学习、增量学习
-argument-hint: "强化学习" / "持续学习" / "迁移学习" / "联邦学习" / "增量学习" / "robotics learning"
+argument-hint: 强化学习 OR 持续学习 OR 迁移学习 OR 联邦学习 OR 增量学习 OR robotics learning
 user-invocable: true
 ---
 

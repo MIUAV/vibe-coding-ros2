@@ -1,7 +1,7 @@
 ---
 name: sensor-integration
 description: Gazebo 传感器集成技能 - LiDAR、相机、IMU、深度传感器配置
-argument-hint: "gazebo传感器" / "添加激光雷达" / "相机配置"
+argument-hint: gazebo传感器 OR 添加激光雷达 OR 相机配置
 user-invocable: true
 ---
 

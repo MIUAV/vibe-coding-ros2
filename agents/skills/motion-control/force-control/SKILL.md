@@ -1,7 +1,7 @@
 ---
 name: force-control
 description: 力控制技能集合 - 阻抗控制、力-位置混合控制
-argument-hint: "力控制" / "impedance" / "force control" / "hybrid control"
+argument-hint: 力控制 OR impedance OR force control OR hybrid control
 user-invocable: true
 ---
 

@@ -1,7 +1,7 @@
 ---
 name: physics-simulation
 description: 物理仿真技能集合 - 接触动力学、软体仿真
-argument-hint: "物理仿真" / "接触" / "dynamics" / "soft body"
+argument-hint: 物理仿真 OR 接触 OR dynamics OR soft body
 user-invocable: true
 ---
 

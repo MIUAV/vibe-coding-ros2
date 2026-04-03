@@ -1,8 +1,8 @@
 ---
-name: opencv-camera-calibration
+name: camera-calibration
 description: OpenCV4 相机标定技能 - 单目/双目标定、畸变校正、立体匹配、深度估计、3D 重建
 user-invocable: true
-argument-hint: "相机标定" / "畸变校正" / "立体匹配" / "深度估计" / "3D重建" / "内参" / "外参"
+argument-hint: 相机标定 OR 畸变校正 OR 立体匹配 OR 深度估计 OR 3D重建 OR 内参 OR 外参
 ---
 
 # OpenCV4 Camera Calibration Skill

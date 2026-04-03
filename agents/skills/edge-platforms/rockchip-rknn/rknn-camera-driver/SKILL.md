@@ -1,7 +1,7 @@
 ---
 name: rknn-camera-driver
 description: 瑞芯微MIPI CSI相机驱动 - 相机配置 ISP调优 视频流获取
-argument-hint: "MIPI相机" / "CSI驱动" / "ISP" / "Rockchip相机"
+argument-hint: MIPI相机 OR CSI驱动 OR ISP OR Rockchip相机
 user-invocable: true
 ---
 

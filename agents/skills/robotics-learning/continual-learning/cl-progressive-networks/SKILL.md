@@ -1,7 +1,7 @@
 ---
 name: cl-progressive-networks
 description: 渐进式网络技能 - 横向扩展网络、专家混合、模块化技能组合
-argument-hint: "渐进网络" / "progressive networks" / "专家混合" / "mixture of experts"
+argument-hint: 渐进网络 OR progressive networks OR 专家混合 OR mixture of experts
 user-invocable: true
 ---
 

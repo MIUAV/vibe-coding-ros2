@@ -2,7 +2,7 @@
 name: opencv
 description: OpenCV4 技能库 - 图像处理、特征检测、深度学习推理、YOLO、边缘部署等完整技能集合
 user-invocable: true
-argument-hint: "opencv" / "视觉" / "图像处理" / "目标检测" / "深度学习" / "边缘部署"
+argument-hint: opencv OR 视觉 OR 图像处理 OR 目标检测 OR 深度学习 OR 边缘部署
 ---
 
 # OpenCV4 Skills Library

@@ -1,7 +1,7 @@
 ---
 name: lidar-visual-fusion
 description: 激光视觉融合 SLAM 技能 - LIO-SAM、LVI-SAM、FusionSLAM、稠密重建
-argument-hint: "激光视觉融合" / "LIO-SAM" / "LVI-SAM" / "fusion slam"
+argument-hint: 激光视觉融合 OR LIO-SAM OR LVI-SAM OR fusion slam
 user-invocable: true
 ---
 

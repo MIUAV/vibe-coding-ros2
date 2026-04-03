@@ -1,8 +1,8 @@
 ---
-name: opencv-openvino
+name: openvino
 description: OpenCV4 OpenVINO 部署技能 - Intel CPU/GPU/VPU、OpenVINO Toolkit、IR 模型、ROS2 部署
 user-invocable: true
-argument-hint: "openvino" / "intel" / "movidius" / "vpu" / "ncs2" / "边缘部署"
+argument-hint: openvino OR intel OR movidius OR vpu OR ncs2 OR 边缘部署
 ---
 
 # OpenCV4 OpenVINO Deployment Skill

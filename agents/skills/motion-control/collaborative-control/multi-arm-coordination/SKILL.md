@@ -1,7 +1,7 @@
 ---
 name: multi-arm-coordination
 description: 多臂协调技能 - 协调约束、同步控制、负载分配、碰撞避免、ROS2 MoveIt 多臂
-argument-hint: "多臂协调" / "multi-arm" / "协调控制" / "collision avoidance"
+argument-hint: 多臂协调 OR multi-arm OR 协调控制 OR collision avoidance
 user-invocable: true
 ---
 

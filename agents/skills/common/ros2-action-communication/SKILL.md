@@ -2,7 +2,7 @@
 name: ros2-action-communication
 description: ROS2 Action 通讯技能 - ActionServer/ActionClient 实现、目标执行、反馈获取、任务取消
 user-invocable: true
-argument-hint: "创建 action" / "ros2 action" / "动作客户端" / "action server client"
+argument-hint: 创建 action OR ros2 action OR 动作客户端 OR action server client
 ---
 
 # ROS2 Action Communication Skill

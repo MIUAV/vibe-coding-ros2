@@ -1,7 +1,7 @@
 ---
 name: federated-learning
 description: 联邦学习技能集合 - FedAvg、差分隐私、水平联邦、垂直联邦、ROS2集成
-argument-hint: "联邦学习" / "federated learning" / "FedAvg" / "隐私保护"
+argument-hint: 联邦学习 OR federated learning OR FedAvg OR 隐私保护
 user-invocable: true
 ---
 

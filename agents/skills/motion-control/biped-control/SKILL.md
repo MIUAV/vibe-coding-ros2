@@ -1,7 +1,7 @@
 ---
 name: biped-control
 description: 双足控制技能集合 - 行走模式生成、平衡控制
-argument-hint: "双足控制" / "biped" / "walking" / "balance" / "步态"
+argument-hint: 双足控制 OR biped OR walking OR balance OR 步态
 user-invocable: true
 ---
 

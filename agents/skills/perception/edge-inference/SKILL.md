@@ -1,7 +1,7 @@
 ---
 name: edge-inference
 description: 边缘推理部署技能集合 - TensorRT、RKNN、OpenVINO 部署
-argument-hint: "边缘推理" / "TensorRT" / "RKNN" / "OpenVINO" / "edge inference"
+argument-hint: 边缘推理 OR TensorRT OR RKNN OR OpenVINO OR edge inference
 user-invocable: true
 ---
 

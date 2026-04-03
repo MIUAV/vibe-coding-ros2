@@ -1,8 +1,8 @@
 ---
-name: opencv-nvidia-jetson
+name: nvidia-jetson
 description: OpenCV4 NVIDIA Jetson 部署技能 - Jetson Nano/Xavier/Orin、JetPack、CUDA、TensorRT、DLA
 user-invocable: true
-argument-hint: "jetson" / "nvidia" / "cuda" / "tensorrt" / "jetpack" / "边缘部署"
+argument-hint: jetson OR nvidia OR cuda OR tensorrt OR jetpack OR 边缘部署
 ---
 
 # OpenCV4 NVIDIA Jetson Deployment Skill

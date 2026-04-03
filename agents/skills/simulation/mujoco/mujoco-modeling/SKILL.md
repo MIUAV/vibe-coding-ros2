@@ -1,7 +1,7 @@
 ---
 name: mujoco-modeling
 description: Mujoco 建模技能 - MJCF 模型、关节驱动、接触参数、ROS2 Mujoco 桥接
-argument-hint: "Mujoco" / "MJCF" / "建模" / "mujoco_model"
+argument-hint: Mujoco OR MJCF OR 建模 OR mujoco_model
 user-invocable: true
 ---
 

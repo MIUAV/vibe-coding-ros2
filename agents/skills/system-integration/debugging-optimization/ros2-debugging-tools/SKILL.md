@@ -1,7 +1,7 @@
 ---
 name: ros2-debugging-tools
 description: ROS2 调试工具技能 - CLI 调试、GDB、Valgrind、ros2cli、rqt 工具
-argument-hint: "ROS2调试" / "debugging" / "gdb" / "valgrind" / "CLI"
+argument-hint: ROS2调试 OR debugging OR gdb OR valgrind OR CLI
 user-invocable: true
 ---
 

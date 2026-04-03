@@ -1,7 +1,7 @@
 ---
 name: calibration
 description: 传感器标定技能集合 - 相机标定、外参标定、时间同步
-argument-hint: "标定" / "calibration" / "相机标定" / "外参" / "intrinsic"
+argument-hint: 标定 OR calibration OR 相机标定 OR 外参 OR intrinsic
 user-invocable: true
 ---
 

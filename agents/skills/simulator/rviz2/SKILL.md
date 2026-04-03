@@ -1,7 +1,7 @@
 ---
 name: rviz2
 description: RViz2 可视化开发技能 - 3D可视化、插件开发、显示类型配置、交互工具开发
-argument-hint: "rviz配置" / "创建显示" / "rviz插件" / "可视化"
+argument-hint: rviz配置 OR 创建显示 OR rviz插件 OR 可视化
 user-invocable: true
 ---
 

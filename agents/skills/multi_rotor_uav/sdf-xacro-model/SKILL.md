@@ -1,7 +1,7 @@
 ---
 name: sdf-xacro-model
 description: 多旋翼无人机 SDF/XACRO 模型开发技能 - 四旋翼、六旋翼、八旋翼模型创建、飞行物理配置、环境风力仿真
-argument-hint: "创建无人机模型" / "四旋翼" / "六旋翼" / "无人机仿真"
+argument-hint: 创建无人机模型 OR 四旋翼 OR 六旋翼 OR 无人机仿真
 user-invocable: true
 ---
 

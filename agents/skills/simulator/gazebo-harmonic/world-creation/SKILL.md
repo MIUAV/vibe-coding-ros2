@@ -1,7 +1,7 @@
 ---
 name: world-creation
 description: Gazebo 世界创建技能 - SDF 世界文件、环境光照、地形、物理引擎配置
-argument-hint: "创建gazebo世界" / "仿真环境" / "地形生成"
+argument-hint: 创建gazebo世界 OR 仿真环境 OR 地形生成
 user-invocable: true
 ---
 

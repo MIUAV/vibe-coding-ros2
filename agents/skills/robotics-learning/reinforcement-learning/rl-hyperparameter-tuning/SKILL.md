@@ -1,7 +1,7 @@
 ---
 name: rl-hyperparameter-tuning
 description: 强化学习超参数自动调优技能 - Optuna、Ray Tune、Population-Based Training
-argument-hint: "超参数调优" / "Optuna" / "Ray Tune" / "PBT" / "hyperparameter"
+argument-hint: 超参数调优 OR Optuna OR Ray Tune OR PBT OR hyperparameter
 user-invocable: true
 ---
 

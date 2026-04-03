@@ -1,7 +1,7 @@
 ---
 name: perception
 description: 人形机器人感知系统 - 双目视觉、深度感知、触觉传感器、平衡感知
-argument-hint: "人形感知" / "人形视觉" / "平衡感知" / "触觉"
+argument-hint: 人形感知 OR 人形视觉 OR 平衡感知 OR 触觉
 user-invocable: true
 ---
 

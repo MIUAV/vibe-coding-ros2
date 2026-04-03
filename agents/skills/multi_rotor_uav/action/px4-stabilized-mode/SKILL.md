@@ -1,7 +1,7 @@
 ---
 name: px4-stabilized-mode
 description: PX4 姿态稳定模式技能 - 手动控制姿态角，油门控制高度，飞控保持飞机水平
-argument-hint: "自稳模式" / "Stabilized Mode" / "姿态模式" / "PX4自稳"
+argument-hint: 自稳模式 OR Stabilized Mode OR 姿态模式 OR PX4自稳
 user-invocable: true
 ---
 

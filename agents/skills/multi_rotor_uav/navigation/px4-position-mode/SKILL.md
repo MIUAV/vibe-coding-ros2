@@ -1,7 +1,7 @@
 ---
 name: px4-position-mode
 description: PX4 位置保持模式技能 - 水平/垂直方向自动保持位置和高度，遥控器控制移动速度
-argument-hint: "位置模式" / "Position Mode" / "定点模式" / "GPS模式"
+argument-hint: 位置模式 OR Position Mode OR 定点模式 OR GPS模式
 user-invocable: true
 ---
 

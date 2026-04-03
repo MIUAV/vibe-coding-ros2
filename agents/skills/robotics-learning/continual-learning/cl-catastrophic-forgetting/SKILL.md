@@ -1,7 +1,7 @@
 ---
 name: cl-catastrophic-forgetting
 description: 灾难性遗忘预防技能 - 正交权重更新、活性正则化、渐进掩码
-argument-hint: "灾难性遗忘" / "catastrophic forgetting" / "OWM" / "渐进掩码"
+argument-hint: 灾难性遗忘 OR catastrophic forgetting OR OWM OR 渐进掩码
 user-invocable: true
 ---
 

@@ -1,7 +1,7 @@
 ---
 name: kinematics
 description: 运动学技能 - 正逆运动学、雅可比矩阵、轨迹运动学、奇异姿态
-argument-hint: "运动学" / "kinematics" / "逆运动学" / "雅可比" / "IK"
+argument-hint: 运动学 OR kinematics OR 逆运动学 OR 雅可比 OR IK
 user-invocable: true
 ---
 

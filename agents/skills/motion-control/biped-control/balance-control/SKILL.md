@@ -1,7 +1,7 @@
 ---
 name: balance-control
 description: 双足平衡控制技能 - 重心控制、支撑多边形、扰动恢复、踝/髋策略
-argument-hint: "平衡控制" / "balance" / "CoM" / "ZMP" / "ankle strategy"
+argument-hint: 平衡控制 OR balance OR CoM OR ZMP OR ankle strategy
 user-invocable: true
 ---
 

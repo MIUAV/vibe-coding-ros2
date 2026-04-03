@@ -1,7 +1,7 @@
 ---
 name: cartesian-trajectory
 description: 笛卡尔空间轨迹技能 - 直线插补、圆弧插补、姿态插值、ROS2 Cartesian 控制器
-argument-hint: "笛卡尔轨迹" / "cartesian" / "直线插补" / "圆弧插补" / "SLERP"
+argument-hint: 笛卡尔轨迹 OR cartesian OR 直线插补 OR 圆弧插补 OR SLERP
 user-invocable: true
 ---
 

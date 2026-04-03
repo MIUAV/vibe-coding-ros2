@@ -1,7 +1,7 @@
 ---
 name: pybullet
 description: PyBullet 物理仿真开发技能 - Python 机器人仿真、强化学习环境、GPU 加速、URDF 导入
-argument-hint: "pybullet仿真" / "强化学习环境" / "机器人仿真" / "GPU加速"
+argument-hint: pybullet仿真 OR 强化学习环境 OR 机器人仿真 OR GPU加速
 user-invocable: true
 ---
 

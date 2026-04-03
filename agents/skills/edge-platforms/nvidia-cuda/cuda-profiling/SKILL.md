@@ -1,7 +1,7 @@
 ---
 name: cuda-profiling
 description: CUDA性能分析工具 - Nsight Systems Nsight Compute 性能分析
-argument-hint: "Nsight" / "CUDA性能" / "profiling" / "nvprof"
+argument-hint: Nsight OR CUDA性能 OR profiling OR nvprof
 user-invocable: true
 ---
 

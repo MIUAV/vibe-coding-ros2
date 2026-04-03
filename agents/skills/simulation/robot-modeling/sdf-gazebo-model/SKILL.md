@@ -1,7 +1,7 @@
 ---
 name: sdf-gazebo-model
 description: SDF Gazebo 模型技能 - SDF vs URDF、插件配置、Gazebo 特定标签
-argument-hint: "SDF" / "Gazebo模型" / "plugin" / "sdf gazebo"
+argument-hint: SDF OR Gazebo模型 OR plugin OR sdf gazebo
 user-invocable: true
 ---
 

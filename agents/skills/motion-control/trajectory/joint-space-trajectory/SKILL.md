@@ -1,7 +1,7 @@
 ---
 name: joint-space-trajectory
 description: 关节空间轨迹技能 - 五次多项式、七次多项式、梯形速度、LSPB
-argument-hint: "关节空间" / "joint space" / "多项式轨迹" / "LSPB" / "trapezoidal"
+argument-hint: 关节空间 OR joint space OR 多项式轨迹 OR LSPB OR trapezoidal
 user-invocable: true
 ---
 

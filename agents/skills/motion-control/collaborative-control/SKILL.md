@@ -1,7 +1,7 @@
 ---
 name: collaborative-control
 description: 协作控制技能集合 - 多臂协调、人机协作
-argument-hint: "协作控制" / "multi-arm" / "human-robot" / "collaborative" / "cooperation"
+argument-hint: 协作控制 OR multi-arm OR human-robot OR collaborative OR cooperation
 user-invocable: true
 ---
 

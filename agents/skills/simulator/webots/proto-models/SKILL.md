@@ -1,7 +1,7 @@
 ---
 name: proto-models
 description: Webots PROTO 模型技能 - 创建自定义机器人模型、传感器原型
-argument-hint: "Webots PROTO" / "机器人模型" / "传感器原型"
+argument-hint: Webots PROTO OR 机器人模型 OR 传感器原型
 user-invocable: true
 ---
 

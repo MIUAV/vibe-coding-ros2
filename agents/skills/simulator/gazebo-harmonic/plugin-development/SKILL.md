@@ -1,7 +1,7 @@
 ---
 name: plugin-development
 description: Gazebo 插件开发技能 - C++ 传感器插件、控制器、系统插件
-argument-hint: "gazebo插件开发" / "编写传感器插件" / "自定义控制器"
+argument-hint: gazebo插件开发 OR 编写传感器插件 OR 自定义控制器
 user-invocable: true
 ---
 

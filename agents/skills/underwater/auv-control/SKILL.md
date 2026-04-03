@@ -1,7 +1,7 @@
 ---
 name: underwater-auv-control
 description: AUV 控制技能 - 水下潜航器动力学、螺旋桨控制、深度控制、航向控制、ROS2 集成
-argument-hint: "AUV" / "水下控制" / "潜航器" / "ROV" / "depth control"
+argument-hint: AUV OR 水下控制 OR 潜航器 OR ROV OR depth control
 user-invocable: true
 ---
 

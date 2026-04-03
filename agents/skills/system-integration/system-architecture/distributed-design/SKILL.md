@@ -1,7 +1,7 @@
 ---
 name: distributed-design
 description: 分布式设计技能 - 多机通信、时钟同步、数据分发、边缘计算架构
-argument-hint: "分布式" / "distributed" / "multi-machine" / "时钟同步" / "edge"
+argument-hint: 分布式 OR distributed OR multi-machine OR 时钟同步 OR edge
 user-invocable: true
 ---
 

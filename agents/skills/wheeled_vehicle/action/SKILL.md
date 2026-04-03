@@ -1,7 +1,7 @@
 ---
 name: wheeled-vehicle-action
 description: 轮式车辆执行控制技能 - 底盘运动控制、差速驱动、阿克曼转向、麦克纳姆轮控制
-argument-hint: "轮式车辆控制" / "底盘驱动" / "差速控制" / "阿克曼" / "麦克纳姆轮"
+argument-hint: 轮式车辆控制 OR 底盘驱动 OR 差速控制 OR 阿克曼 OR 麦克纳姆轮
 user-invocable: true
 ---
 

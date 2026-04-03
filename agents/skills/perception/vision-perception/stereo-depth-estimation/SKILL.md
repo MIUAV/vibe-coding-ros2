@@ -1,7 +1,7 @@
 ---
 name: stereo-depth-estimation
 description: 立体匹配与深度估计技能 - 双目校正、立体匹配、SGM、深度融合
-argument-hint: "立体匹配" / "深度估计" / "stereo" / "SGM" / "disparity"
+argument-hint: 立体匹配 OR 深度估计 OR stereo OR SGM OR disparity
 user-invocable: true
 ---
 

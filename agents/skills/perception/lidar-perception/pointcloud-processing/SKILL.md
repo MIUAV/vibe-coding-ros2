@@ -1,7 +1,7 @@
 ---
 name: pointcloud-processing
 description: 点云处理技能 - PCL 滤波、降采样、特征提取、ROS2 PCL 节点开发
-argument-hint: "PCL" / "点云处理" / "降采样" / "滤波" / "pointcloud"
+argument-hint: PCL OR 点云处理 OR 降采样 OR 滤波 OR pointcloud
 user-invocable: true
 ---
 

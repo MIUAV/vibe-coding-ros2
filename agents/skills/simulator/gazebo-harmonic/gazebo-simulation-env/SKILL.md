@@ -1,7 +1,7 @@
 ---
 name: gazebo-simulation-env
 description: Gazebo 仿真环境创建技能 - 世界文件、地形、障碍物、气象条件、多机器人场景配置
-argument-hint: "Gazebo仿真环境" / "创建仿真世界" / "地形建模" / "gazebo环境配置"
+argument-hint: Gazebo仿真环境 OR 创建仿真世界 OR 地形建模 OR gazebo环境配置
 user-invocable: true
 ---
 

@@ -1,7 +1,7 @@
 ---
 name: sdf-xacro-model
 description: 足式机器人 SDF/XACRO 模型开发技能 - 四足机器人模型创建、腿部关节配置、步态仿真、环境交互
-argument-hint: "创建四足机器人" / "足式机器人" / "步态仿真" / "液压驱动"
+argument-hint: 创建四足机器人 OR 足式机器人 OR 步态仿真 OR 液压驱动
 user-invocable: true
 ---
 

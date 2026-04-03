@@ -1,7 +1,7 @@
 ---
 name: rl-environments
 description: PyBullet RL 环境技能 - Gymnasium 环境、奖励函数、并行训练
-argument-hint: "PyBullet RL" / "Gymnasium环境" / "强化学习"
+argument-hint: PyBullet RL OR Gymnasium环境 OR 强化学习
 user-invocable: true
 ---
 

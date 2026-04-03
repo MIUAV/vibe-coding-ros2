@@ -1,7 +1,7 @@
 ---
 name: tensorrt-deployment
 description: TensorRT 部署技能 - ONNX 转换、Engine 构建、INT8 量化、ROS2 加速推理
-argument-hint: "TensorRT" / "ONNX" / "INT8" / "GPU加速" / "tensorrt deployment"
+argument-hint: TensorRT OR ONNX OR INT8 OR GPU加速 OR tensorrt deployment
 user-invocable: true
 ---
 

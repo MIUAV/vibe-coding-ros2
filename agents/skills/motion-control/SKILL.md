@@ -1,7 +1,7 @@
 ---
 name: motion-control
 description: 机器人运动控制技能库 - 运动学、轨迹规划、力控制、双足控制、协作控制
-argument-hint: "运动控制" / "kinematics" / "trajectory" / "力控制" / "motion control"
+argument-hint: 运动控制 OR kinematics OR trajectory OR 力控制 OR motion control
 user-invocable: true
 ---
 

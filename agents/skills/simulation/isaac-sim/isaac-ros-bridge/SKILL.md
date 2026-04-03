@@ -1,7 +1,7 @@
 ---
 name: isaac-ros-bridge
 description: Isaac ROS 桥接技能 - ROS2-Gazebo 桥接、Omnigraph、Graph 脚本
-argument-hint: "Isaac ROS" / "ros2_bridge" / "omni.graph" / "bridge"
+argument-hint: Isaac ROS OR ros2_bridge OR omni.graph OR bridge
 user-invocable: true
 ---
 

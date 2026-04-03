@@ -1,7 +1,7 @@
 ---
 name: humanoid-kinematics
 description: 人形机器人运动学技能 - 全身运动学、闭链运动学、根骨跟踪、ROS2 HRGCF
-argument-hint: "人形机器人" / "humanoid" / "whole-body" / "HRGCF" / "kinematics"
+argument-hint: 人形机器人 OR humanoid OR whole-body OR HRGCF OR kinematics
 user-invocable: true
 ---
 

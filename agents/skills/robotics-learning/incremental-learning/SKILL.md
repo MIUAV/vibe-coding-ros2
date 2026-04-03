@@ -1,7 +1,7 @@
 ---
 name: incremental-learning
 description: 增量学习技能集合 - 类别增量、任务增量、表示学习、ROS2集成
-argument-hint: "增量学习" / "incremental learning" / "class IL" / "task IL"
+argument-hint: 增量学习 OR incremental learning OR class IL OR task IL
 user-invocable: true
 ---
 

@@ -1,7 +1,7 @@
 ---
 name: omniverse-setup
 description: Omniverse 配置技能 - Isaac Sim 安装、USD 场景、ROS2 环境配置
-argument-hint: "Omniverse" / "Isaac Sim" / "USD" / "安装配置"
+argument-hint: Omniverse OR Isaac Sim OR USD OR 安装配置
 user-invocable: true
 ---
 

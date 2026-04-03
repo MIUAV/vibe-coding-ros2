@@ -1,7 +1,7 @@
 ---
 name: isaac-sim
 description: Isaac Sim 仿真技能集合 - Omniverse 配置、Isaac ROS 桥接
-argument-hint: "Isaac Sim" / "Omniverse" / "isaac" / "Nvidia"
+argument-hint: Isaac Sim OR Omniverse OR isaac OR Nvidia
 user-invocable: true
 ---
 

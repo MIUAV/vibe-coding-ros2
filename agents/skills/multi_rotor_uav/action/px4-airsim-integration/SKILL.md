@@ -1,7 +1,7 @@
 ---
 name: px4-airsim-integration
 description: PX4 AirSim联合开发 - AirSim仿真器配置、SITL/HITL集成、多无人机仿真、视觉/激光雷达仿真
-argument-hint: "AirSim仿真" / "PX4 AirSim" / "AirSim开发" / "联合仿真"
+argument-hint: AirSim仿真 OR PX4 AirSim OR AirSim开发 OR 联合仿真
 user-invocable: true
 ---
 

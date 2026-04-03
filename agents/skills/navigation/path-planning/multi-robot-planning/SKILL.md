@@ -1,7 +1,7 @@
 ---
 name: multi-robot-planning
 description: 多机器人路径规划技能 - ORCA、VR算法、冲突解决、协同规划
-argument-hint: "多机器人规划" / "ORCA" / "multi-robot" / "协同规划"
+argument-hint: 多机器人规划 OR ORCA OR multi-robot OR 协同规划
 user-invocable: true
 ---
 

@@ -1,7 +1,7 @@
 ---
 name: environment-setup
 description: ManiSkill3 环境配置技能 - 物理引擎、传感器、渲染设置
-argument-hint: "ManiSkill3环境" / "物理配置" / "渲染设置"
+argument-hint: ManiSkill3环境 OR 物理配置 OR 渲染设置
 user-invocable: true
 ---
 

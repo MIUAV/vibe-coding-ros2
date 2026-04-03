@@ -1,7 +1,7 @@
 ---
 name: px4-hold-mode
 description: PX4 悬停/盘旋模式技能 - 在当前位置上空自动悬停等待指令，适用于等待起飞许可、悬停观察等场景
-argument-hint: "悬停" / "Hold Mode" / "Loiter" / "盘旋模式"
+argument-hint: 悬停 OR Hold Mode OR Loiter OR 盘旋模式
 user-invocable: true
 ---
 

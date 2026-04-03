@@ -1,7 +1,7 @@
 ---
 name: transfer-learning
 description: 迁移学习技能集合 - 域适应、微调、课程学习、跨机器人迁移、ROS2集成
-argument-hint: "迁移学习" / "transfer learning" / "domain adaptation" / "fine-tuning"
+argument-hint: 迁移学习 OR transfer learning OR domain adaptation OR fine-tuning
 user-invocable: true
 ---
 
