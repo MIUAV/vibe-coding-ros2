@@ -35,7 +35,7 @@ examples/
 ### 前置要求
 
 ```bash
-# 安装 Claude Code CLI（其余 Agent 可选）
+# 安装 Claude Code CLI（推荐）
 # https://docs.anthropic.com/en/docs/claude-code/overview
 
 # 或安装 OpenAI Codex CLI
@@ -67,25 +67,7 @@ AGENT_MODEL=claude-opus-4-20250514 ./scripts/mcp/mcp-agent-orchestrator.sh manip
 | `claude` | Claude Code 官方 CLI | ⭐ 推荐，支持多轮对话 |
 | `codex` | OpenAI Codex CLI | 代码生成能力强 |
 | `copilot` | GitHub Copilot CLI | 与 GitHub 深度集成 |
-
-### 工作流程
-
-```
-用户输入需求
-    ↓
-Orchestrator 分析任务 → 拆解为子任务
-    ↓
-Skill Router Agent 读取相关 SKILL.md
-    ↓
-多 Agent 并行执行：
-  Model Agent     → URDF/XACRO 模型
-  Sim Agent      → Gazebo 世界配置
-  Control Agent  → 控制器代码
-  ROS2 Agent     → 功能包生成
-  Verifier Agent → 仿真验证
-    ↓
-输出完整可运行的机器人系统
-```
+| `copilot-chat` | VS Code Copilot Chat | 需手动在 VS Code 中执行 |
 
 ### 案例一：宇树 GO2 机器狗 S 曲线
 
@@ -120,11 +102,7 @@ Skill Router Agent 读取相关 SKILL.md
 
 ```bash
 ./scripts/mcp/mcp-agent-orchestrator.sh custom --agent claude
-
-# 交互式输入：
-# 1. 描述你的任务（例如：让无人机跟踪特定目标）
-# 2. 选择机器人类型（quadruped/manipulator/uav/...）
-# 3. Agent 自动选择合适的 Skills 开始工作
+# 交互式输入任务描述和机器人类型
 ```
 
 ---
@@ -179,28 +157,16 @@ ros2 run add_two_ints add_two_ints_client   # 终端2
 
 ## 🔧 MCP 工具链
 
-所有 MCP 相关工具位于 `scripts/mcp/`：
-
 ```bash
 scripts/mcp/
 └── mcp-agent-orchestrator.sh   # 一键启动多 Agent 协作
 ```
 
-**环境变量：**
+环境变量：
 
 ```bash
-AGENT=claude              # Agent 类型（claude/codex/copilot）
+AGENT=claude                          # Agent 类型
 AGENT_MODEL=claude-sonnet-4-20250514  # 模型
-AGENT_TIMEOUT=300         # 超时秒数（默认 300s）
-WORKSPACE=~/ros2_ws       # 开发工作区（默认 ~/ros2_ws）
-```
-
-**示例：**
-
-```bash
-# 使用 Opus 模型，超时 600s，工作区指定
-AGENT_MODEL=claude-opus-4-20250514 \
-AGENT_TIMEOUT=600 \
-WORKSPACE=/opt/ros2_ws \
-./scripts/mcp/mcp-agent-orchestrator.sh go2-scurve --agent claude
+AGENT_TIMEOUT=300                     # 超时秒数
+WORKSPACE=~/ros2_ws                  # 开发工作区
 ```
