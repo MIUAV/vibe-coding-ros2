@@ -92,21 +92,38 @@ VibeCoding 的核心是一个能**自我优化**的 AI 系统：
 
 | 工具 | 路径 | 说明 |
 |------|------|------|
-| `ros2-package-generator.sh` | `scripts/generators/` | 一键生成标准 ROS2 包（CMakeLists.txt + package.xml + launch 骨架） |
-| `ros2-node-validator.sh` | `scripts/validators/` | 检查 C++ 代码的智能指针/QoS/Executor 规范 |
-| `check_ros2_package.sh` | `scripts/` | 通用包结构验证（depend/ament/install） |
-| `ros2-build.yml` | `.github/workflows/` | CI 自动化：5 个 job 验证文档、脚本、Python、Shell、AGENTS |
+| `ros2-package-generator.sh` | `scripts/generators/` | 一键生成标准 ROS2 包（自动检测 msg/srv） |
+| `ros2-node-validator.sh` | `scripts/validators/` | 检查 C++/QoS/Executor/生命周期安全 |
+| `check_ros2_package.sh` | `scripts/` | 包结构完整性检查（depend/ament/install） |
+| `ros2-debug.sh` | `scripts/debugger/` | ROS2 环境调试（topics/QoS/nodes/diag） |
+| `ros2-build.yml` | `.github/workflows/` | CI 自动化（8 个 job，自动同步 latest） |
+| `init-agent.sh` | 项目根目录 | 初始化脚本（生成 .gitignore/.github/.vscode） |
 
 ```bash
 # 示例：生成一个 ROS2 包
 bash scripts/generators/ros2-package-generator.sh my_control cpp rclcpp,std_msgs,geometry_msgs
 
-# 示例：验证节点代码
+# 示例：验证节点代码（C++/QoS/并发）
 bash scripts/validators/ros2-node-validator.sh src/my_control_node.cpp
 
 # 示例：检查包结构
 bash scripts/check_ros2_package.sh my_control
+
+# 示例：ROS2 环境调试
+bash scripts/debugger/ros2-debug.sh all
+bash scripts/debugger/ros2-debug.sh qos   # 仅 QoS 检查
 ```
+
+### 可运行的示例代码（v0.0.1-beta 新增）
+
+| 示例 | 内容 | 编译命令 |
+|------|------|----------|
+| `examples/ros2-minimal/cpp_publisher/` | C++ 发布者 + QoS + wall_timer | `colcon build --packages-select cpp_publisher --symlink-install` |
+| `examples/ros2-minimal/py_subscriber/` | Python 订阅者 + rclpy 规范 | `colcon build --packages-select py_subscriber --symlink-install` |
+| `examples/ros2-lifecycle/lifecycle_sensor/` | Lifecycle 节点（状态机） | `colcon build --packages-select lifecycle_sensor --symlink-install` |
+| `examples/ros2-service/add_two_ints/` | Service + Client + 超时保护 | `colcon build --packages-select add_two_ints --symlink-install` |
+
+> 所有示例均包含完整注释和 Anti-Patterns 规范检查
 
 ### 嵌入式平台 Debug（容器/仿真 → 实机部署）
 
