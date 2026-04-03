@@ -9,35 +9,25 @@ user-invocable: true
 
 > 深度掌握 ROS2 工作空间管理、colcon 构建、overlay 开发模式和大型项目管理
 
----
-
-## 何时使用
-
-当需要以下帮助时使用此技能：
-- 创建完整的 ROS2 工作空间
-- 管理 overlay/underlay 依赖关系
-- 使用 colcon 元构建系统
-- 生成多机器人/多功能包模板
-- 构建 metapackage 组织大型项目
-- 批量创建包结构和配置
-- 实现包版本管理和发布
-
----
-
 ## 工作空间结构
 
-### 标准 ROS2 Workspace
-
+### 标准 Workspace
 ```
 workspace/
-├── src/           # 源代码 (必须)
-├── build/          # colcon build 输出 (自动)
-├── install/        # colcon install 输出 (自动)
-└── log/            # colcon 日志 (自动)
+├── src/           # 源代码
+├── build/          # 构建输出
+├── install/        # 安装输出
+└── log/            # 日志
+```
+
+### Overlay/Underlay 原理
+```
+Underlay = /opt/ros/iron/ (系统包)
+Overlay = ~/ros2_ws/install/ (工作空间包，优先使用)
+source 顺序: underlay 先 source，overlay 后 source 覆盖
 ```
 
 ### 初始化工作空间
-
 ```bash
 mkdir -p ~/ros2_ws/src
 cd ~/ros2_ws
@@ -47,86 +37,46 @@ colcon build --symlink-install
 source install/setup.bash
 ```
 
-### Overlay / Underlay 原理
-
-```
-Underlay (Base System):
-  /opt/ros/iron/  → 系统包 (rclcpp, std_msgs, geometry_msgs)
-
-Overlay (Workspace):
-  ~/ros2_ws/install/  → 工作空间覆盖包
-
-执行顺序:
-  source /opt/ros/iron/setup.bash   # 先加载 underlay
-  source ~/ros2_ws/install/setup.bash  # overlay 优先
-```
-
----
-
 ## colcon 详解
 
 ### 常用命令
-
 ```bash
-# 构建
 colcon build                          # 全量构建
-colcon build --symlink-install       # 开发推荐 (源文件变更自动生效)
+colcon build --symlink-install       # 开发推荐(变更自动生效)
 colcon build --packages-select pkg1 pkg2  # 选择性构建
-colcon build --packages-up-to pkg1   # pkg1 及其依赖
-colcon build --packages-above pkg1   # pkg1 及其反向依赖
+colcon build --packages-up-to pkg    # pkg及其依赖
+colcon build --packages-above pkg    # pkg及其反向依赖
 colcon build --cmake-args -DCMAKE_BUILD_TYPE=Debug
-
-# 并行
-colcon build -j 4                   # 4核并行
-colcon build --merge-install         # 合并安装
-
-# 清理
-colcon build --cmake-clean-cache
-colcon build --cmake-clean
-
-# 测试
+colcon build -j 4                  # 4核并行
 colcon test
-colcon test --packages-select pkg
-colcon test-result
-
-# 列表
-colcon list --names-only
 colcon graph  # 依赖图
+colcon list --names-only
 ```
-
----
 
 ## 包模板生成
 
 ### 批量生成脚本
-
 ```bash
 #!/bin/bash
-# generate_packages.sh
-
 PKG_PREFIX="my_robot"
-ROBOT_TYPE=$1
 
 generate_package() {
   local name=$1
-  local pkg_name="${PKG_PREFIX}_${name}"
-
-  mkdir -p src/$pkg_name/{src,include,msg,srv,launch,config,test}
+  local pkg="${PKG_PREFIX}_${name}"
+  mkdir -p src/$pkg/{src,msg,srv,launch,config,test}
 
   # package.xml (Format 3)
-  cat > src/$pkg_name/package.xml <<EOF
+  cat > src/$pkg/package.xml <<EOF
 <?xml version="1.0"?>
 <package format="3">
-  <name>$pkg_name</name>
+  <name>${pkg}</name>
   <version>0.1.0</version>
-  <description>$name package for $ROBOT_TYPE</description>
+  <description>${name} package</description>
   <maintainer email="dev@example.com">Developer</maintainer>
   <license>Apache-2.0</license>
   <depend>rclcpp</depend>
   <depend>std_msgs</depend>
-  <depend>geometry_msgs</depend>
   <depend>ament_lint_auto</depend>
-  <depend>ament_lint_common</depend>
   <export>
     <build_type>ament_cmake</build_type>
   </export>
@@ -134,9 +84,9 @@ generate_package() {
 EOF
 
   # CMakeLists.txt
-  cat > src/$pkg_name/CMakeLists.txt <<EOF
+  cat > src/$pkg/CMakeLists.txt <<EOF
 cmake_minimum_required(VERSION 3.16)
-project($pkg_name)
+project($pkg)
 if(CMAKE_VERSION VERSION_LESS "3.16.0")
   cmake_policy(SET CMP0077 NEW)
 endif()
@@ -152,44 +102,28 @@ ament_target_dependencies(\${PROJECT_NAME} rclcpp std_msgs)
 install(TARGETS \${PROJECT_NAME} LIBRARY DESTINATION lib)
 ament_package()
 EOF
-
-  echo "✓ Created $pkg_name"
+  echo "Created $pkg"
 }
 
-# 生成五类包
 generate_package "description"   # URDF/XACRO
-generate_package "control"       # 控制器
-generate_package "navigation"   # 导航
+generate_package "control"        # 控制器
+generate_package "navigation"    # 导航
 generate_package "perception"    # 感知
-generate_package "bringup"       # 启动集合
+generate_package "bringup"        # 启动集合
 ```
-
-### 机器人专用包结构
-
-```
-humanoid_robot/           # metapackage
-├── humanoid_description/   # 机器人描述
-│   ├── humanoid.urdf.xacro
-│   └── humanoid.ros2_control.xacro
-├── humanoid_control/        # 控制器
-│   ├── humanoid_controller.ros2_control.xacro
-│   └── config/
-├── humanoid_navigation/     # 导航
-│   ├── humanoid_nav2.launch.py
-│   └── config/
-└── humanoid_bringup/       # 启动集合
-    └── humanoid_bringup.launch.py
-```
-
----
 
 ## Metapackage
 
-### Metapackage = 虚包（无源代码）
+### 原理
+```
+Metapackage = 虚包，无源代码
+            = 仅包含 package.xml + CMakeLists.txt
+            = 用于组织一组相关包的依赖声明
+```
 
+### 实现
 ```xml
 <!-- package.xml -->
-<?xml version="1.0"?>
 <package format="3">
   <name>my_robot_metapackage</name>
   <version>1.0.0</version>
@@ -215,87 +149,18 @@ install(DIRECTORY DESTINATION share/${PROJECT_NAME}/)
 ament_package()
 ```
 
-### Package Group
-
-```xml
-<!-- package_group.xml -->
-<packages>
-  <name>my_robot_packages_group</name>
-  <group>my_robot_packages_group</group>
-  <package>my_robot_description</package>
-  <package>my_robot_control</package>
-  <package>my_robot_navigation</package>
-</packages>
-```
-
----
-
-## 依赖管理
-
-### rosdep
+## rosdep 依赖管理
 
 ```bash
-# 安装依赖
 rosdep install -r -y --from-paths src --ignore-src
-
-# 检查依赖
 rosdep check --from-paths src --ignore-src
-
-# 查看依赖树
 rosdep depends my_package
-```
 
-### Git Submodule
-
-```bash
-cd ~/ros2_ws/src
-git submodule add git@github.com:org/external_lib.git external/lib
-
-# 克隆时同步 submodule
+# Git Submodule
+git submodule add git@github.com:org/lib.git external/lib
 git clone --recursive git@github.com:org/workspace.git
-
-# 更新
 git submodule update --remote external/lib
 ```
-
-### 多仓库管理 (vcs)
-
-```yaml
-# company-repos.yaml
-repositories:
-  robot_platform:
-    type: git
-    url: git@github.com:company/robot-platform.git
-    version: main
-  robot_core:
-    type: git
-    url: git@github.com:company/robot-core.git
-    version: main
-```
-
-```bash
-vcs import src < company-repos.yaml
-vcs pull src
-```
-
----
-
-## 发布流程
-
-```bash
-# 1. 版本 bump
-bump2version patch  # major / minor / patch
-
-# 2. 打标签
-git tag -a v1.2.3 -m "Release v1.2.3"
-git push origin v1.2.3
-
-# 3. Bloom 发布
-source /opt/ros/humble/setup.bash
-bloom-release --track humble --rosdistro humble my_package
-```
-
----
 
 ## Docker 开发环境
 
@@ -303,42 +168,26 @@ bloom-release --track humble --rosdistro humble my_package
 FROM ros:humble
 RUN apt-get update && apt-get install -y \
     python3-colcon-common-extensions \
-    python3-rosdep \
-    git && rm -rf /var/lib/apt/lists/*
+    python3-rosdep git && rm -rf /var/lib/apt/lists/*
 WORKDIR /workspace
-RUN rosdep init && rosdep install -y --from-paths /workspace/src || true
+RUN rosdep init && \
+    rosdep install -y --from-paths /workspace/src || true
 COPY src/ ./src/
-RUN . /opt/ros/humble/setup.sh && \
-    colcon build --symlink-install
+RUN colcon build --symlink-install
 ENTRYPOINT ["/bin/bash"]
 ```
-
----
 
 ## 故障排查
 
 | 问题 | 原因 | 解决方案 |
 |------|------|----------|
 | 包找不到 | overlay 未 source | `source install/setup.bash` |
-| 旧包优先 | source 顺序错误 | underlay 先 source |
-| colcon build 卡住 | 循环依赖 | `--packages-ignore` 排除 |
-| rosdep 失败 | sources 未配置 | `sudo rosdep init && rosdep update` |
-| bloom-release 失败 | 包名非标准 | `--non-interactive` 跳过检查 |
-
-### 调试命令
-
-```bash
-colcon graph | dot -Tpng > deps.png   # 依赖图
-ros2 pkg prefix my_package            # 包路径
-echo $AMENT_PREFIX_PATH              # 前缀路径
-rm -rf build/ install/ log/ && colcon build --symlink-install  # 强制重构建
-cat log/latest_build/colcon_*.log   # 构建日志
-```
-
----
+| overlay 不生效 | source 顺序错误 | underlay 先 source |
+| colcon build 卡住 | 循环依赖 | `--packages-ignore pkg` |
+| rosdep 安装失败 | sources 未配置 | `sudo rosdep init && rosdep update` |
+| bloom-release 失败 | 包名非标准 | `--non-interactive` |
 
 ## 相关技能
-
 - `common/cmake-configuration` — CMakeLists.txt 深度配置
 - `common/ros2-interface-definition` — 消息/服务/动作定义
 - `common/ros2-launch-advanced` — Launch 高级配置
