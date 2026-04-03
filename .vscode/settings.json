@@ -1,0 +1,24 @@
+{
+  "python.analysis.autoSearchPaths": true,
+  "python.analysis.extraPaths": ["/opt/ros/humble/lib/python3.10/site-packages"],
+  "python.autoComplete.extraPaths": ["/opt/ros/humble/lib/python3.10/site-packages"],
+  "files.associations": {
+    "*.cmake": "cmake",
+    "CMakeLists.txt": "cmake",
+    "*.launch.py": "python",
+    "*.srv": "yaml",
+    "*.msg": "yaml",
+    "*.action": "yaml"
+  },
+  "cmake.configureOnOpen": true,
+  "cmake.buildDirectory": "${workspaceFolder}/build",
+  "[cmake]": {
+    "tabSize": 2
+  },
+  "[python]": {
+    "tabSize": 4,
+    "indentSize": 4
+  },
+  "ros.distro": "humble",
+  "ros.distroFile": "/opt/ros/humble/share/rosdistro/rosdistro.xml"
+}
