@@ -496,3 +496,71 @@ NodeA:                    NodeB:
 □ 每次提醒 source install/setup.bash
 ```
 
+
+---
+
+# 🚦 QoS 速查卡（最常静默失败的地方）
+
+```
+QoS 不匹配 = 静默失败（不报错，但收不到数据）
+
+发布者 QoS          订阅者 QoS          能通信？
+──────────────────────────────────────────────
+reliable(10)    →   reliable(10)      ✅
+best_effort(5)  →   best_effort(5)   ✅
+reliable(10)    →   best_effort(5)   ❌ 静默失败
+best_effort(5)  →   reliable(10)      ❌ 静默失败
+```
+
+## 场景 → QoS 选择
+
+| 场景 | Reliability | History | Depth | Durability |
+|------|-------------|---------|-------|------------|
+| 传感器原始流（激光、深度图） | `best_effort` | `KEEP_LAST` | 5 | `VOLATILE` |
+| 控制命令（/cmd_vel） | `reliable` | `KEEP_LAST` | 1 | `VOLATILE` |
+| 参数/配置同步 | `reliable` | `KEEP_LAST` | 1 | `TRANSIENT_LOCAL` |
+| 地图/状态发布 | `reliable` | `KEEP_LAST` | 10 | `TRANSIENT_LOCAL` |
+| 日志/调试信息 | `best_effort` | `KEEP_LAST` | 5 | `VOLATILE` |
+| 服务调用 | `reliable` | `KEEP_LAST` | 1 | `VOLATILE` |
+
+## C++ QoS 代码
+
+```cpp
+// 传感器（不重传，不阻塞）
+rclcpp::QoS qos_sensor(5);
+qos_sensor.best_effort();
+
+// 控制命令（必须到达）
+rclcpp::QoS qos_cmd(1);
+qos_cmd.reliable();
+
+// 状态持久化（新订阅者收到最新一条）
+rclcpp::QoS qos_state(10);
+qos_state.reliable().transient_local();
+```
+
+## 调试命令
+
+```bash
+# 查看话题 QoS
+ros2 topic info /topic_name
+
+# 查看发布/订阅 QoS 是否匹配
+ros2 topic pub /chatter std_msgs/msg/String "{data: 'test'}" --qos-reliability reliable
+ros2 topic echo /chatter --qos-reliability reliable
+```
+
+## 静默失败最常见场景
+
+```
+🚫 相机发布用默认 QoS（reliable），Gazebo 仿真订阅用 best_effort
+   → RViz 显示无数据，但无报错
+   → 检查：ros2 topic info /camera/image
+
+🚫 激光雷达发布 best_effort，导航节点订阅 reliable
+   → 导航正常但偶尔丢数据包
+   → 检查：ros2 topic bw /scan
+
+🚫 两个节点在同一机器通信正常，跨机器后失败
+   → QoS 不匹配，或 ROS_DOMAIN_ID 不同
+```
