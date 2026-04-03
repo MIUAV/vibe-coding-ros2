@@ -1,6 +1,6 @@
 # 进度记录
 
-> 项目: ros-humble-nvr
+> 项目: ros-humble-<pkgname>
 > 开始日期: 2026-04-01
 
 ---

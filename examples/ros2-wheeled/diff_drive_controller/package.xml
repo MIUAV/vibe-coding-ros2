@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!--
+  示例: 差速驱动轮式机器人控制器
+  功能: /cmd_vel → 左右轮速发布
+  对应规范: ANTI_PATTERNS.md QoS + 智能指针规则
+-->
+<package format="3">
+  <name>diff_drive_controller</name>
+  <version>0.1.0</version>
+  <description>差速驱动轮式机器人控制器</description>
+  <maintainer email="dev@miuav.com">MIUAV Dev</maintainer>
+  <license>Apache-2.0</license>
+
+  <depend>rclcpp</depend>
+  <depend>geometry_msgs</depend>
+  <depend>nav_msgs</depend>
+  <depend>tf2_ros</depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>
