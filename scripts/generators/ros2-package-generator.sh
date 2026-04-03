@@ -33,6 +33,21 @@ echo -e "${GREEN}=== 生成 ROS2 包: $PKG_NAME ===${NC}"
 # 创建目录
 mkdir -p "$PKG_NAME"/{src,msg,srv,action,launch,config,test}
 
+# ── 自动检测自定义接口 ────────────────────────
+if find "$PKG_NAME/msg" -name '*.msg' 2>/dev/null | grep -q .; then
+    HAS_MSG=1; echo "  ✓ 检测到 msg 接口"
+else HAS_MSG=0; fi
+if find "$PKG_NAME/srv" -name '*.srv' 2>/dev/null | grep -q .; then
+    HAS_SRV=1; echo "  ✓ 检测到 srv 接口"
+else HAS_SRV=0; fi
+if find "$PKG_NAME/action" -name '*.action' 2>/dev/null | grep -q .; then
+    HAS_ACT=1; echo "  ✓ 检测到 action 接口"
+else HAS_ACT=0; fi
+HAS_INTERFACE=$((HAS_MSG + HAS_SRV + HAS_ACT))
+if [[ $HAS_INTERFACE -gt 0 ]]; then
+    echo "  → 将自动添加 rosidl_generate_interfaces"
+fi
+
 # ========== package.xml (Format 3) ==========
 cat > "$PKG_NAME/package.xml" <<EOF
 <?xml version="1.0"?>
@@ -50,6 +65,7 @@ cat > "$PKG_NAME/package.xml" <<EOF
 $(echo "$DEPS" | tr ',' '\n' | sed 's/^/  <depend>/' | sed 's/$/<\/depend>/')
   <depend>ament_lint_auto</depend>
   <depend>ament_lint_common</depend>
+$([[ $HAS_INTERFACE -gt 0 ]] && echo '  <depend>rosidl_default_generators</depend>\n  <exec_depend>rosidl_default_runtime</exec_depend>')
 
   <export>
     <build_type>ament_cmake</build_type>
@@ -85,8 +101,22 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
 $(echo "$DEPS" | tr ',' '\n' | grep -v 'rclcpp\|std_msgs' | sed 's/^/find_package(/' | sed 's/$/ REQUIRED)/')
+$([[ $HAS_INTERFACE -gt 0 ]] && echo 'find_package(rosidl_default_generators REQUIRED)\nfind_package(builtin_interfaces REQUIRED)' || true)
 
-# ========== 2. 构建库 ==========
+# ========== 2. rosidl 接口生成 ==========
+$([[ $HAS_INTERFACE -gt 0 ]] && cat <<'ROSIDLEOF'
+# ── 自定义接口 ─────────────────────────────
+# 请将下方占位符替换为实际文件名
+set(INTERFACE_FILES
+  msg/.msg    # 替换为实际 .msg 文件
+  srv/.srv    # 替换为实际 .srv 文件
+)
+rosidl_generate_interfaces(\${PROJECT_NAME}
+  ${INTERFACE_FILES}
+)
+ROSIDLEOF
+)
+# ========== 3. 构建库 ==========
 add_library(\${PROJECT_NAME} SHARED
   src/${PKG_NAME}_node.cpp
 )
@@ -103,7 +133,7 @@ install(TARGETS \${PROJECT_NAME}
   RUNTIME DESTINATION lib
 )
 
-install(DIRECTORY launch config
+install(DIRECTORY launch config msg srv action
   DESTINATION share/\${PROJECT_NAME}/
 )
 
