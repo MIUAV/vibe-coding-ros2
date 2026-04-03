@@ -162,7 +162,7 @@ sudo apt install -y ros-humble-gazebo-ros-pkgs ros-humble-turtlebot3-*
 
 | 梯队 | 模型 | 适用场景 |
 |------|------|----------|
-| **第一梯队** | Claude 3.7 Sonnet / GPT-4o / o3 / Gemini 2.0 Ultra / Kimi K2.5 / Qwen 3.5 / Minimax-M2.7 | 机器人架构设计、运动控制算法、导航规划、感知融合、多模态交互、仿真调试 |
+| **第一梯队** | Claude 4.6 / GPT-5.2 / o3 / Gemini 2.0 Ultra / Kimi K2.5 / Qwen 3.5 / Minimax-M2.7 | 机器人架构设计、运动控制算法、导航规划、感知融合、多模态交互、仿真调试 |
 | **第二梯队** | Codex 5.5-max / Grok-3 / Qwen 3.5 / Doubao-Pro / Seed-Code 2.0 / DeepSeek V3.2 / Llama 4 | 节点代码生成、传感器驱动、控制器实现、SLAM算法、ROS2集成、边缘部署 |
 | **第三梯队** | Mistral Large / Gemini 2.0 Flash / Hunyuan-T1 / Ernie-4.5 / Qwen 3 MoE / DeepSeek-Coder-V3 / SWE-1-Max / Tongyi-Qwen-VL / Yi-VL | 视觉里程计、目标检测、图像分割、模型量化加速、代码补全、Bug修复 |
 
