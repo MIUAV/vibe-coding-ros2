@@ -4,10 +4,10 @@
 
 <p align="left">
     <img src="https://visitor-badge.laobi.icu/badge?page_id=MIUAV.vibe-coding-ros2" alt="Visitor Badge" />
-    <img src="https://img.shields.io/badge/stars-private-lightgrey?style=flat-square" alt="GitHub stars" />
-    <img src="https://img.shields.io/badge/forks-private-lightgrey?style=flat-square" alt="GitHub forks" />
-    <img src="https://img.shields.io/badge/issues-private-lightgrey?style=flat-square" alt="GitHub issues" />
-    <img src="https://img.shields.io/badge/last%20commit-v0.0.1--alpha-blue?style=flat-square" alt="Last commit" />
+    <img src="https://img.shields.io/badge/version-v0.0.1--beta-blue?style=flat-square" alt="Version" />
+    <img src="https://img.shields.io/badge/ROS2-Humble%20%7C%20Iron%20%7C%20Jazzy-green?style=flat-square" alt="ROS2 Distros" />
+    <img src="https://img.shields.io/badge/C%2B%2B-17%2B-blue?style=flat-square" alt="C++ Standard" />
+    <img src="https://img.shields.io/badge/workflows-5%20CI%20jobs-blue?style=flat-square" alt="CI Status" />
 </p>
 
 ## 📊 仓库活跃度
@@ -86,6 +86,28 @@ VibeCoding 的核心是一个能**自我优化**的 AI 系统：
 - **代码一多就切会话** — 保持上下文清晰
 - **逆向思考** — 从需求逆向构建代码
 
+### 可执行工具（v0.0.1-beta 新增）
+
+本项目不仅有文档，还有**可直接运行**的脚本：
+
+| 工具 | 路径 | 说明 |
+|------|------|------|
+| `ros2-package-generator.sh` | `scripts/generators/` | 一键生成标准 ROS2 包（CMakeLists.txt + package.xml + launch 骨架） |
+| `ros2-node-validator.sh` | `scripts/validators/` | 检查 C++ 代码的智能指针/QoS/Executor 规范 |
+| `check_ros2_package.sh` | `scripts/` | 通用包结构验证（depend/ament/install） |
+| `ros2-build.yml` | `.github/workflows/` | CI 自动化：5 个 job 验证文档、脚本、Python、Shell、AGENTS |
+
+```bash
+# 示例：生成一个 ROS2 包
+bash scripts/generators/ros2-package-generator.sh my_control cpp rclcpp,std_msgs,geometry_msgs
+
+# 示例：验证节点代码
+bash scripts/validators/ros2-node-validator.sh src/my_control_node.cpp
+
+# 示例：检查包结构
+bash scripts/check_ros2_package.sh my_control
+```
+
 ### 嵌入式平台 Debug（容器/仿真 → 实机部署）
 
 | 阶段 | 环境 | Debug 手段 |
@@ -134,11 +156,11 @@ sudo apt install -y ros-humble-gazebo-ros-pkgs ros-humble-turtlebot3-*
 
 | 梯队 | 模型 | 适用场景 |
 |------|------|----------|
-| **第一梯队** | Claude 4.7 Opus / GPT-5.4 Pro / Gemini 3.1 Ultra / Kimi K3 / GLM-5 | 机器人架构设计、运动控制算法、导航规划、感知融合、多模态交互、仿真调试 |
+| **第一梯队** | Claude 3.7 Sonnet / GPT-4o / o3 / Gemini 2.0 Ultra / Kimi K2.5 / Qwen 3.5 / Minimax-M2.7 | 机器人架构设计、运动控制算法、导航规划、感知融合、多模态交互、仿真调试 |
 | **第二梯队** | Codex 5.5-max / Grok-3 / Qwen 3.5 / Doubao-Pro / Seed-Code 2.0 / DeepSeek V3.2 / Llama 4 | 节点代码生成、传感器驱动、控制器实现、SLAM算法、ROS2集成、边缘部署 |
-| **第三梯队** | Mistral Large 3 / Gemini 3.1 Flash / Minimax-M2.7 / Hunyuan-T1 / Ernie-4.5 / Qwen 3 MoE / DeepSeek-Coder-V3 / SWE-1-Max / Tongyi-Qwen-VL / Yi-VL | 视觉里程计、目标检测、图像分割、模型量化加速、代码补全、Bug修复 |
+| **第三梯队** | Mistral Large / Gemini 2.0 Flash / Hunyuan-T1 / Ernie-4.5 / Qwen 3 MoE / DeepSeek-Coder-V3 / SWE-1-Max / Tongyi-Qwen-VL / Yi-VL | 视觉里程计、目标检测、图像分割、模型量化加速、代码补全、Bug修复 |
 
-> **2026年4月要点**: GPT-5 / Claude 4.7 Opus / Gemini 3 Ultra 引领多模态融合，Kimi K3 / GLM-5 / Qwen 3 在机器人开发场景达到国际第一梯队水平
+> **2026年4月要点**: GPT-4o / o3 / Claude 3.7 Sonnet / Gemini 2.0 Ultra 引领多模态融合，Kimi K2.5 / Qwen 3.5 / Minimax-M2.7 在机器人开发场景达到国际第一梯队水平
 
 ---
 
