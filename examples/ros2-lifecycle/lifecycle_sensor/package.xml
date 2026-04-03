@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!--
+  示例3: ROS2 Lifecycle 节点
+  功能: 传感器管理（可优雅启停）
+  对应规范: ANTI_PATTERNS.md Lifecycle 状态机规则
+-->
+<package format="3">
+  <name>lifecycle_sensor</name>
+  <version>0.1.0</version>
+  <description>ROS2 Lifecycle 传感器管理节点示例</description>
+  <maintainer email="dev@miuav.com">MIUAV Dev</maintainer>
+  <license>Apache-2.0</license>
+
+  <depend>rclcpp</depend>
+  <depend>rclcpp_lifecycle</depend>
+  <depend>std_msgs</depend>
+  <depend>lifecycle_msgs</depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>
