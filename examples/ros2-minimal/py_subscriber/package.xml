@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!--
+  示例2: Python 订阅者节点
+  功能: 订阅 /chatter 话题并打印消息
+  对应规范: ANTI_PATTERNS.md Python rclpy 规则
+-->
+<package format="3">
+  <name>py_subscriber</name>
+  <version>0.1.0</version>
+  <description>ROS2 Python 订阅者示例节点</description>
+  <maintainer email="dev@miuav.com">MIUAV Dev</maintainer>
+  <license>Apache-2.0</license>
+
+  <depend>rclpy</depend>
+  <depend>std_msgs</depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>
