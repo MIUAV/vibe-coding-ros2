@@ -187,3 +187,312 @@ grep -c "LaunchDescription" my.launch.py
 ---
 
 *ANTI_PATTERNS.md — 每次生成代码前必读*
+
+---
+
+# C++ & ROS2 并发安全规范（v0.0.1-beta 新增）
+
+> 这些是 AI 在 ROS2 C++ 开发中最容易破坏的地方，用 `✅ 正确` / `🚫 禁止` 标记。
+
+---
+
+## 1. 智能指针（必须）
+
+```
+✅ C++98 禁止 new/delete，ROS2 C++ 必须用：
+  - std::make_shared<T>()  创建 SharedPtr
+  - std::make_unique<T>()  创建 UniquePtr
+  - 注意：ROS2 Node 本身用 SharedPtr，无需 unique_ptr
+
+🚫 禁止裸指针
+   Node::SharedPtr node = new Node();  // 泄漏
+   ✅ Node::SharedPtr node = std::make_shared<Node>();  // 正确
+
+🚫 禁止类成员裸指针持有回调
+   // 错误：成员 holding 裸指针
+   MyClass {
+     rclcpp::Subscription::SharedPtr sub_;  // 如果持有裸指针错误
+   };
+   ✅ 始终保持 SharedPtr: subscription_
+```
+
+### 回调中的 this 捕获
+
+```
+✅ Lambda 正确写法（捕获 this 的 SharedPtr）
+auto sub = create_subscription<std_msgs::msg::String>(
+    "/topic", 10,
+    [this](const std_msgs::msg::String::SharedPtr msg) {  // ← SharedPtr
+        RCLCPP_INFO(get_logger(), "Got: %s", msg->data.c_str());
+        // this 在回调中安全，因为 SharedPtr 活着
+    }
+);
+
+🚫 禁止裸指针捕获
+auto sub = create_subscription<std_msgs::msg::String>(
+    "/topic", 10,
+    [this](const std_msgs::msg::String::SharedPtr msg) {
+        // 禁止在 lambda 中 delete this
+    }
+);
+
+⚠️ 危险：SharedPtr 循环引用
+  class A { std::shared_ptr<B> b_; };   // A owns B
+  class B { std::shared_ptr<A> a_; };   // B owns A → 循环引用 → 内存泄漏！
+  ✅ 用 std::weak_ptr<B> 打破循环
+```
+
+---
+
+## 2. QoS 配置（必须）
+
+### QoS 原则
+
+```
+ROS2 QoS 不是"调优参数"，是通信契约！
+
+可靠性 (Reliability):
+  - BEST_EFFORT:   UDP 风格，可能丢包（用于传感器原始流）
+  - RELIABLE:     TCP 风格，必达（用于控制命令）
+
+历史 (History):
+  - KEEP_LAST(n): 保留最近 n 条
+  - KEEP_ALL:     保留所有（慎用，内存爆炸）
+
+深度 (Depth): 队列长度，必须配合 History 使用
+
+持久性 (Durability):
+  - VOLATILE:        不保留，迟到者丢失
+  - TRANSIENT_LOCAL:  发布者保留，迟到订阅者收到最新一条
+```
+
+### 常见 QoS 场景
+
+```cpp
+// ── 场景1: 传感器（激光雷达、深度相机）─────────────
+// 传感器数据流：可能丢包，保留最新，队列=5
+rclcpp::QoS qos_sensor(5);
+qos_sensor.best_effort();  // 不重传，不阻塞
+
+// ── 场景2: 控制命令（/cmd_vel）─────────────────
+// 控制命令：必须到达，不丢包，队列=1（最新）
+rclcpp::QoS qos_cmd(1);
+qos_cmd.reliable();       // TCP 重传
+
+// ── 场景3: 参数同步、服务调用 ─────────────────
+// 服务：可靠，队列=1
+rclcpp::QoS qos_svc(1);
+qos_svc.reliable();
+
+// ── 场景4: 生命周期节点的状态发布 ───────────────
+// 状态发布：发布者离线时新订阅者需要状态
+rclcpp::QoS qos_state(10);
+qos_state.reliable().transient_local();
+```
+
+### QoS 不匹配最常见错误
+
+```
+🚫 典型错误：传感器发布用默认 QoS（RELIABLE），订阅者用 BEST_EFFORT
+   → 订阅者收不到数据，双方都不报错（静默失败）
+   → 解决：明确声明 QoS 策略
+
+✅ QoS 匹配检测命令：
+  ros2 topic info /topic_name
+  # 看 Reliability/History/Durability 是否匹配
+```
+
+---
+
+## 3. Executor 并发模式（必须选一）
+
+```
+ROS2 有 4 种 Executor，只能选一种：
+
+1. SingleThreadedExecutor  ← 最安全，适合大多数节点
+   rclcpp::spin(node);
+
+2. MultiThreadedExecutor  ← 多线程，必须考虑线程安全
+   rclcpp::executors::MultiThreadedExecutor executor;
+   executor.add_node(node);
+   executor.spin();
+
+3. StaticSingleThreadedExecutor  ← 订阅预注册，不支持动态增删
+   // 用于性能极致优化场景
+
+4. StaticExecutiveGroup  ← 实验性
+
+⚠️ 危险混用：
+  rclcpp::spin(node);           // ← SingleThreaded
+  executor.add_node(node2);      // ← 但又加了 MultiThreaded
+  // → 行为未定义
+```
+
+### 线程安全规则
+
+```
+🚫 禁止在回调中调用 rclcpp::shutdown()
+🚫 禁止在回调中长时间阻塞
+🚫 禁止两个回调同时写同一个变量（无锁保护）
+🚫 禁止在回调中创建新的 Publisher（死锁风险）
+
+✅ 用 Mutex 保护共享数据：
+  std::mutex data_mutex_;
+  std::atomic<bool> flag_{false};       // 原子类型
+  std::lock_guard<std::mutex> lock(data_mutex_);  // 局部锁
+
+✅ 用多线程 Executor 时，高频回调用互斥量：
+  auto sub = create_subscription<std_msgs::msg::String>(
+      "/topic", 10,
+      [this](const String::SharedPtr msg) {
+          std::lock_guard<std::mutex> lock(mutex_);
+          latest_msg_ = msg;  // 线程安全写
+      }
+  );
+```
+
+---
+
+## 4. 生命周期节点（Lifecycle Node）
+
+```
+🚫 普通节点没有状态机，无法优雅启停
+🚫 控制类节点（arm_controller）必须用 LifecycleNode
+
+Lifecycle 状态机：
+  UNCONFIGURED → INACTIVE → ACTIVE → UNCONFIGURED
+       ↑_________________________________|
+
+✅ 生命周期节点代码骨架：
+
+#include <rclcpp_lifecycle/lifecycle_node.hpp>
+
+class MyLifecycleNode : public rclcpp_lifecycle::LifecycleNode
+{
+public:
+  using Base = rclcpp_lifecycle::LifecycleNode;
+
+  MyLifecycleNode()
+  : Base("my_lifecycle_node")
+  {
+    RCLCPP_INFO(get_logger(), "Constructed");
+  }
+
+  // ── 状态回调（必须实现）─────────────────
+  rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
+  on_configure(const rclcpp_lifecycle::State &)
+  {
+    // 1. 读取参数
+    // 2. 创建发布者/订阅者（但不 activate）
+    // 3. 返回 SUCCESS / FAILURE / ERROR
+    RCLCPP_INFO(get_logger(), "Configuring...");
+    pub_ = create_publisher<std_msgs::msg::String>("/output", 10);
+    return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
+  }
+
+  rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
+  on_activate(const rclcpp_lifecycle::State &)
+  {
+    // 启动定时器、激活发布者
+    RCLCPP_INFO(get_logger(), "Activating...");
+    return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
+  }
+
+  rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
+  on_deactivate(const rclcpp_lifecycle::State &)
+  {
+    // 停止发布、暂停定时器
+    return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
+  }
+
+  rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
+  on_cleanup(const rclcpp_lifecycle::State &)
+  {
+    // 清理资源
+    pub_.reset();  // ← 显式 reset SharedPtr
+    return SUCCESS;
+  }
+
+private:
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr pub_;
+};
+```
+
+---
+
+## 5. WaitSet 与 Guard Condition（手写异步）
+
+```
+🚫 不要在高性能场景用 busy-wait 或 sleep 轮询
+✅ 用 WaitSet 等待多个条件
+
+rclcpp::WaitSet wait_set{};
+wait_set.add_subscription(sub1_);
+wait_set.add_subscription(sub2_);
+wait_set.add_timer(timer_);
+
+auto [subscriptions, timers, ..] = wait_set.wait(1s);  // 阻塞等待
+
+for (auto & sub : subscriptions) {
+    auto msg = sub->take_message();
+    if (msg) process(msg);
+}
+```
+
+---
+
+## 6. Timer 与 回调周期
+
+```
+🚫 不要在 Timer 回调中做耗时操作
+  → 阻塞主循环，其他回调堆积
+
+✅ 耗时操作必须：
+  1. 扔到线程池：rclcpp::CallbackGroup
+  2. 或用 async_compose 执行器
+
+rclcpp::CallbackGroup::SharedPtr bg = create_callback_group(
+    rclcpp::CallbackGroupType::MutuallyExclusive);
+
+auto timer = create_wall_timer(
+    100ms,
+    [this]() { /* 轻量任务 */ },
+    bg
+);
+```
+
+---
+
+## 7. 跨节点通信死锁检测
+
+```
+⚠️ 两个节点互相等待对方响应，容易死锁
+
+NodeA:                    NodeB:
+  subscribe /b   →           subscribe /a
+  client.call(b)  →           client.call(a)
+
+✅ 解决：设置超时
+  auto future = client->async_send_request(request);
+  if (future.wait_for(5s) != std::future_status::ready) {
+      RCLCPP_WARN("Service call timeout");
+  }
+```
+
+---
+
+## 快速自检清单（v0.0.1-beta）
+
+```
+□ 所有 new/delete 替换为 make_shared / make_unique
+□ 回调捕获 SharedPtr 而非裸指针
+□ QoS 策略明确声明（sensor=best_effort, cmd=reliable）
+□ 多线程 Executor 使用 Mutex 保护共享变量
+□ 生命周期节点正确实现 on_configure/activate/deactivate/cleanup
+□ Timer 回调不超过 1ms 耗时
+□ 服务调用有超时保护
+□ SharedPtr 循环引用用 weak_ptr 打破
+□ launch 文件包含 LaunchDescription()
+□ 每次提醒 source install/setup.bash
+```
+

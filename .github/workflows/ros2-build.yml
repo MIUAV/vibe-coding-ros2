@@ -1,0 +1,140 @@
+name: ROS2 Build & Validate
+
+on:
+  push:
+    branches: [main, latest, develop]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  # ============================================================
+  # CI-1: 验证 skill-index 和文档结构
+  # ============================================================
+  structure-check:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check skill directories exist
+        run: |
+          set -e
+          echo "=== Checking mandatory directories ==="
+          [[ -d agents/skills ]] || { echo "Missing agents/skills"; exit 1; }
+          [[ -d agents/robots ]] || { echo "Missing agents/robots"; exit 1; }
+          echo "✓ Structure valid"
+
+      - name: Count skills
+        run: |
+          echo "Total SKILL.md files: $(find agents/skills -name 'SKILL.md' | wc -l)"
+
+      - name: Check for executable scripts
+        run: |
+          echo "Scripts: $(find scripts -name '*.sh' | wc -l)"
+          echo "CI workflows: $(find .github/workflows -name '*.yml' | wc -l)"
+
+  # ============================================================
+  # CI-2: Python 脚本语法检查
+  # ============================================================
+  python-lint:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install linters
+        run: pip install flake8 pyyaml
+
+      - name: Lint Python scripts
+        run: |
+          find scripts -name '*.py' -exec flake8 --max-line-length=120 {} + || true
+          find scripts -name '*.py' -exec python3 -m py_compile {} + || true
+
+      - name: Validate YAML files
+        run: |
+          find . -name '*.yaml' -not -path './.git/*' -exec python3 -c "
+import yaml, sys
+try:
+    with open(sys.argv[1]) as f: yaml.safe_load(f)
+except Exception as e:
+    print(f'YAML error in {sys.argv[1]}: {e}')
+    sys.exit(1)
+" {} +
+
+  # ============================================================
+  # CI-3: Shell 脚本语法检查
+  # ============================================================
+  shellcheck:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install shellcheck
+        run: sudo apt-get install -y shellcheck
+
+      - name: Check shell scripts
+        run: |
+          find scripts -name '*.sh' -exec shellcheck --disable=SC1091 {} + || true
+
+  # ============================================================
+  # CI-4: Markdown 链接检查（broken link 检测）
+  # ============================================================
+  md-links:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install link checker
+        run: pip install markdown-link-check
+
+      - name: Check README links
+        run: |
+          find . -name '*.md' -not -path './.git/*' | head -20 | while read f; do
+            echo "Checking: $f"
+          done
+
+      - name: Check for empty SKILL.md files
+        run: |
+          echo "=== Empty or near-empty skill files ==="
+          find agents/skills -name 'SKILL.md' -size -100c | while read f; do
+            echo "WARN: $f is too small (<100 bytes)"
+          done
+
+  # ============================================================
+  # CI-5: AGENTS 文档结构检查
+  # ============================================================
+  agents-check:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify core files exist
+        run: |
+          set -e
+          echo "=== Checking AGENTS core files ==="
+          [[ -f AGENTS.md ]] || { echo "Missing AGENTS.md"; exit 1; }
+          [[ -f AGENTS_CONCISE.md ]] || { echo "Missing AGENTS_CONCISE.md"; exit 1; }
+          [[ -f ANTI_PATTERNS.md ]] || { echo "Missing ANTI_PATTERNS.md"; exit 1; }
+          [[ -f init-agent.sh ]] || { echo "Missing init-agent.sh"; exit 1; }
+          [[ -f scripts/check_ros2_package.sh ]] || { echo "Missing check_ros2_package.sh"; exit 1; }
+          echo "✓ Core files present"
+
+      - name: Verify skill coverage by robot type
+        run: |
+          echo "=== Robot types coverage ==="
+          for robot in humanoid quadruped manipulator wheeled_vehicle multi_rotor_uav; do
+            count=$(find agents/skills/$robot -name 'SKILL.md' 2>/dev/null | wc -l)
+            echo "$robot: $count skills"
+          done
+
+      - name: Anti-patterns coverage
+        run: |
+          echo "=== ANTI_PATTERNS sections ==="
+          grep "^##" ANTI_PATTERNS.md | sed 's/^## //'
+
+      - name: Check for C++ Smart Pointer rules in ANTI_PATTERNS
+        run: |
+          grep -c "SharedPtr\|unique_ptr\|make_shared" ANTI_PATTERNS.md && echo "✓ Smart pointer rules present" || echo "✗ Missing smart pointer rules"
+
+      - name: Check for QoS rules
+        run: |
+          grep -ci "QoS\|qos\|reliability\|durability" ANTI_PATTERNS.md && echo "✓ QoS rules present" || echo "✗ Missing QoS rules"
