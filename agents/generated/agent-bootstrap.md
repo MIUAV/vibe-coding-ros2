@@ -13,6 +13,6 @@
 
 - 用户请求 → 确定机器人类型 → 确定功能域 → 加载 SKILL.md
 - 如 skill 重名，按 taxonomy 路径（agents/skills/{type}/{domain}/）唯一确定
-- 使用 AGENTS_CONCISE.md 作为极简参考
-- 使用 ANTI_PATTERNS.md 检查 C++/QoS/并发安全性
+- 使用 i18n/zh-CN/AGENTS_CONCISE.md 作为极简参考
+- 使用 i18n/zh-CN/ANTI_PATTERNS.md 检查 C++/QoS/并发安全性
 - 生成代码后用 scripts/validators/ros2-node-validator.sh 验证

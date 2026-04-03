@@ -18,7 +18,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Verify core files
         run: |
-          for f in agents/skills agents/robots scripts init-agent.sh AGENTS_CONCISE.md ANTI_PATTERNS.md; do
+          for f in agents/skills agents/robots scripts init-agent.sh README.md AGENTS.md i18n/zh-CN/AGENTS_CONCISE.md i18n/zh-CN/ANTI_PATTERNS.md; do
             [[ -d "$f" || -f "$f" ]] && echo "✓ $f" || { echo "✗ $f missing"; exit 1; }
           done
       - name: Skills count
@@ -34,10 +34,11 @@ jobs:
           done
       - name: Anti-Patterns coverage
         run: |
-          [[ -f ANTI_PATTERNS.md ]] || { echo "Missing ANTI_PATTERNS.md"; exit 1; }
-          grep -qi "SharedPtr\|make_shared" ANTI_PATTERNS.md && echo "✓ Smart pointer rules" || exit 1
-          grep -qi "QoS" ANTI_PATTERNS.md && echo "✓ QoS rules" || exit 1
-          grep -qi "Lifecycle" ANTI_PATTERNS.md && echo "✓ Lifecycle rules" || exit 1
+          AP="i18n/zh-CN/ANTI_PATTERNS.md"
+          [[ -f "$AP" ]] || { echo "Missing $AP"; exit 1; }
+          grep -qi "SharedPtr\|make_shared" "$AP" && echo "✓ Smart pointer rules" || exit 1
+          grep -qi "QoS" "$AP" && echo "✓ QoS rules" || exit 1
+          grep -qi "Lifecycle" "$AP" && echo "✓ Lifecycle rules" || exit 1
 
   cmake-check:
     name: CMakeLists.txt Correctness

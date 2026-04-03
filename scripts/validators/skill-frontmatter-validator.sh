@@ -37,8 +37,8 @@ check_frontmatter() {
   local dir; dir=$(dirname "$file")
   local skill_name; skill_name=$(basename "$dir")
 
-  # 读取 frontmatter（--- ... --- 之间的内容）
-  local fm; fm=$(sed -n '/^---$/,/^---$/p' "$file" | sed '1d;$d')
+  # 读取 frontmatter（第一个 --- ... --- 之间的内容，仅第一对）
+  local fm; fm=$(awk '/^---$/{c++; next} c==1{print} c==2{exit}' "$file")
 
   if [[ -z "$fm" ]]; then
     fail "$file: 缺少 Frontmatter（没有 --- 分隔符）"

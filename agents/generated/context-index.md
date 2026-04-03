@@ -38,8 +38,8 @@ vibe-coding-ros2/
 
 | 文件 | 用途 |
 |------|------|
-| AGENTS_CONCISE.md | 极简工作流指令卡 |
-| ANTI_PATTERNS.md | C++/QoS/并发安全规则 |
+| i18n/zh-CN/AGENTS_CONCISE.md | 极简工作流指令卡 |
+| i18n/zh-CN/ANTI_PATTERNS.md | C++/QoS/并发安全规则 |
 | init-agent.sh | 初始化脚本 |
 | scripts/generators/ros2-package-generator.sh | 一键生成 ROS2 包 |
 | scripts/validators/ros2-node-validator.sh | 代码安全验证 |

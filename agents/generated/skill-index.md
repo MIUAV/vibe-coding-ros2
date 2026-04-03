@@ -29,7 +29,7 @@
 
 ### common
 
-- **agent-skill-bootstrap**: 智能体技能导入引导技能 - 用于重建 skill-index
+- **agent-skill-bootstrap**: "智能体技能导入引导技能 - 用于重建 skill-inde
 - **arm64-cross-compile**: ARM64 交叉编译技能 - 配置 x86 到 ARM64 (Jetson Orin
 - **cmake-configuration**: CMakeLists.txt 和 package.xml 配置技能 - ROS2 CMake 复
 - **opencv**: OpenCV4 技能库 - 图像处理、特征检测、深度学�
@@ -90,10 +90,10 @@
 
 ### navigation
 
-- **map-building**: 地图构建技能集合 - 2D栅格地图、3D点云地图�
+- **map-building**: 地图构建技能 - SLAM实时建图、地图保存与加�
 - **nav2-integration**: 导航2 (Nav2) 集成技能 - Nav2 配置、行为树、路�
-- **obstacle-avoidance**: 动态避障技能集合 - 动态障碍物检测、成本图
-- **path-planning**: 路径规划技能集合 - 全局规划、局部规划、多
+- **obstacle-avoidance**: 动态避障技能 - DWA/Teb/ORCA算法、局部路径规划
+- **path-planning**: 全局路径规划技能 - A*/RRT*/Dijkstra/Hybrid A*、代�
 - **slam**: SLAM 算法技能 - LaserSLAM、VisualSLAM、RTAB-Map、Cart
 
 ### perception

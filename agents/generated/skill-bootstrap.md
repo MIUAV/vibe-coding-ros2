@@ -3,8 +3,8 @@
 ## 开发工作流
 
 ```
-1. 读 AGENTS_CONCISE.md
-2. 读 ANTI_PATTERNS.md（重点：C++ 指针/QoS/并发）
+1. 读 i18n/zh-CN/AGENTS_CONCISE.md
+2. 读 i18n/zh-CN/ANTI_PATTERNS.md（重点：C++ 指针/QoS/并发）
 3. 读 skill-index.md（找对应 SKILL.md）
 4. 读 SKILL.md（获取实现细节）
 5. 生成代码

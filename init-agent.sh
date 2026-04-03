@@ -4,7 +4,7 @@
 #
 # 功能：生成本地配置文件 + AI Agent 索引
 # 原则：
-#   1. 仓库根目录只放 agents/ i18n/ scripts/（用户 clone 后立即可开发）
+#   1. 根目录文档仅保留 README.md 和 AGENTS.md，其他文档统一放到 i18n/ 下
 #   2. .github/ .gitignore 等本地配置由本脚本生成，不进入版本控制
 #   3. 用户 clone → 运行 init-agent.sh → 立刻开始 ROS2 包开发 → 编译 → 提交
 #
@@ -150,7 +150,7 @@ jobs:
 
       - name: Verify core files
         run: |
-          for f in agents/skills agents/robots scripts init-agent.sh; do
+          for f in agents/skills agents/robots scripts init-agent.sh README.md AGENTS.md i18n/zh-CN/AGENTS_CONCISE.md i18n/zh-CN/ANTI_PATTERNS.md; do
             [[ -d "$f" || -f "$f" ]] && echo "✓ $f" || { echo "✗ $f missing"; exit 1; }
           done
 
@@ -169,11 +169,12 @@ jobs:
 
       - name: Anti-Patterns C++ coverage
         run: |
-          [[ -f ANTI_PATTERNS.md ]] || { echo "Missing ANTI_PATTERNS.md"; exit 1; }
-          grep -qi "SharedPtr\|make_shared" ANTI_PATTERNS.md && echo "✓ Smart pointer rules" || exit 1
-          grep -qi "QoS\|qos" ANTI_PATTERNS.md && echo "✓ QoS rules" || exit 1
-          grep -qi "Lifecycle" ANTI_PATTERNS.md && echo "✓ Lifecycle rules" || exit 1
-          grep -qi "MultiThreaded\|mutex\|atomic" ANTI_PATTERNS.md && echo "✓ Concurrency rules" || exit 1
+          AP="i18n/zh-CN/ANTI_PATTERNS.md"
+          [[ -f "$AP" ]] || { echo "Missing $AP"; exit 1; }
+          grep -qi "SharedPtr\|make_shared" "$AP" && echo "✓ Smart pointer rules" || exit 1
+          grep -qi "QoS\|qos" "$AP" && echo "✓ QoS rules" || exit 1
+          grep -qi "Lifecycle" "$AP" && echo "✓ Lifecycle rules" || exit 1
+          grep -qi "MultiThreaded\|mutex\|atomic" "$AP" && echo "✓ Concurrency rules" || exit 1
 
   # ── CI-2: CMakeLists.txt 正确性 ────────────────
   cmake-check:
@@ -498,8 +499,8 @@ vibe-coding-ros2/
 
 | 文件 | 用途 |
 |------|------|
-| AGENTS_CONCISE.md | 极简工作流指令卡 |
-| ANTI_PATTERNS.md | C++/QoS/并发安全规则 |
+| i18n/zh-CN/AGENTS_CONCISE.md | 极简工作流指令卡 |
+| i18n/zh-CN/ANTI_PATTERNS.md | C++/QoS/并发安全规则 |
 | init-agent.sh | 初始化脚本 |
 | scripts/generators/ros2-package-generator.sh | 一键生成 ROS2 包 |
 | scripts/validators/ros2-node-validator.sh | 代码安全验证 |
@@ -523,8 +524,8 @@ CTXEOF
 
 - 用户请求 → 确定机器人类型 → 确定功能域 → 加载 SKILL.md
 - 如 skill 重名，按 taxonomy 路径（agents/skills/{type}/{domain}/）唯一确定
-- 使用 AGENTS_CONCISE.md 作为极简参考
-- 使用 ANTI_PATTERNS.md 检查 C++/QoS/并发安全性
+- 使用 i18n/zh-CN/AGENTS_CONCISE.md 作为极简参考
+- 使用 i18n/zh-CN/ANTI_PATTERNS.md 检查 C++/QoS/并发安全性
 - 生成代码后用 scripts/validators/ros2-node-validator.sh 验证
 BOOTSTRAPEOF
   ok "agents/generated/agent-bootstrap.md"
@@ -536,8 +537,8 @@ BOOTSTRAPEOF
 ## 开发工作流
 
 ```
-1. 读 AGENTS_CONCISE.md
-2. 读 ANTI_PATTERNS.md（重点：C++ 指针/QoS/并发）
+1. 读 i18n/zh-CN/AGENTS_CONCISE.md
+2. 读 i18n/zh-CN/ANTI_PATTERNS.md（重点：C++ 指针/QoS/并发）
 3. 读 skill-index.md（找对应 SKILL.md）
 4. 读 SKILL.md（获取实现细节）
 5. 生成代码

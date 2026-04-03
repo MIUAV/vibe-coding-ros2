@@ -7,9 +7,9 @@ ROOT="/home/node/.openclaw/workspace/vibe-coding-ros2"
 DEST="$ROOT/i18n/zh-CN"
 SRC="$ROOT"
 
-echo "Moving root .md files to $DEST ..."
+echo "Syncing non-root docs to $DEST ..."
 
-for f in README.md AGENTS.md AGENTS_CONCISE.md ANTI_PATTERNS.md QUICKSTART.md DEPLOYMENT.md CONTRIBUTING.md; do
+for f in AGENTS_CONCISE.md ANTI_PATTERNS.md QUICKSTART.md DEPLOYMENT.md CONTRIBUTING.md; do
     if [[ -f "$ROOT/$f" ]]; then
         cp "$ROOT/$f" "$DEST/$f"
         echo "  ✓ $f → $DEST/$f"
@@ -19,4 +19,4 @@ for f in README.md AGENTS.md AGENTS_CONCISE.md ANTI_PATTERNS.md QUICKSTART.md DE
 done
 
 echo ""
-echo "Done. Run: git add i18n/zh-CN/ && git commit -m 'chore: move root docs to i18n/zh-CN'"
+echo "Done. Root keeps README.md + AGENTS.md only."

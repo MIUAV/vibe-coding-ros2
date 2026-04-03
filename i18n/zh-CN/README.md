@@ -245,18 +245,17 @@ vibe-coding-ros2/
 ### Step 0: 一键初始化 AI 规则与技能导入
 
 ```bash
-./init-agent.sh --target all
+./init-agent.sh --all
 ```
 
 说明:
-- `--target all`: 同时生成 VS Code Copilot 与 Cursor 配置
-- `--target copilot`: 仅生成 Copilot 配置
-- `--target cursor`: 仅生成 Cursor 配置
+- `--all`: 生成 AI 索引 + 本地配置（默认）
+- `--agent`: 仅生成 AI 索引
+- `--local`: 仅生成本地配置（.gitignore/.github/.vscode）
 
 脚本会自动生成:
-- Copilot 指令文件: `.github/copilot-instructions.md`
-- Cursor 规则文件: `.cursor/rules/vibe-coding-ros2.mdc`
-- MCP 配置模板: `.vscode/mcp.json` 与 `.cursor/mcp.json`
+- CI 配置: `.github/workflows/ros2-build.yml`
+- MCP 配置模板: `.vscode/mcp.json`
 - 全量技能索引: `agents/generated/skill-index.md`
 - 项目准则索引: `agents/generated/context-index.md`
 
@@ -304,14 +303,12 @@ mkdir -p memory-bank
 
 | 分类 | 文档 | 内容 |
 |------|------|------|
-| 入门 | [开发经验](./documents/Methodology_and_Principles/development-experience.md) | ROS2 开发坑点与经验 |
-| 方法论 | [架构原则](./documents/Methodology_and_Principles/ros2-architecture-principles.md) | 节点设计、通信模式 |
-| 模板 | [项目模板](./documents/Templates_and_Resources/ros2-project-template.md) | 标准项目结构 |
-| 模板 | [Memory Bank](./documents/Templates_and_Resources/memory-bank-template.md) | 上下文文档模板 |
-| 指南 | [调试指南](./documents/Tutorials_and_Guides/ros2-debug-guide.md) | rqt, bag, launch 调试 |
-| 指南 | [Docker 配置](./documents/Tutorials_and_Guides/docker-setup-guide.md) | 容器开发环境 |
-| 指南 | [交叉编译](./documents/Tutorials_and_Guides/cross-compile-guide.md) | ARM64 编译 |
-| 指南 | [Agent 导入指南](./i18n/zh-CN/AGENT_IMPORT_GUIDE.md) | AI 工具加载技能与提示 |
+| 规则 | [极简工作流](./AGENTS_CONCISE.md) | Agent 执行顺序与检查清单 |
+| 规则 | [Anti-Patterns](./ANTI_PATTERNS.md) | C++/QoS/并发安全规范 |
+| 入门 | [快速开始](./QUICKSTART.md) | 5 分钟启动项目 |
+| 指南 | [部署指南](./DEPLOYMENT.md) | ARM/边缘设备部署 |
+| 贡献 | [贡献指南](./CONTRIBUTING.md) | 提交流程与质量门控 |
+| 指南 | [Agent 导入指南](./AGENT_IMPORT_GUIDE.md) | AI 工具加载技能与提示 |
 
 ---
 

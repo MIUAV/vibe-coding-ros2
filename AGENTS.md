@@ -3,8 +3,8 @@
 ## 执行顺序（强制）
 
 ```
-1. 读 AGENTS_CONCISE.md  ← 必须先读
-2. 读 ANTI_PATTERNS.md   ← 必须二读
+1. 读 i18n/zh-CN/AGENTS_CONCISE.md  ← 必须先读
+2. 读 i18n/zh-CN/ANTI_PATTERNS.md   ← 必须二读
 3. 读 skill-index.md     ← 找对应 SKILL.md
 4. 读对应 SKILL.md       ← 获取实现细节
 5. 写代码
@@ -41,7 +41,7 @@ pkg_name/
 └── config/              # YAML 参数
 ```
 
-### 禁止事项（详见 ANTI_PATTERNS.md）
+### 禁止事项（详见 i18n/zh-CN/ANTI_PATTERNS.md）
 
 - CMakeLists.txt 遗漏 find_package
 - package.xml 遗漏 <depend>
@@ -83,7 +83,7 @@ pkg_name/
 ```
 FP  = Frontmatter (SKILL.md 头部 YAML)
 KB  = Knowledge Base (SKILL.md)
-AP  = Anti-Patterns (ANTI_PATTERNS.md)
+AP  = Anti-Patterns (i18n/zh-CN/ANTI_PATTERNS.md)
 MEM = ROS2_MEMORY.md
 ```
 
@@ -119,4 +119,4 @@ ros2 pkg executables pkg_name
 
 ---
 
-*完整指南见 AGENTS_CONCISE.md（精简版）和各 SKILL.md*
+*完整指南见 i18n/zh-CN/AGENTS_CONCISE.md（精简版）和各 SKILL.md*

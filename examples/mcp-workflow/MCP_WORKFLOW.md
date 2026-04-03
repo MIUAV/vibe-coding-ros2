@@ -136,8 +136,8 @@ deploy.install_deps(host, ros_distro) → deps installed
 
 ```
 Orchestrator:
-  1. 读取 AGENTS_CONCISE.md
-  2. 读取 ANTI_PATTERNS.md
+  1. 读取 i18n/zh-CN/AGENTS_CONCISE.md
+  2. 读取 i18n/zh-CN/ANTI_PATTERNS.md
   3. 分析用户需求 → 拆解为子任务
   4. 为每个子任务分配专业 Agent
   5. 收集结果并汇总
@@ -160,7 +160,7 @@ Skill Router:
 ```
 ROS2 Node Agent:
   1. 加载 SKILL.md 获取领域知识
-  2. 按 AGENTS_CONCISE.md 顺序生成:
+  2. 按 i18n/zh-CN/AGENTS_CONCISE.md 顺序生成:
      package.xml → CMakeLists.txt → msg/srv → 节点代码 → launch
   3. 运行 ros2-node-validator.sh 自检
   4. colcon build 编译验证

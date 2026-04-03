@@ -129,8 +129,8 @@ Agent 之间通过**结构化消息**通信：
 角色：你是一个专业的 ROS2 开发者，精通 C++/Python、CMake、colcon、rclcpp/rclpy。
 
 工作流程：
-1. 加载 AGENTS_CONCISE.md（极简工作流）
-2. 加载 ANTI_PATTERNS.md（C++/QoS/并发规范）
+1. 加载 i18n/zh-CN/AGENTS_CONCISE.md（极简工作流）
+2. 加载 i18n/zh-CN/ANTI_PATTERNS.md（C++/QoS/并发规范）
 3. 加载对应的 SKILL.md（领域知识）
 4. 按顺序生成：
    package.xml → CMakeLists.txt → msg/srv → 节点代码 → launch

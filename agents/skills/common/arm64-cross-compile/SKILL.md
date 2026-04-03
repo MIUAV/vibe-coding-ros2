@@ -1,6 +1,8 @@
 ---
 name: arm64-cross-compile
 description: ARM64 交叉编译技能 - 配置 x86 到 ARM64 (Jetson OrinNX/RDK-X5) 的交叉编译环境
+argument-hint: 交叉编译 OR ARM64 OR Jetson OR RDK-X5 OR Raspberry Pi
+user-invocable: true
 ---
 
 # ARM64 Cross Compile Skill

@@ -171,8 +171,8 @@ run_go2_scurve() {
     "$PROJECT_ROOT/agents/skills/quadruped/motion-control/SKILL.md"
     "$PROJECT_ROOT/agents/skills/quadruped/sdf-xacro-model/SKILL.md"
     "$PROJECT_ROOT/agents/skills/simulator/gazebo-harmonic/gazebo-simulation-env/SKILL.md"
-    "$PROJECT_ROOT/AGENTS_CONCISE.md"
-    "$PROJECT_ROOT/ANTI_PATTERNS.md"
+    "$PROJECT_ROOT/i18n/zh-CN/AGENTS_CONCISE.md"
+    "$PROJECT_ROOT/i18n/zh-CN/ANTI_PATTERNS.md"
   )
 
   log "加载 Skills:"
@@ -202,8 +202,8 @@ run_go2_scurve() {
 3. simulator/gazebo-harmonic/gazebo-simulation-env — Gazebo 世界配置
 
 ## 工作流程（必须执行）
-1. 读取 AGENTS_CONCISE.md（极简工作流）
-2. 读取 ANTI_PATTERNS.md（C++/QoS/并发规范）
+1. 读取 i18n/zh-CN/AGENTS_CONCISE.md（极简工作流）
+2. 读取 i18n/zh-CN/ANTI_PATTERNS.md（C++/QoS/并发规范）
 3. 读取 quadruped/motion-control SKILL.md
 4. 生成 ROS2 功能包（使用 ros2-package-generator.sh）
 5. 实现 S 曲线控制器（参考 examples/mcp-workflow/cases/go2-scurve/README.md）
@@ -255,8 +255,8 @@ run_manipulator_pickplace() {
 5. manipulator/skill-planning — MoveIt2 配置
 
 ## 工作流程
-1. 读取 AGENTS_CONCISE.md
-2. 读取 ANTI_PATTERNS.md
+1. 读取 i18n/zh-CN/AGENTS_CONCISE.md
+2. 读取 i18n/zh-CN/ANTI_PATTERNS.md
 3. 读取 manipulator/motion-control/grasp-planning SKILL.md
 4. 生成 ROS2 包（使用 ros2-package-generator.sh）
 5. 实现点云处理节点
@@ -316,8 +316,8 @@ $robot
 
 ## 工作流程
 1. 分析任务 → 确定需要的 Skills
-2. 读取 AGENTS_CONCISE.md
-3. 读取 ANTI_PATTERNS.md
+2. 读取 i18n/zh-CN/AGENTS_CONCISE.md
+3. 读取 i18n/zh-CN/ANTI_PATTERNS.md
 4. 搜索相关 SKILL.md（agents/skills/$robot/*/SKILL.md）
 5. 生成 ROS2 功能包
 6. 实现代码
@@ -326,7 +326,7 @@ $robot
 
 ## 约束
 - 使用 ros2-package-generator.sh 生成包结构
-- 遵循 AGENTS_CONCISE.md 的文件生成顺序
+- 遵循 i18n/zh-CN/AGENTS_CONCISE.md 的文件生成顺序
 - C++ 节点: SharedPtr, rclcpp::init/shutdown
 - launch 文件: LaunchDescription 结构
 - 代码编译通过
@@ -385,8 +385,8 @@ launch_claude() {
     --system "$(cat <<'SYSTEM'
 你是一个专业的 ROS2 机器人开发工程师。
 你必须：
-1. 遵循 AGENTS_CONCISE.md 的执行顺序
-2. 遵循 ANTI_PATTERNS.md 的 C++/QoS/并发规范
+1. 遵循 i18n/zh-CN/AGENTS_CONCISE.md 的执行顺序
+2. 遵循 i18n/zh-CN/ANTI_PATTERNS.md 的 C++/QoS/并发规范
 3. 使用 ros2-package-generator.sh 生成包结构
 4. 所有 C++ 节点使用 SharedPtr
 5. 所有 launch 文件使用 LaunchDescription 结构
