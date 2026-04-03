@@ -12,15 +12,17 @@ robots/
 ├── common/                      # 共性特性
 │   └── ros2_robot_common.md     # 所有ROS2机器人的共性原则
 ├── humanoid/                    # 人形机器人
-│   └── humanoid_guide.md         # 人形机器人专有指南
-├── quadruped/                   # 四足机器人
+│   └── humanoid_guide.md        # 人形机器人专有指南
+├── quadruped/                  # 四足机器人
 │   └── quadruped_guide.md       # 四足机器人专有指南
 ├── manipulator/                 # 机械臂
 │   └── manipulator_guide.md      # 机械臂专有指南
 ├── wheeled_vehicle/             # 轮式底盘
-│   └── wheeled_vehicle_guide.md # 轮式底盘专有指南
-└── multi_rotor_uav/             # 多旋翼无人机
-    └── uav_guide.md             # 无人机专有指南
+│   └── wheeled_vehicle_guide.md  # 轮式底盘专有指南
+├── multi_rotor_uav/            # 多旋翼无人机
+│   └── uav_guide.md             # 无人机专有指南
+└── underwater/                  # 水下机器人 (AUV/ROV)
+    └── underwater_guide.md       # 水下机器人专有指南
 ```
 
 ---
@@ -34,6 +36,7 @@ robots/
 | **机械臂** | 多自由度、精度操作 | 装配、搬运、医疗 | 运动规划、力控操作 |
 | **轮式底盘** | 轮式移动、负载能力 | 物流、清洁、巡检 | 自主导航、避障 |
 | **多旋翼无人机** | 空中飞行、机动灵活 | 航拍、巡检、农业 | 3D导航、飞行安全 |
+| **水下机器人** | 水下潜航、声学感知 | 水下探测、管道巡检、海底测绘 | 水声通信、深海导航 |
 
 ---
 
@@ -159,6 +162,20 @@ robots/
 
 ---
 
+### 水下机器人 (AUV/ROV)
+
+适用于:
+- 水下自主潜航器 (AUV)
+- 遥控水下机器人 (ROV)
+- 水下滑翔机
+- 水下管道巡检机器人
+
+**核心模块**: 水声通信、声呐感知、深海定位、AUV 控制
+
+📖 [阅读水下机器人指南](./underwater/underwater_guide.md)
+
+---
+
 ## 共性特性
 
 所有 ROS2 机器人的共性原则和技术栈：
@@ -225,4 +242,4 @@ robots/
 
 ---
 
-*最后更新: 2025*
+*最后更新: 2026-04-03*
