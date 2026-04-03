@@ -76,8 +76,8 @@
 - **biped-control**: 双足控制技能集合 - 行走模式生成、平衡控制
 - **collaborative-control**: 协作控制技能集合 - 多臂协调、人机协作
 - **force-control**: 力控制技能集合 - 阻抗控制、力-位置混合控�
-- **kinematics**: 运动学技能集合 - 正逆运动学、雅可比、冗余
-- **trajectory**: 轨迹规划技能集合 - 关节空间轨迹、笛卡尔空
+- **kinematics**: 运动学技能 - 正逆运动学、雅可比矩阵、轨迹
+- **trajectory**: 轨迹规划技能 - 关节空间规划、笛卡尔空间规
 
 ### multi_rotor_uav
 
@@ -94,7 +94,7 @@
 - **nav2-integration**: 导航2 (Nav2) 集成技能 - Nav2 配置、行为树、路�
 - **obstacle-avoidance**: 动态避障技能集合 - 动态障碍物检测、成本图
 - **path-planning**: 路径规划技能集合 - 全局规划、局部规划、多
-- **slam**: SLAM 技能集合 - 激光SLAM、视觉SLAM、激光视觉�
+- **slam**: SLAM 算法技能 - LaserSLAM、VisualSLAM、RTAB-Map、Cart
 
 ### perception
 
