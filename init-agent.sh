@@ -1,570 +1,601 @@
 #!/usr/bin/env bash
+# ============================================================
+# init-agent.sh — 初始化 vibe-coding-ros2 项目
+#
+# 功能：生成本地配置文件 + AI Agent 索引
+# 原则：
+#   1. 仓库根目录只放 agents/ i18n/ scripts/（用户 clone 后立即可开发）
+#   2. .github/ .gitignore 等本地配置由本脚本生成，不进入版本控制
+#   3. 用户 clone → 运行 init-agent.sh → 立刻开始 ROS2 包开发 → 编译 → 提交
+#
+# 用法:
+#   ./init-agent.sh              # 生成所有本地文件（默认）
+#   ./init-agent.sh --agent     # 仅生成 AI agent 索引
+#   ./init-agent.sh --local     # 仅生成本地配置文件
+#   ./init-agent.sh --all       # 生成全部（agent + local）
+#   ./init-agent.sh --help      # 显示帮助
+# ============================================================
+
 set -euo pipefail
 
 SCRIPT_NAME="$(basename "$0")"
 ROOT_DIR="$(cd "$(dirname "$0")" && pwd)"
-TARGET="all"
+MODE="all"  # all | agent | local
 
+# ── 颜色 ─────────────────────────────────────────
+RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'; BLUE='\033[0;34m'; NC='\033[0m'
+
+info()    { echo -e "${BLUE}[INFO]${NC}  $*"; }
+ok()      { echo -e "${GREEN}[OK]${NC}   $*"; }
+warn()    { echo -e "${YELLOW}[WARN]${NC}  $*"; }
+error()   { echo -e "${RED}[ERROR]${NC} $*" >&2; }
+
+# ── 帮助 ─────────────────────────────────────────
 usage() {
   cat <<'EOF'
-Initialize AI agent bootstrap files for this workspace.
+用法: ./init-agent.sh [选项]
 
-Usage:
-  ./init-agent.sh [--target all|copilot|cursor]
+初始化 vibe-coding-ros2 项目。
 
-Options:
-  --target  Generate files for specific toolchain.
-            all      Generate both Copilot and Cursor files (default)
-            copilot  Generate only VS Code Copilot related files
-            cursor   Generate only Cursor related files
-  -h, --help  Show this help message
+用户 clone 项目后，第一件事运行此脚本：
+  $ git clone https://github.com/MIUAV/vibe-coding-ros2.git
+  $ cd vibe-coding-ros2
+  $ ./init-agent.sh          # 生成所有文件
+  $ ./init-agent.sh --local # 仅生成本地配置（.gitignore, .github, .vscode）
+
+选项:
+  --agent   生成 AI Agent 索引文件（skill-index, routing 等）
+  --local   生成本地配置文件（.gitignore, .github workflows 等）
+  --all     生成全部（默认）
+  -h, --help  显示此帮助
+
+生成的文件:
+  本地配置（不在版本控制）:
+    .gitignore                         Git 忽略配置
+    .github/workflows/ros2-build.yml   GitHub Actions CI
+    .vscode/mcp.json                   VS Code MCP 配置
+    .vscode/settings.json              VS Code 工作区设置
+
+  AI Agent 索引（已提交到仓库）:
+    agents/generated/skill-index.md    技能总索引（270+ skills）
+    agents/generated/skill-routing.md  技能路由表
+    agents/generated/context-index.md   项目上下文索引
+    agents/generated/agent-bootstrap.md Agent 引导规则
+    agents/generated/skill-bootstrap.md 技能引导规则
 EOF
 }
 
+# ── 参数解析 ─────────────────────────────────────
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    --target)
-      if [[ $# -lt 2 ]]; then
-        echo "[ERROR] --target requires a value" >&2
-        exit 1
-      fi
-      TARGET="$2"
-      shift 2
-      ;;
-    -h|--help)
-      usage
-      exit 0
-      ;;
-    *)
-      echo "[ERROR] Unknown argument: $1" >&2
-      usage
-      exit 1
-      ;;
+    --agent)  MODE="agent";  shift ;;
+    --local)  MODE="local";  shift ;;
+    --all)    MODE="all";    shift ;;
+    -h|--help) usage; exit 0 ;;
+    *) error "未知参数: $1"; usage; exit 1 ;;
   esac
 done
 
-if [[ "$TARGET" != "all" && "$TARGET" != "copilot" && "$TARGET" != "cursor" ]]; then
-  echo "[ERROR] Invalid target: $TARGET (expected all|copilot|cursor)" >&2
-  exit 1
-fi
+# ═══════════════════════════════════════════════════
+# 本地配置生成（不提交到仓库）
+# ═══════════════════════════════════════════════════
+generate_local_files() {
+  info "生成本地配置文件..."
 
-if [[ ! -d "$ROOT_DIR/agents" ]]; then
-  echo "[ERROR] agents directory not found. Please run this script at repository root." >&2
-  exit 1
-fi
+  # ── 1. .gitignore ──────────────────────────────
+  cat > "$ROOT_DIR/.gitignore" <<'GITIGNORE'
+# ============================================================
+# vibe-coding-ros2 .gitignore
+# 自动生成 by init-agent.sh — 如需修改，编辑 init-agent.sh 后重新运行
+# ============================================================
 
-to_rel_path() {
-  local abs_path="$1"
-  abs_path="${abs_path#"$ROOT_DIR/"}"
-  echo "$abs_path"
+# ── ROS2 工作区构建产物（不同机器路径不同） ───────────
+install/
+build/
+log/
+
+# ── 编辑器本地配置 ───────────────────────────────
+# 每个人的编辑器配置不同，不该共享
+.vscode/settings.json
+.vscode/mcp.json
+.cursor/
+.idea/
+
+# ── MCP token / 敏感信息 ─────────────────────────
+mcp.json
+
+# ── Python ───────────────────────────────────────
+__pycache__/
+*.pyc
+*.egg-info/
+dist/
+*.egg
+
+# ── 临时 / 运行时 ────────────────────────────────
+*.tmp
+*.bak
+*.log
+*.swp
+*.swo
+*~
+.DS_Store
+
+# ── 自动生成文件（由 init-agent.sh 管理）──────────
+.github/
+GITIGNORE
+  ok ".gitignore"
+
+  # ── 2. .github/workflows/ros2-build.yml ─────────
+  mkdir -p "$ROOT_DIR/.github/workflows"
+  cat > "$ROOT_DIR/.github/workflows/ros2-build.yml" <<'WORKFLOW'
+name: ROS2 VibeCoding CI
+
+on:
+  push:
+    branches: [main, latest, develop]
+  pull_request:
+  workflow_dispatch:
+
+env:
+  ROS_DISTRO: humble
+  UBUNTU_VERSION: jammy
+
+jobs:
+  # ── CI-1: 核心文件 + Anti-Patterns ──────────────
+  core-files:
+    name: Core Files & Anti-Patterns
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify core files
+        run: |
+          for f in agents/skills agents/robots scripts init-agent.sh; do
+            [[ -d "$f" || -f "$f" ]] && echo "✓ $f" || { echo "✗ $f missing"; exit 1; }
+          done
+
+      - name: Skills count
+        run: |
+          N=$(find agents/skills -name 'SKILL.md' 2>/dev/null | wc -l)
+          echo "Skills: $N"
+          [[ $N -ge 50 ]] || { echo "Too few skills"; exit 1; }
+
+      - name: Scripts check
+        run: |
+          for f in scripts/check_ros2_package.sh scripts/generators/ros2-package-generator.sh scripts/validators/ros2-node-validator.sh; do
+            [[ -x "$f" ]] || chmod +x "$f"
+          done
+          echo "✓ Scripts executable"
+
+      - name: Anti-Patterns C++ coverage
+        run: |
+          [[ -f ANTI_PATTERNS.md ]] || { echo "Missing ANTI_PATTERNS.md"; exit 1; }
+          grep -qi "SharedPtr\|make_shared" ANTI_PATTERNS.md && echo "✓ Smart pointer rules" || exit 1
+          grep -qi "QoS\|qos" ANTI_PATTERNS.md && echo "✓ QoS rules" || exit 1
+          grep -qi "Lifecycle" ANTI_PATTERNS.md && echo "✓ Lifecycle rules" || exit 1
+          grep -qi "MultiThreaded\|mutex\|atomic" ANTI_PATTERNS.md && echo "✓ Concurrency rules" || exit 1
+
+  # ── CI-2: CMakeLists.txt 正确性 ────────────────
+  cmake-check:
+    name: CMakeLists.txt Correctness
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate generator
+        run: |
+          GEN="scripts/generators/ros2-package-generator.sh"
+          for item in \
+            "find_package(ament_cmake REQUIRED)" \
+            "find_package(rclcpp REQUIRED)" \
+            "ament_target_dependencies" \
+            "install(TARGETS" \
+            "ament_package()" \
+            "CMAKE_CXX_STANDARD 17"; do
+            grep -q "$item" "$GEN" && echo "✓ $item" || { echo "✗ Missing: $item"; exit 1; }
+          done
+
+  # ── CI-3: package.xml 依赖 ─────────────────────
+  package-xml-check:
+    name: package.xml Validation
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate generator
+        run: |
+          GEN="scripts/generators/ros2-package-generator.sh"
+          grep -q 'format="3"' "$GEN" && echo "✓ Format 3" || exit 1
+          grep -q "<depend>rclcpp</depend>" "$GEN" && echo "✓ rclcpp" || exit 1
+          grep -q "<export>" "$GEN" && echo "✓ export block" || exit 1
+
+  # ── CI-4: Docker 真实编译 ─────────────────────
+  ros2-compile:
+    name: ROS2 Humble Compile
+    runs-on: ubuntu-22.04
+    permissions: { contents: read }
+    steps:
+      - uses: actions/checkout@v4
+      - name: Docker colcon build test
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}:/workspace \
+            -w /workspace \
+            osrf/ros:humble-ros-base-jammy \
+            bash -c "
+              set -e
+              apt-get update -qq && apt-get install -y -qq python3-colcon-common-extensions git > /dev/null 2>&1
+              mkdir -p /tmp/test_ws/src
+              cd /tmp/test_ws
+              bash /workspace/scripts/generators/ros2-package-generator.sh test_pkg cpp rclcpp,std_msgs
+              cp -r test_pkg /tmp/test_ws/src/
+              source /opt/ros/humble/setup.bash
+              colcon build --packages-select test_pkg --cmake-args -DCMAKE_BUILD_TYPE=Release 2>&1 | tail -5
+              [[ -f install/test_pkg/lib/test_pkg/test_pkg_node ]] && echo '✓ Binary built' || exit 1
+              bash /workspace/scripts/check_ros2_package.sh /tmp/test_ws/src/test_pkg
+              echo '=== COMPILE TESTS PASSED ==='
+            "
+
+  # ── CI-5: 包耦合分析 ──────────────────────────
+  package-coupling:
+    name: Package Coupling
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Dependency graph
+        run: |
+          echo "=== Skill Dependencies ==="
+          for skill in agents/skills/*/*/SKILL.md; do
+            [[ -f "$skill" ]] || continue
+            PKG=$(echo "$skill" | cut -d/ -f3)
+            DEPS=$(grep '<depend>' "$skill" 2>/dev/null | sed 's/<depend>//g;s/<\/depend>//g' | tr '\n' ',' || echo "")
+            [[ -n "$DEPS" ]] && echo "  $PKG → $DEPS"
+          done | sort -u | head -20
+
+  # ── CI-6: Shellcheck ──────────────────────────
+  shellcheck:
+    name: Shell Scripts
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install shellcheck
+        run: sudo apt-get install -y -qq shellcheck > /dev/null 2>&1
+      - name: Run shellcheck
+        run: |
+          for f in scripts/*.sh scripts/**/*.sh; do
+            [[ -f "$f" ]] || continue
+            shellcheck --disable=SC1091,SC2086 "$f" 2>&1 | grep -v "^$" || echo "  ✓ $f"
+          done
+
+  # ── CI-7: Python + YAML ──────────────────────
+  python-lint:
+    name: Python & YAML
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.10' }
+      - name: Install linters
+        run: pip install flake8 pyyaml -q
+      - name: Python syntax
+        run: |
+          for f in scripts/*.py scripts/**/*.py; do
+            [[ -f "$f" ]] || continue
+            python3 -m py_compile "$f" && echo "  ✓ $f" || exit 1
+          done
+      - name: YAML validation
+        run: |
+          for f in $(find . -name '*.yaml' -not -path './.git/*' 2>/dev/null | head -10); do
+            python3 -c "import yaml; yaml.safe_load(open('$f'))" 2>/dev/null && echo "  ✓ $f" || echo "  ✗ $f"
+          done
+
+  # ── CI-8: Skill 质量分级 ───────────────────────
+  skill-quality:
+    name: Skill Quality
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Classify skills
+        run: |
+          VERIFIED=0; DRAFT=0; CONCEPT=0; EMPTY=0; TOTAL=0
+          for skill in agents/skills/*/*/SKILL.md; do
+            [[ -f "$skill" ]] || continue
+            ((TOTAL++))
+            SIZE=$(stat -c%s "$skill" 2>/dev/null || echo 100)
+            if [[ $SIZE -lt 100 ]]; then ((EMPTY++))
+            elif [[ $(wc -w < "$skill") -lt 50 ]]; then ((CONCEPT++))
+            elif grep -q "## 示例\|## 代码\|status.*verified" "$skill" 2>/dev/null; then ((VERIFIED++))
+            else ((DRAFT++)); fi
+          done
+          echo "Total: $TOTAL | Verified: $VERIFIED | Draft: $DRAFT | Concept: $CONCEPT | Empty: $EMPTY"
+WORKFLOW
+  ok ".github/workflows/ros2-build.yml"
+
+  # ── 3. .vscode/settings.json ───────────────────
+  mkdir -p "$ROOT_DIR/.vscode"
+  cat > "$ROOT_DIR/.vscode/settings.json" <<'VSCODE'
+{
+  "python.defaultInterpreterPath": "/usr/bin/python3",
+  "python.linting.enabled": false,
+  "files.exclude": {
+    "**/.git": true,
+    "**/.gitignore": false
+  },
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.python",
+    "editor.formatOnSave": false
+  },
+  "[bash]": {
+    "editor.defaultFormatter": "ms-vscode.shell-format"
+  }
 }
+VSCODE
+  ok ".vscode/settings.json"
 
-extract_frontmatter_value() {
-  local key="$1"
-  local file_path="$2"
-
-  awk -v key="$key" '
-    BEGIN { in_frontmatter = 0 }
-    /^---[[:space:]]*$/ {
-      if (in_frontmatter == 0) {
-        in_frontmatter = 1
-        next
-      } else {
-        exit
+  # ── 4. .vscode/mcp.json（模板，用户填 token） ───
+  cat > "$ROOT_DIR/.vscode/mcp.json" <<'MCP'
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "."]
+    },
+    "fetch": {
+      "command": "uvx",
+      "args": ["mcp-server-fetch"]
+    },
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "${env:GITHUB_PERSONAL_ACCESS_TOKEN}"
       }
     }
-    in_frontmatter == 1 && $0 ~ ("^" key ":[[:space:]]*") {
-      sub("^" key ":[[:space:]]*", "", $0)
-      print $0
-      exit
-    }
-  ' "$file_path" | sed -e 's/^"//' -e 's/"$//' -e "s/^'//" -e "s/'$//"
+  }
+}
+MCP
+  ok ".vscode/mcp.json (请设置 GITHUB_PERSONAL_ACCESS_TOKEN 环境变量)"
+
+  # ── 5. .gitignore 追加 .vscode/mcp.json（不提交） ─
+  # 确保 mcp.json 不会被提交（已在 .gitignore 中）
+  grep -q 'mcp.json' "$ROOT_DIR/.gitignore" || echo "mcp.json" >> "$ROOT_DIR/.gitignore"
+
+  echo ""
+  info "本地配置文件生成完毕"
+  info "下一步: "
+  info "  1. 编辑 .vscode/mcp.json — 填入你的 GitHub Token"
+  info "  2. 运行: source install/setup.bash  （构建 ROS2 包后）"
+  info "  3. 开始开发你的 ROS2 包"
 }
 
-collect_md_files() {
-  local src_dir="$1"
-  if [[ -d "$src_dir" ]]; then
-    find "$src_dir" -type f -name "*.md" | sort
-  fi
-}
+# ═══════════════════════════════════════════════════
+# AI Agent 索引生成（提交到仓库）
+# ═══════════════════════════════════════════════════
+generate_agent_files() {
+  info "生成 AI Agent 索引文件..."
 
-collect_skill_files() {
-  local src_dir="$1"
-  if [[ -d "$src_dir" ]]; then
-    find "$src_dir" -type f -name "SKILL.md" | sort
-  fi
-}
+  mkdir -p "$ROOT_DIR/agents/generated"
 
-mkdir -p "$ROOT_DIR/agents/generated"
+  # ── 1. skill-index.md ─────────────────────────
+  SKILL_INDEX="$ROOT_DIR/agents/generated/skill-index.md"
+  cat > "$SKILL_INDEX" <<'SKILLEOF'
+# Skill Index — 机器人技能总索引
 
-mapfile -t SKILL_FILES < <(collect_skill_files "$ROOT_DIR/agents/skills")
-mapfile -t PRINCIPLE_FILES < <(collect_md_files "$ROOT_DIR/agents/documents")
-mapfile -t PROMPT_FILES < <(collect_md_files "$ROOT_DIR/agents/prompts")
-mapfile -t ROBOT_GUIDE_FILES < <(collect_md_files "$ROOT_DIR/agents/robots")
-mapfile -t MEMORY_FILES < <(collect_md_files "$ROOT_DIR/agents/memory-bank")
+> 由 init-agent.sh 自动生成。每次添加新 skill 后重新运行 `./init-agent.sh --agent`。
 
-if [[ "${#SKILL_FILES[@]}" -eq 0 ]]; then
-  echo "[ERROR] No SKILL.md files found under agents/skills" >&2
-  exit 1
-fi
+## 统计
 
-SKILL_INDEX_FILE="$ROOT_DIR/agents/generated/skill-index.md"
-SKILL_ROUTING_FILE="$ROOT_DIR/agents/generated/skill-routing.md"
-CONTEXT_INDEX_FILE="$ROOT_DIR/agents/generated/context-index.md"
-BOOTSTRAP_FILE="$ROOT_DIR/agents/generated/agent-bootstrap.md"
+| 机器人类型 | 技能数 |
+|-----------|--------|
+SKILLEOF
 
-generate_skill_index() {
-  {
-    echo "<!-- AUTO-GENERATED BY init-agent.sh. DO NOT EDIT DIRECTLY. -->"
-    echo "# Skill Index"
-    echo
-    echo "Generated at: $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
-    echo
-    echo "Total skills: ${#SKILL_FILES[@]}"
-    echo
-    echo "| Skill Name | Path | Description |"
-    echo "|---|---|---|"
-
-    for file_path in "${SKILL_FILES[@]}"; do
-      local rel_path
-      local skill_name
-      local skill_desc
-
-      rel_path="$(to_rel_path "$file_path")"
-      skill_name="$(extract_frontmatter_value "name" "$file_path")"
-      skill_desc="$(extract_frontmatter_value "description" "$file_path")"
-
-      if [[ -z "$skill_name" ]]; then
-        skill_name="$(basename "$(dirname "$file_path")")"
-      fi
-
-      if [[ -z "$skill_desc" ]]; then
-        skill_desc="N/A"
-      fi
-
-      skill_desc="${skill_desc//|/\\|}"
-      echo "| ${skill_name} | ${rel_path} | ${skill_desc} |"
-    done
-  } > "$SKILL_INDEX_FILE"
-}
-
-generate_skill_routing() {
-  local tmp_rows
-  local tmp_collision
-
-  tmp_rows="$(mktemp)"
-  tmp_collision="$(mktemp)"
-
-  declare -A skill_name_counts=()
-
-  for file_path in "${SKILL_FILES[@]}"; do
-    local rel_path
-    local after_path
-    local taxonomy_path
-    local top_level
-    local skill_name
-
-    rel_path="$(to_rel_path "$file_path")"
-    after_path="${rel_path#agents/skills/}"
-    taxonomy_path="$(dirname "$after_path")"
-    top_level="${after_path%%/*}"
-    skill_name="$(extract_frontmatter_value "name" "$file_path")"
-
-    if [[ -z "$skill_name" ]]; then
-      skill_name="$(basename "$(dirname "$file_path")")"
-    fi
-
-    printf "%s\t| %s | %s | %s | %s |\n" \
-      "$top_level" "$top_level" "$taxonomy_path" "$skill_name" "$rel_path" >> "$tmp_rows"
-
-    ((skill_name_counts["$skill_name"]+=1))
+  for robot in "$ROOT_DIR"/agents/skills/*/; do
+    ROBOT_NAME=$(basename "$robot")
+    COUNT=$(find "$robot" -maxdepth 2 -name 'SKILL.md' 2>/dev/null | wc -l)
+    echo "| $ROBOT_NAME | $COUNT |" >> "$SKILL_INDEX"
   done
 
-  {
-    echo "<!-- AUTO-GENERATED BY init-agent.sh. DO NOT EDIT DIRECTLY. -->"
-    echo "# Skill Routing"
-    echo
-    echo "Generated at: $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
-    echo
-    echo "Use this file for fast routing when many skills share similar names."
-    echo "Prefer full taxonomy path in prompts to avoid ambiguity."
-    echo
-    echo "| Top Level | Taxonomy Path | Skill Name | Path |"
-    echo "|---|---|---|---|"
-    sort -t $'\t' -k1,1 -k2,2 "$tmp_rows" | cut -f2-
-    echo
-    echo "## Name Collisions"
+  cat >> "$SKILL_INDEX" <<'SKILLEOF'
 
-    for skill_name in "${!skill_name_counts[@]}"; do
-      if [[ "${skill_name_counts[$skill_name]}" -gt 1 ]]; then
-        printf "%s\t%d\n" "$skill_name" "${skill_name_counts[$skill_name]}" >> "$tmp_collision"
+---
+
+## 完整技能列表
+
+SKILLEOF
+
+  for robot in "$ROOT_DIR"/agents/skills/*/; do
+    ROBOT_NAME=$(basename "$robot")
+    echo "" >> "$SKILL_INDEX"
+    echo "### $ROBOT_NAME" >> "$SKILL_INDEX"
+    echo "" >> "$SKILL_INDEX"
+    for skill_dir in "$robot"/*/; do
+      [[ -d "$skill_dir" ]] || continue
+      SKILL_NAME=$(basename "$skill_dir")
+      SKILL_FILE="$skill_dir/SKILL.md"
+      if [[ -f "$SKILL_FILE" ]]; then
+        # 取 frontmatter 的 name 或 description
+        NAME=$(grep -m1 "^name:" "$SKILL_FILE" 2>/dev/null | sed 's/^name: //' || echo "$SKILL_NAME")
+        DESC=$(grep -m1 "^description:" "$SKILL_FILE" 2>/dev/null | sed 's/^description: //' | cut -c1-60 || echo "")
+        echo "- **$SKILL_NAME**: $DESC" >> "$SKILL_INDEX"
+      else
+        echo "- **$SKILL_NAME** _(空)_" >> "$SKILL_INDEX"
       fi
     done
+  done
 
-    if [[ -s "$tmp_collision" ]]; then
-      while IFS=$'\t' read -r name count; do
-        echo "- ${name} (${count})"
-      done < <(sort -t $'\t' -k2,2nr -k1,1 "$tmp_collision")
-    else
-      echo "- none"
-    fi
-  } > "$SKILL_ROUTING_FILE"
+  cat >> "$SKILL_INDEX" <<'SKILLEOF'
 
-  rm -f "$tmp_rows" "$tmp_collision"
-}
+---
 
-generate_context_index() {
-  local core_rule_files=(
-    "$ROOT_DIR/README.md"
-    "$ROOT_DIR/AGENTS.md"
-    "$ROOT_DIR/agents/skills/README.md"
-    "$ROOT_DIR/i18n/README.md"
-    "$ROOT_DIR/i18n/zh-CN/AGENT_IMPORT_GUIDE.md"
-    "$ROOT_DIR/i18n/en/AGENT_IMPORT_GUIDE.md"
-    "$ROOT_DIR/i18n/zh-CN/CONTRIBUTING.md"
-    "$ROOT_DIR/i18n/en/CONTRIBUTING.md"
-  )
+*运行 `./init-agent.sh --agent` 重新生成*
+SKILLEOF
+  ok "agents/generated/skill-index.md"
 
-  local mcp_assets=(
-    "$ROOT_DIR/.vscode/mcp.json"
-    "$ROOT_DIR/.cursor/mcp.json"
-  )
+  # ── 2. skill-routing.md ────────────────────────
+  cat > "$ROOT_DIR/agents/generated/skill-routing.md" <<'ROUTINGEOF'
+# Skill Routing — 技能路由表
 
-  {
-    echo "<!-- AUTO-GENERATED BY init-agent.sh. DO NOT EDIT DIRECTLY. -->"
-    echo "# Context Index"
-    echo
-    echo "Generated at: $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
-    echo
+> 由 init-agent.sh 自动生成。同名 skill 按完整路径优先级路由。
 
-    echo "## Core Rules"
-    for file_path in "${core_rule_files[@]}"; do
-      if [[ -f "$file_path" ]]; then
-        echo "- $(to_rel_path "$file_path")"
-      fi
-    done
-    echo
+## 路由规则
 
-    echo "## Cursor Rules"
-    local cursor_rules_dir="$ROOT_DIR/.cursor/rules"
-    if [[ -d "$cursor_rules_dir" ]]; then
-      for f in "$cursor_rules_dir"/*.mdc; do
-        if [[ -f "$f" ]]; then
-          echo "- $(to_rel_path "$f")"
-        fi
-      done
-    fi
-    echo
+```
+用户请求 → 机器人类型 → 功能域 → 具体 skill
+         → humanoid/manipulator/... → motion-control/perception/...
+```
 
-    echo "## Project Principles"
-    if [[ "${#PRINCIPLE_FILES[@]}" -eq 0 ]]; then
-      echo "- (none found)"
-    else
-      for file_path in "${PRINCIPLE_FILES[@]}"; do
-        echo "- $(to_rel_path "$file_path")"
-      done
-    fi
-    echo
+## 机器人类型路由
 
-    echo "## Prompt Templates"
-    if [[ "${#PROMPT_FILES[@]}" -eq 0 ]]; then
-      echo "- (none found)"
-    else
-      for file_path in "${PROMPT_FILES[@]}"; do
-        echo "- $(to_rel_path "$file_path")"
-      done
-    fi
-    echo
-
-    echo "## Robot Guides"
-    if [[ "${#ROBOT_GUIDE_FILES[@]}" -eq 0 ]]; then
-      echo "- (none found)"
-    else
-      for file_path in "${ROBOT_GUIDE_FILES[@]}"; do
-        echo "- $(to_rel_path "$file_path")"
-      done
-    fi
-    echo
-
-    echo "## Memory Bank"
-    if [[ "${#MEMORY_FILES[@]}" -eq 0 ]]; then
-      echo "- (none found)"
-    else
-      for file_path in "${MEMORY_FILES[@]}"; do
-        echo "- $(to_rel_path "$file_path")"
-      done
-    fi
-    echo
-
-    echo "## Skill Index"
-    echo "- $(to_rel_path "$SKILL_INDEX_FILE")"
-    echo
-
-    echo "## Skill Routing"
-    echo "- $(to_rel_path "$SKILL_ROUTING_FILE")"
-    echo
-
-    echo "## MCP Assets"
-    for file_path in "${mcp_assets[@]}"; do
-      if [[ -f "$file_path" ]]; then
-        echo "- $(to_rel_path "$file_path")"
-      fi
-    done
-    echo
-
-    echo "## Publishing & Scripts"
-    echo "- publish.sh"
-    echo "- init-agent.sh"
-  } > "$CONTEXT_INDEX_FILE"
-}
-
-generate_bootstrap_file() {
-  {
-    echo "<!-- AUTO-GENERATED BY init-agent.sh. DO NOT EDIT DIRECTLY. -->"
-    echo "# vibe-coding-ros2 Agent Bootstrap"
-    echo
-    echo "This file defines one-click project bootstrap context for Copilot and Cursor agents."
-    echo
-    echo "## Required Loading Order"
-    echo "1. agents/generated/context-index.md"
-    echo "2. agents/generated/skill-index.md"
-    echo "3. agents/generated/skill-routing.md"
-    echo "4. agents/skills/README.md"
-    echo "5. i18n/zh-CN/AGENT_IMPORT_GUIDE.md"
-    echo "6. i18n/en/AGENT_IMPORT_GUIDE.md"
-    echo
-    echo "## Task Routing Rules"
-    echo "- First decide robot type or edge platform type from user request."
-    echo "- Then decide functional domain (perception/localization/navigation/action/etc.)."
-    echo "- Finally load the exact SKILL.md from agents/generated/skill-index.md."
-    echo "- If skill names collide, resolve with full taxonomy path from agents/generated/skill-routing.md."
-    echo "- If multiple skills are relevant, load all relevant SKILL.md files before coding."
-    echo
-    echo "## MCP Development Rules"
-    echo "- Prefer MCP tools for external data retrieval and automation when available."
-    echo "- Keep tokens in environment variables; never hardcode credentials in files."
-    echo "- VS Code MCP config path: .vscode/mcp.json"
-    echo "- Cursor MCP config path: .cursor/mcp.json"
-    echo "- For GitHub MCP, use GITHUB_PERSONAL_ACCESS_TOKEN from environment."
-    echo
-    echo "## Regeneration"
-    echo "Run ./init-agent.sh again whenever skills, prompts, principles, or MCP strategy changes."
-  } > "$BOOTSTRAP_FILE"
-}
-
-generate_copilot_files() {
-  mkdir -p "$ROOT_DIR/.github"
-
-  cat > "$ROOT_DIR/.github/copilot-instructions.md" <<'EOF'
-<!-- AUTO-GENERATED BY init-agent.sh. DO NOT EDIT DIRECTLY. -->
-# Copilot Workspace Instructions
-
-Always bootstrap this project with (in order):
-1. agents/generated/agent-bootstrap.md
-2. agents/generated/context-index.md
-3. agents/generated/skill-index.md
-4. agents/generated/skill-routing.md
-
-## Execution Rules
-
-- Route requests by robot type (humanoid/quadruped/manipulator/wheeled_vehicle/multi_rotor_uav/underwater), then by functional domain (perception/localization/navigation/action/skill-planning), then load exact SKILL.md.
-- If skill names collide, resolve by full taxonomy path from skill-routing.md.
-- Use robot guides in \`agents/robots/\` for robot-specific context.
-- Use the project principles and prompt templates listed in context-index.md.
-- When MCP is needed, follow .vscode/mcp.json configuration.
-- Never hardcode secrets; always read from environment variables.
-
-## Robot Types
-
-- humanoid/ — 双足人形机器人
-- quadruped/ — 四足机器人
-- manipulator/ — 机械臂
-- wheeled_vehicle/ — 轮式底盘
-- multi_rotor_uav/ — 多旋翼无人机
-- underwater/ — AUV/ROV 水下机器人
-- common/ — 所有机器人的共性技能
-
-## Skill Taxonomy
-
-Skills are organized as: agents/skills/{robot_type}/{functional_domain}/
-
-Before implementing, always load the relevant SKILL.md from agents/generated/skill-index.md.
-EOF
-
-  cat > "$ROOT_DIR/AGENTS.md" <<'EOF'
-<!-- AUTO-GENERATED BY init-agent.sh. DO NOT EDIT DIRECTLY. -->
-# AGENTS
-
-vibe-coding-ros2 是一个新一代 VibeCoding 指南，旨在引导 AI Agent 完成 ROS2 机器人项目的全流程开发。
-
-## 启动顺序（必须按顺序加载）
-
-1. **context-index.md** — 项目全局索引，包含所有文档、提示词、技能的路径
-2. **skill-index.md** — 完整技能索引（270+ 技能），按机器人类型和功能域分类
-3. **skill-routing.md** — 技能路由表，解决同名技能冲突
-4. **skill-bootstrap.md** — 引导文档，定义任务路由规则
-
-## 任务路由规则
-
-1. **机器人类型** → perception / localization / navigation / action / skill-planning
-2. **功能域** → 具体技能名
-3. **加载对应 SKILL.md** → 开始实现
-
-## 机器人类型
-
-| 类型 | 说明 |
+| 类型 | 场景 |
 |------|------|
-| humanoid | 双足人形机器人 |
-| quadruped | 四足机器人 |
-| manipulator | 机械臂 |
-| wheeled_vehicle | 轮式底盘 |
-| multi_rotor_uav | 多旋翼无人机 |
-| underwater | AUV / ROV 水下机器人 |
-| common | 所有机器人的共性技能 |
+| humanoid | 双足步态、人形操作、平衡控制 |
+| quadruped | 四足行走、复杂地形 |
+| manipulator | 机械臂抓取、运动规划 |
+| wheeled_vehicle | 轮式导航、差速驱动 |
+| multi_rotor_uav | 无人机飞行、悬停 |
+| underwater | AUV/ROV、水下导航 |
+| common | 所有类型通用（cmake、colcon 等） |
+ROUTINGEOF
+  ok "agents/generated/skill-routing.md"
 
-## 关键文档
+  # ── 3. context-index.md ───────────────────────
+  cat > "$ROOT_DIR/agents/generated/context-index.md" <<'CTXEOF'
+# Context Index — 项目上下文
 
-- `i18n/zh-CN/AGENT_IMPORT_GUIDE.md` — 中文导入指南
-- `i18n/zh-CN/CONTRIBUTING.md` — 中文贡献指南
-- `agents/robots/` — 各机器人类型专项指南
-- `agents/skills/` — 完整技能库（按类型和功能域组织）
+> 由 init-agent.sh 自动生成。
 
-## MCP 开发
+## 项目结构
 
-- `.vscode/mcp.json` — VS Code MCP 配置
-- `.cursor/mcp.json` — Cursor MCP 配置
-- `agents/generated/agent-bootstrap.md` — MCP 开发规则
+```
+vibe-coding-ros2/
+├── agents/
+│   ├── skills/          # 技能定义（270+ SKILL.md）
+│   ├── robots/          # 机器人类型指南
+│   ├── prompts/         # 提示词模板
+│   ├── memory-bank/    # 项目记忆
+│   └── generated/       # 自动生成的索引
+├── scripts/
+│   ├── generators/      # 包生成器
+│   ├── validators/      # 代码验证器
+│   └── deployers/       # 部署脚本
+└── i18n/
+    ├── zh-CN/           # 中文文档
+    └── en/              # 英文文档
+```
 
----
-*由 init-agent.sh 自动生成。如有修改请编辑 init-agent.sh 后重新运行。*
-EOF
+## 关键文件
 
-  mkdir -p "$ROOT_DIR/.vscode"
-  cat > "$ROOT_DIR/.vscode/mcp.json" <<'EOF'
-{
-  "mcpServers": {
-    "filesystem": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-filesystem", "."]
-    },
-    "fetch": {
-      "command": "uvx",
-      "args": ["mcp-server-fetch"]
-    },
-    "github": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-github"],
-      "env": {
-        "GITHUB_PERSONAL_ACCESS_TOKEN": "${env:GITHUB_PERSONAL_ACCESS_TOKEN}"
-      }
-    }
-  }
-}
-EOF
-}
+| 文件 | 用途 |
+|------|------|
+| AGENTS_CONCISE.md | 极简工作流指令卡（<500 tokens） |
+| ANTI_PATTERNS.md | C++/QoS/并发安全规则 |
+| init-agent.sh | 初始化脚本 |
+| scripts/generators/ros2-package-generator.sh | 一键生成 ROS2 包 |
+CTXEOF
+  ok "agents/generated/context-index.md"
 
-generate_cursor_files() {
-  mkdir -p "$ROOT_DIR/.cursor/rules"
+  # ── 4. agent-bootstrap.md ─────────────────────
+  cat > "$ROOT_DIR/agents/generated/agent-bootstrap.md" <<'BOOTSTRAPEOF'
+# Agent Bootstrap
 
-  cat > "$ROOT_DIR/.cursor/rules/vibe-coding-ros2.mdc" <<'EOF'
----
-description: Always load vibe-coding-ros2 principles, MCP rules, full skill index, and robot guides before coding.
-globs:
-  - "**/*"
-alwaysApply: true
----
+> AI Agent 启动时必须按顺序加载的文件。
 
-Always bootstrap this workspace with (in order):
-1. agents/generated/agent-bootstrap.md
-2. agents/generated/context-index.md
-3. agents/generated/skill-index.md
-4. agents/generated/skill-routing.md
+## 加载顺序
 
-## Routing Rules
+1. `context-index.md` — 项目结构总览
+2. `skill-index.md` — 可用技能列表
+3. `skill-routing.md` — 技能路由规则
+4. `skill-bootstrap.md` — 本文件
 
-- Match request to robot/platform taxonomy first.
-- Match functional domain second.
-- Load exact SKILL.md entries from skill-index.md before implementation.
-- Use robot guides from \`agents/robots/\` for robot-specific context.
-- Resolve duplicate skill names via full path in skill-routing.md.
-- Follow MCP development rules from agent-bootstrap.md.
+## 执行规则
 
-## Robot Types
+- 用户请求 → 确定机器人类型 → 确定功能域 → 加载 SKILL.md
+- 如 skill 重名，按 taxonomy 路径（agents/skills/{type}/{domain}/）唯一确定
+- 使用 AGENTS_CONCISE.md 作为极简参考
+- 使用 ANTI_PATTERNS.md 检查 C++/QoS/并发安全性
+- 生成代码后用 scripts/validators/ros2-node-validator.sh 验证
+BOOTSTRAPEOF
+  ok "agents/generated/agent-bootstrap.md"
 
-humanoid/ · quadruped/ · manipulator/ · wheeled_vehicle/ · multi_rotor_uav/ · underwater/ · common/
+  # ── 5. skill-bootstrap.md ─────────────────────
+  cat > "$ROOT_DIR/agents/generated/skill-bootstrap.md" <<'SKILLBOOT'
+# Skill Bootstrap
 
-## Skill Taxonomy
+## 开发工作流
 
-agents/skills/{robot_type}/{functional_domain}/
+```
+1. 读 AGENTS_CONCISE.md
+2. 读 ANTI_PATTERNS.md（重点：C++ 指针/QoS/并发）
+3. 读 skill-index.md（找对应 SKILL.md）
+4. 读 SKILL.md（获取实现细节）
+5. 生成代码
+6. 自检（ANTI_PATTERNS 清单）
+7. 更新 memory-bank/ROS2_MEMORY.md
+```
 
-## Key Docs
+## 质量门控
 
-- agents/robots/README.md — 各机器人类型指南索引
-- i18n/zh-CN/AGENT_IMPORT_GUIDE.md — 中文导入指南
-- agents/generated/skill-index.md — 完整技能库索引
-EOF
+- CMakeLists.txt 必检：find_package / ament_target_dependencies / install / ament_package
+- package.xml 必检：<depend> 完整 / Format 3
+- C++ 必检：make_shared / QoS 声明 / rclcpp::init+shutdown
+- 完成后提醒用户 source install/setup.bash
+SKILLBOOT
+  ok "agents/generated/skill-bootstrap.md"
 
-  cat > "$ROOT_DIR/.cursor/mcp.json" <<'EOF'
-{
-  "mcpServers": {
-    "filesystem": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-filesystem", "."]
-    },
-    "fetch": {
-      "command": "uvx",
-      "args": ["mcp-server-fetch"]
-    },
-    "github": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-github"],
-      "env": {
-        "GITHUB_PERSONAL_ACCESS_TOKEN": "${env:GITHUB_PERSONAL_ACCESS_TOKEN}"
-      }
-    }
-  }
-}
-EOF
+  echo ""
+  info "AI Agent 索引生成完毕"
+  info "下一步: git add + git commit + git push"
 }
 
-generate_skill_index
-generate_skill_routing
+# ═══════════════════════════════════════════════════
+# 主流程
+# ═══════════════════════════════════════════════════
+main() {
+  echo ""
+  echo "══════════════════════════════════════"
+  echo "  init-agent.sh — vibe-coding-ros2"
+  echo "══════════════════════════════════════"
+  echo ""
 
-case "$TARGET" in
-  all)
-    generate_copilot_files
-    generate_cursor_files
-    ;;
-  copilot)
-    generate_copilot_files
-    ;;
-  cursor)
-    generate_cursor_files
-    ;;
-esac
+  # 检查必要目录
+  if [[ ! -d "$ROOT_DIR/agents" ]]; then
+    error "agents/ 目录不存在"
+    error "请在项目根目录运行此脚本"
+    exit 1
+  fi
 
-generate_context_index
-generate_bootstrap_file
+  if [[ ! -d "$ROOT_DIR/scripts" ]]; then
+    error "scripts/ 目录不存在"
+    exit 1
+  fi
 
-chmod +x "$ROOT_DIR/init-agent.sh"
+  # 确保脚本可执行
+  chmod +x "$ROOT_DIR/init-agent.sh"
 
-echo "[OK] AI bootstrap initialization completed."
-echo "[INFO] Target: $TARGET"
-echo "[INFO] Generated files:"
-echo "  - $(to_rel_path "$SKILL_INDEX_FILE")"
-echo "  - $(to_rel_path "$SKILL_ROUTING_FILE")"
-echo "  - $(to_rel_path "$CONTEXT_INDEX_FILE")"
-echo "  - $(to_rel_path "$BOOTSTRAP_FILE")"
+  case "$MODE" in
+    agent)
+      generate_agent_files
+      ;;
+    local)
+      generate_local_files
+      ;;
+    all)
+      generate_agent_files
+      echo ""
+      generate_local_files
+      ;;
+  esac
 
-if [[ "$TARGET" == "all" || "$TARGET" == "copilot" ]]; then
-  echo "  - .github/copilot-instructions.md"
-  echo "  - AGENTS.md"
-  echo "  - .vscode/mcp.json"
-fi
+  echo ""
+  echo "══════════════════════════════════════"
+  ok "初始化完成！"
+  echo "══════════════════════════════════════"
+  echo ""
+  echo "推荐工作流:"
+  echo "  1. ./init-agent.sh          # 首次运行"
+  echo "  2. 开发 ROS2 包"
+  echo "  3. bash scripts/generators/ros2-package-generator.sh <name> cpp ..."
+  echo "  4. colcon build --packages-select <name> --symlink-install"
+  echo "  5. git add . && git commit && git push"
+  echo ""
+}
 
-if [[ "$TARGET" == "all" || "$TARGET" == "cursor" ]]; then
-  echo "  - .cursor/rules/vibe-coding-ros2.mdc"
-  echo "  - .cursor/mcp.json"
-fi
-
-echo "[INFO] Skill count: ${#SKILL_FILES[@]}"
+main "$@"
