@@ -3,3 +3,7 @@
 .github/
 .vscode/
 publish.sh
+-e cron-git.sh
+cron-git.log
+cron-git.pid
+.last_push
