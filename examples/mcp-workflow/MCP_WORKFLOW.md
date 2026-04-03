@@ -4,12 +4,60 @@
 
 ---
 
+## 🚀 快速启动
+
+### 前置要求
+
+```bash
+# 安装 Claude Code CLI（推荐）
+# https://docs.anthropic.com/en/docs/claude-code/overview
+
+# 或安装 OpenAI Codex CLI
+npm install -g @openai/codex
+
+# 或安装 GitHub Copilot CLI
+gh extension install github/gh-copilot
+```
+
+### 一键启动
+
+```bash
+cd /path/to/vibe-coding-ros2
+
+# 案例一：宇树 GO2 机器狗 S 曲线
+./scripts/mcp/mcp-agent-orchestrator.sh go2-scurve --agent claude
+
+# 案例二：机械臂自主抓取
+./scripts/mcp/mcp-agent-orchestrator.sh manipulator-pickplace --agent claude
+
+# 自定义任务（交互式）
+./scripts/mcp/mcp-agent-orchestrator.sh custom --agent claude
+```
+
+### 环境变量
+
+```bash
+# 指定模型
+AGENT_MODEL=claude-opus-4-20250514 \
+./scripts/mcp/mcp-agent-orchestrator.sh go2-scurve --agent claude
+
+# 指定超时（秒）
+AGENT_TIMEOUT=600 \
+./scripts/mcp/mcp-agent-orchestrator.sh manipulator-pickplace --agent claude
+
+# 指定工作区
+WORKSPACE=/opt/ros2_ws \
+./scripts/mcp/mcp-agent-orchestrator.sh go2-scurve --agent claude
+```
+
+---
+
 ## 架构
 
 ```
 ┌─────────────────────────────────────────────────────────┐
 │                    Orchestrator Agent                   │
-│         (首席 Agent，负责规划 + 分配 + 汇总)              │
+│         (首席 Agent，负责规划 + 分配 + 汇总)             │
 └────────────────────┬────────────────────────────────────┘
                      │ MCP Tool Calls
           ┌──────────┼──────────┬─────────────┐
@@ -17,12 +65,22 @@
     ┌─────▼────┐ ┌──▼────┐ ┌─▼──────┐ ┌──▼─────┐
     │  Skill   │ │ ROS2  │ │ Gazebo │ │ Deploy │
     │  Router  │ │ Node  │ │  Env   │ │  Agent │
-    │  Agent   │ │ Agent │ │ Agent  │ │        │
     └──────────┘ └───────┘ └────────┘ └────────┘
          ↓           ↓          ↓          ↓
     agents/skills  colcon    gz sim   ssh/scp
                    build
 ```
+
+---
+
+## Agent 类型
+
+| Agent | CLI | 说明 |
+|-------|-----|------|
+| `claude` | Claude Code 官方 CLI | ⭐ 推荐，支持多轮对话 |
+| `codex` | OpenAI Codex CLI | 代码生成能力强 |
+| `copilot` | GitHub Copilot CLI | 与 GitHub 深度集成 |
+| `copilot-chat` | VS Code Copilot Chat | 需手动在 VS Code 中执行 |
 
 ---
 
