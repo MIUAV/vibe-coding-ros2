@@ -7,7 +7,7 @@
 
 ---
 
-## [Unreleased] - 2026-04-02
+## [Unreleased] - 2026-04-03
 
 ### 新增
 
@@ -15,6 +15,20 @@
 - **simulator 技能目录**: 新增仿真器技能目录
 - **skill-routing.md**: 新增技能路由索引文件
 - **init-agent.sh 功能增强**: 支持 Copilot 和 Cursor 双 IDE 配置生成
+
+- **Agent 智能体目录**: 新增专用 Agent 目录
+  - `motion-control-agent/`: 运动控制智能体
+  - `navigation-agent/`: 导航智能体
+  - `perception-agent/`: 感知智能体
+  - `simulation-agent/`: 仿真智能体
+  - `system-integration-agent/`: 系统集成智能体
+
+- **功能领域技能目录**: 新增按功能分类的技能
+  - `motion-control/`: 运动控制（biped-control、collaborative-control、force-control、kinematics、trajectory）
+  - `navigation/`: 导航（map-building、nav2-integration、obstacle-avoidance、path-planning、slam）
+  - `perception/`: 感知（calibration、edge-inference、lidar-perception、sensor-fusion、vision-perception）
+  - `simulation/`: 仿真（gazebo、isaac-sim、mujoco、physics-simulation、robot-modeling）
+  - `system-integration/`: 系统集成（debugging-optimization、edge-deployment、lifecycle-management、ros2-communication、system-architecture）
 
 ### 变更
 
