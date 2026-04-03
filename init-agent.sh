@@ -122,6 +122,7 @@ dist/
 
 # ── 自动生成文件（由 init-agent.sh 管理）──────────
 .github/
+.docs/
 GITIGNORE
   ok ".gitignore"
 
@@ -309,6 +310,59 @@ jobs:
           echo "Total: $TOTAL | Verified: $VERIFIED | Draft: $DRAFT | Concept: $CONCEPT | Empty: $EMPTY"
 WORKFLOW
   ok ".github/workflows/ros2-build.yml"
+  # ── 3. .docs/graphical-tools.md ────────────────────
+  mkdir -p "$ROOT_DIR/.docs"
+  cat > "$ROOT_DIR/.docs/graphical-tools.md" <<'DOCS'
+# 图形化工具
+
+> ROS2 图形化开发与调试工具
+
+---
+
+## rqt 插件
+
+| 插件 | 命令 | 用途 |
+|------|------|------|
+| rqt_graph | `rqt_graph` | 计算图可视化 |
+| rqt_console | `rqt_console` | 日志查看器 |
+| rqt_plot | `rqt_plot` | 数值曲线绘制 |
+| rqt_image_view | `rqt_image_view` | 图像话题查看 |
+| rqt_service_caller | `rqt_service_caller` | Service 调用器 |
+| rqt_bag | `rqt_bag` | Bag 可视化播放器 |
+
+## rviz2
+
+```bash
+rviz2
+```
+
+三维可视化：TF、LaserScan、PointCloud2、Image、Path
+
+## foxglove
+
+```bash
+ros2 launch foxglove_bridge foxglove_bridge_launch.xml
+```
+
+## plotjuggler
+
+```bash
+ros2 run plotjuggler plotjuggler
+```
+
+数值绘图，支持 bag 回放、多曲线对比。
+
+## 调试命令
+
+```bash
+ros2 topic list -v     # 列出所有话题
+ros2 topic echo <name> # 查看话题内容
+ros2 node list         # 列出所有节点
+ros2 interface list    # 列出所有接口
+```
+DOCS
+  ok ".docs/graphical-tools.md"
+
 
   # ── 3. .vscode/settings.json ───────────────────
   mkdir -p "$ROOT_DIR/.vscode"
@@ -331,7 +385,7 @@ WORKFLOW
 VSCODE
   ok ".vscode/settings.json"
 
-  # ── 4. .vscode/mcp.json（模板，用户填 token） ───
+  # ── 5. .vscode/mcp.json（模板，用户填 token） ───
   cat > "$ROOT_DIR/.vscode/mcp.json" <<'MCP'
 {
   "mcpServers": {
@@ -355,7 +409,7 @@ VSCODE
 MCP
   ok ".vscode/mcp.json (请设置 GITHUB_PERSONAL_ACCESS_TOKEN 环境变量)"
 
-  # ── 5. .gitignore 追加 .vscode/mcp.json（不提交） ─
+  # ── 6. .gitignore 追加 .vscode/mcp.json（不提交） ─
   # 确保 mcp.json 不会被提交（已在 .gitignore 中）
   grep -q 'mcp.json' "$ROOT_DIR/.gitignore" || echo "mcp.json" >> "$ROOT_DIR/.gitignore"
 
