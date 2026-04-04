@@ -1,0 +1,8 @@
+# lifecycle_controller params.yaml
+# 运行时参数配置文件
+# 用法: ros2 run lifecycle_controller lifecycle_controller_node --ros-args --params_file <this_file>
+
+/**:
+  ros__parameters:
+    cycle_duration: 1.0    # 发布周期 (秒), 默认 1Hz
+    node_name: lifecycle_controller
