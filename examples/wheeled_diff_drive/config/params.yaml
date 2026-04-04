@@ -1,0 +1,9 @@
+# wheeled_diff_drive params.yaml
+/**:
+  ros__parameters:
+    wheelbase: 0.5           # m — 机器人轮距
+    max_linear_vel: 1.0      # m/s — 最大线速度
+    max_angular_vel: 2.0     # rad/s — 最大角速度
+    cmd_vel_topic: /cmd_vel  # 订阅的 cmd_vel topic
+    left_wheel_topic: /left_wheel_velocity
+    right_wheel_topic: /right_wheel_velocity
