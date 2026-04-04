@@ -1,140 +1,200 @@
 #!/bin/bash
-# ros2-build-feedback.sh — 捕获 colcon build 错误并提取关键依赖缺失信息
-# 用法: bash ros2-build-feedback.sh <pkg_name> [--fix]
-# AI Agent 使用此脚本获取编译错误并自动修正
+# ros2-build-feedback.sh — AI 代码生成后的自动编译验证
+# 用法: ./ros2-build-feedback.sh <package_path>
+# 退出码: 0=编译成功, 1=编译失败, 2=无colcon包
 
 set -e
 
-RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'; BLUE='\033[0;34m'; NC='\033[0m'
+PACKAGE_PATH="${1:-.}"
 
-PKG_NAME="${1:-}"
-DO_FIX="${2:-}"
+echo "============================================"
+echo "  ros2-build-feedback: 自动编译验证"
+echo "============================================"
+echo "包路径: $PACKAGE_PATH"
+echo ""
 
-if [[ -z "$PKG_NAME" ]]; then
-    echo -e "${RED}用法: $0 <包名> [--fix]${NC}"
-    echo "  <包名> : ROS2 包名"
-    echo "  --fix  : 自动修复发现的错误"
-    exit 1
+# 切换到包目录
+cd "$(dirname "$0")/../../" && cd "$PACKAGE_PATH" 2>/dev/null || {
+    echo "错误: 无法进入目录: $PACKAGE_PATH"
+    exit 2
+}
+
+# 检查是否是 ROS2 包
+if [ ! -f "package.xml" ]; then
+    echo "错误: 不是 ROS2 包（无 package.xml）"
+    exit 2
 fi
 
-# 加载 ROS2 环境
-load_ros2() {
-    if [[ -n "$ROS_DISTRO" ]]; then
-        return 0
-    fi
-    for distro in humble iron rolling galactic foxy; do
-        if [[ -f "/opt/ros/$distro/setup.bash" ]]; then
-            source "/opt/ros/$distro/setup.bash"
-            return 0
-        fi
-    done
-    echo -e "${RED}! 未检测到 ROS2 环境${NC}"
-    return 1
-}
+PACKAGE_NAME=$(basename "$(pwd)")
+echo "包名: $PACKAGE_NAME"
+echo ""
 
-# ── 编译并捕获错误 ───────────────────────────
-run_build() {
-    echo -e "${BLUE}=== colcon build: $PKG_NAME ===${NC}"
-    load_ros2 || exit 1
-    
-    BUILD_OUTPUT=$(colcon build --packages-select "$PKG_NAME" --symlink-install 2>&1)
-    BUILD_RC=$?
-    
-    echo "$BUILD_OUTPUT"
-    return $BUILD_RC
-}
+# ── 执行编译 ──────────────────────────────────────────
+echo ">>> 执行 colcon build ..."
+echo ""
 
-# ── 解析错误类型 ─────────────────────────────
-parse_errors() {
-    local output="$1"
-    
+BUILD_OUTPUT=$(colcon build 2>&1)
+BUILD_EXIT=$?
+
+# ── 分析结果 ──────────────────────────────────────────
+echo ""
+echo "============================================"
+echo "  编译结果分析"
+echo "============================================"
+
+if [ $BUILD_EXIT -eq 0 ]; then
+    echo "✅ 编译成功（零错误）"
     echo ""
-    echo -e "${BLUE}=== 错误分析 ===${NC}"
-    
-    # 1. 缺失依赖
-    MISSING=$(echo "$output" | grep -oP "non-existent dependency '\K[^']+")
-    if [[ -n "$MISSING" ]]; then
-        echo -e "${RED}[1] 缺失依赖:${NC}"
-        for dep in $(echo "$MISSING" | sort -u); do
-            echo -e "  ! find_package(${dep} REQUIRED) 缺失"
-            echo -e "  修复: 在 CMakeLists.txt 添加: find_package(${dep} REQUIRED)"
-        done
-    fi
-    
-    # 2. 未定义引用
-    UNDEF=$(echo "$output" | grep -oP "undefined reference to '\K[^']+")
-    if [[ -n "$UNDEF" ]]; do
-        echo -e "${RED}[2] 未定义引用:${NC}"
-        for sym in $(echo "$UNDEF" | sort -u | head -5); do
-            echo -e "  ! $sym"
-            echo -e "     修复: 在 ament_target_dependencies 中添加对应库"
-        done
-    fi
-    
-    # 3. ament_export_dependencies 缺失
-    if echo "$output" | grep -q "ament_export_dependencies"; then
-        echo -e "${RED}[3] ament_export_dependencies 缺失${NC}"
-        echo -e "  修复: 在 CMakeLists.txt find_package 后添加: ament_export_dependencies()"
-        echo -e "  或替换为: ament_auto_find_build_dependencies() + ament_auto_package()"
-    fi
-    
-    # 4. 消息类型错误
-    if echo "$output" | grep -q "cannot find message file"; then
-        echo -e "${RED}[4] 消息类型文件缺失${NC}"
-        echo -e "  检查: rosidl_generate_interfaces 中的 .msg 文件名是否正确"
-    fi
-    
-    # 5. C++ 标准错误
-    if echo "$output" | grep -q "CMAKE_CXX_STANDARD"; then
-        echo -e "${RED}[5] C++ 标准版本问题${NC}"
-        echo -e "  修复: 在 CMakeLists.txt 添加: set(CMAKE_CXX_STANDARD 17)"
-    fi
-    
-    # 无错误
-    if [[ -z "$MISSING" && -z "$UNDEF" && ! "$output" =~ ament_export_dependencies ]]; then
-        echo -e "${GREEN}[OK] 未发现已知错误模式${NC}"
-        echo "  可能需要手动检查编译输出"
-    fi
-}
-
-# ── 自动修复 ─────────────────────────────────
-auto_fix() {
-    local pkg_dir
-    pkg_dir=$(pwd)
-    
+    echo "生成的文件:"
+    find install -name "*.so" 2>/dev/null | head -5 | sed 's/^/  /'
     echo ""
-    echo -e "${BLUE}=== 自动修复 ===${NC}"
-    
-    # 修复 1: 添加缺失依赖到 CMakeLists.txt
-    if [[ -n "$MISSING" ]]; then
-        for dep in $(echo "$MISSING" | sort -u); do
-            dep_clean=$(echo "$dep" | tr '-' '_')
-            if ! grep -q "find_package(${dep}" "$pkg_dir/CMakeLists.txt" 2>/dev/null; then
-                echo -e "  + 添加缺失依赖: find_package(${dep} REQUIRED)"
-                sed -i "s/find_package(ament_cmake REQUIRED)/find_package(ament_cmake REQUIRED)\nfind_package(${dep} REQUIRED)/" \
-                    "$pkg_dir/CMakeLists.txt"
-            fi
-        done
-    fi
-    
-    echo -e "${YELLOW}! 自动修复完成，请重新编译验证:${NC}"
-    echo "  colcon build --packages-select $PKG_NAME --symlink-install"
-}
-
-# ── 主逻辑 ───────────────────────────────────
-run_build
-BUILD_RC=$?
-
-if [[ $BUILD_RC -eq 0 ]]; then
-    echo ""
-    echo -e "${GREEN}✓ 编译成功${NC}"
+    echo ">>> 编译验证通过 ✓"
     exit 0
 fi
 
-parse_errors "$BUILD_OUTPUT"
+# ── 解析错误 ──────────────────────────────────────────
+echo "❌ 编译失败（错误数统计）"
+echo ""
 
-if [[ "$DO_FIX" == "--fix" ]]; then
-    auto_fix
+# 统计错误类型
+ERROR_TYPES=$(echo "$BUILD_OUTPUT" | grep -E "error:" | sed 's/:.*//' | sort | uniq -c | sort -rn)
+if [ -n "$ERROR_TYPES" ]; then
+    echo "错误类型统计:"
+    echo "$ERROR_TYPES" | while read count rest; do
+        printf "  %4d  %s\n" "$count" "$rest"
+    done
+    echo ""
 fi
 
-exit $BUILD_RC
+# ── 分类错误并给出修复建议 ───────────────────────────
+echo "============================================"
+echo "  错误分类 & 修复建议"
+echo "============================================"
+
+# 1. CMake 链接错误
+if echo "$BUILD_OUTPUT" | grep -q "undefined reference\|ld: cannot find\|link error"; then
+    echo ""
+    echo "🔧 [CMake 链接错误] — 缺少 ament_export_dependencies"
+    echo ""
+    echo "   常见原因:"
+    echo "   1. CMakeLists.txt 缺少: ament_export_dependencies(rclcpp)"
+    echo "   2. add_library 的 target 没有 link 依赖库"
+    echo "   3. 依赖的包没有正确 find_package"
+    echo ""
+    
+    # 提取具体缺失的符号
+    UNDEFINED=$(echo "$BUILD_OUTPUT" | grep "undefined reference" | head -3)
+    if [ -n "$UNDEFINED" ]; then
+        echo "   缺失符号示例:"
+        echo "$UNDEFINED" | sed 's/^/   /'
+        echo ""
+    fi
+    
+    # 提取缺失的库
+    MISSING_LIBS=$(echo "$BUILD_OUTPUT" | grep "cannot find -l" | sed 's/^/   /')
+    if [ -n "$MISSING_LIBS" ]; then
+        echo "   缺失库文件:"
+        echo "$MISSING_LIBS"
+        echo ""
+    fi
+fi
+
+# 2. 头文件找不到
+if echo "$BUILD_OUTPUT" | grep -q "fatal error:\|No such file or directory"; then
+    echo ""
+    echo "🔧 [头文件找不到] — include 路径配置错误"
+    echo ""
+    echo "   常见原因:"
+    echo "   1. CMakeLists.txt 缺少: include_directories(include)"
+    echo "   2. target_include_directories 没有添加到库目标"
+    echo "   3. find_package 没有正确声明依赖"
+    echo ""
+    
+    MISSING_HEADERS=$(echo "$BUILD_OUTPUT" | grep "fatal error:" | sed 's/fatal error: //' | sed "s/ //" | head -3)
+    if [ -n "$MISSING_HEADERS" ]; then
+        echo "   缺失的头文件:"
+        echo "$MISSING_HEADERS" | sed 's/^/   /'
+        echo ""
+    fi
+fi
+
+# 3.ament_auto 缺失
+if echo "$BUILD_OUTPUT" | grep -q "ament_auto not found\|ament_auto_find_build_dependencies"; then
+    echo ""
+    echo "🔧 [ament_auto 宏不存在]"
+    echo ""
+    echo "   解决方案: 在 CMakeLists.txt 顶部添加"
+    echo '   ament_auto_find_build_dependencies()'
+    echo ""
+fi
+
+# 4. Python 依赖问题
+if echo "$BUILD_OUTPUT" | grep -q "ModuleNotFoundError\|No module named"; then
+    echo ""
+    echo "🔧 [Python 依赖缺失]"
+    echo ""
+    MISSING_PY=$(echo "$BUILD_OUTPUT" | grep "ModuleNotFoundError" | head -2 | sed 's/^/   /')
+    echo "   $MISSING_PY"
+    echo ""
+    echo "   解决方案: pip install <module> 或在 package.xml 添加 <exec_depend>"
+    echo ""
+fi
+
+# 5.ament_cmake 版本问题
+if echo "$BUILD_OUTPUT" | grep -q "CMAKE_CXX_STANDARD"; then
+    echo ""
+    echo "🔧 [C++ 标准版本问题]"
+    echo ""
+    echo "   解决方案: 在 CMakeLists.txt 添加:"
+    echo '   if(CMAKE_CXX_STANDARD LESS 17)'
+    echo '     set(CMAKE_CXX_STANDARD 17)'
+    echo '   endif()'
+    echo ""
+fi
+
+# 6.ament_export 缺失（最重要！）
+if echo "$BUILD_OUTPUT" | grep -q "ament_export\|ament_target_dependencies"; then
+    echo ""
+    echo "🔧 [ament_export_dependencies 缺失 — 这是最常见的错误]"
+    echo ""
+    echo "   完整正确格式（必须同时有这三行）:"
+    echo '   ament_target_dependencies(${PROJECT_NAME} rclcpp std_msgs)'
+    echo '   ament_export_dependencies(rclcpp)'
+    echo '   ament_export_include_directories(include)'
+    echo '   ament_export_libraries(${PROJECT_NAME})'
+    echo ""
+fi
+
+# 7. 未知错误
+if echo "$BUILD_OUTPUT" | grep -qE "error:|undefined reference|cannot find"; then
+    OTHER_ERRORS=$(echo "$BUILD_OUTPUT" | grep -E "error:" | grep -v "ament_export\|undefined reference\|cannot find\|fatal error" | head -5)
+    if [ -n "$OTHER_ERRORS" ]; then
+        echo ""
+        echo "📋 [其他错误]"
+        echo "$OTHER_ERRORS" | sed 's/^/   /'
+        echo ""
+    fi
+fi
+
+# ── 修复命令建议 ───────────────────────────────────
+echo "============================================"
+echo "  快速修复命令"
+echo "============================================"
+echo ""
+echo "# 查看完整编译输出"
+echo "colcon build --event-handlers console_direct+ 2>&1 | tee build.log"
+echo ""
+echo "# 只重新编译指定包（更快）"
+echo "colcon build --packages-select $PACKAGE_NAME"
+echo ""
+echo "# 清理后重新编译"
+echo "rm -rf build/ install/ log/ && colcon build"
+echo ""
+
+# 输出原始错误供 AI 解析
+echo "============================================"
+echo "  原始错误（供 AI 修正使用）"
+echo "============================================"
+echo "$BUILD_OUTPUT" | grep -E "error:|warning:" | head -30
+
+exit 1

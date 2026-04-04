@@ -1,268 +1,232 @@
----
-name: ros2-debug
-description: ROS2调试技能 - 编译错误诊断/QoS静默失败/TF问题/rclcpp崩溃/Lifecycle调试/性能剖析
-argument-hint: ros2调试 OR cmake错误 OR QoS不兼容 OR tf问题 OR 崩溃 OR Lifecycle调试 OR rclcpp
-user-invocable: true
----
+# ros2-debug — ROS2 调试技能
 
-# ROS2 调试技能
+## 目的
 
-> 用于诊断和解决 ROS2 开发中的各类运行时/编译时问题
+ROS2 问题按频率排列：
+1. **编译失败** — CMake/链接错误（最高频）
+2. **运行时崩溃** — rclcpp 异常、段错误
+3. **数据不通** — QoS 不匹配、话题不通
+4. **Lifecycle 状态机卡住**
 
----
-
-## 一、编译错误
-
-### 1.1 "non-existent dependency XXX"
+## 工具链
 
 ```bash
-# 诊断
-colcon build --packages-select <pkg> 2>&1 | grep "non-existent"
+# 编译错误
+colcon build --event-handlers console_direct+
 
-# 修复：添加缺失的 find_package
-find_package(XXX REQUIRED)
-ament_target_dependencies(my_node XXX)
-ament_export_dependencies(XXX)
+# 运行时崩溃
+gdb -ex run -ex bt --args <你的节点>
+
+# 话题通信
+ros2 topic list                     # 列出所有话题
+ros2 topic info <topic>              # 查看话题类型/QoS
+ros2 topic hz <topic>               # 频率监控
+ros2 topic echo <topic>             # 实时打印数据
+
+# 节点通信
+ros2 node list                       # 列出所有节点
+ros2 node info <node>                # 节点订阅/发布/服务
+
+# 服务调用
+ros2 service list                    # 列出所有服务
+ros2 service call <service> <type> <data>
+
+# 参数
+ros2 param list                       # 节点参数
+ros2 param get <node> <param>          # 获取参数值
+ros2 param set <node> <param> <value>  # 设置参数
+
+# 生命周期
+ros2 lifecycle list <node>            # 查看节点生命周期状态
+ros2 lifecycle set <node> <state>       # 切换状态
+
+# 代价地图可视化
+ros2 run nav2_map_server map_saver_cli -f my_map
+
+# 工具箱
+ros2 run rqt_graph rqt_graph          # 节点关系图（最常用！）
+ros2 run rqt_topic rqt_topic          # 话题监控
+ros2 run rqt_console rqt_console      # 日志查看器
+ros2 run rqt_msg rqt_msg              # 消息定义查看器
 ```
 
-### 1.2 "undefined reference to YYY"
+## 编译错误分类与修复
 
-```bash
-# 原因：YYY 是某个库的符号，但未链接
-# 修复：在 ament_target_dependencies 中加入该库
-ament_target_dependencies(my_node rclcpp cv_bridge sensor_msgs)
+### 错误1: `undefined reference to 'ros2_xxx'`
+
+**原因：** 缺少 `ament_export_dependencies` 或 `ament_target_dependencies`
+
+**修复：** 在 CMakeLists.txt 中添加：
+```cmake
+ament_target_dependencies(${PROJECT_NAME}
+  rclcpp
+  std_msgs
+)
+ament_export_dependencies(rclcpp)
 ```
 
-### 1.3 "ament_index_is_register_plugins failed"
+### 错误2: `fatal error: rclcpp/rclcpp.hpp: No such file or directory`
 
-```bash
-# 原因：plugin_description.xml 中的插件未注册
-# 修复：添加 ament_register_plugins
-ament_register_plugins(${PROJECT_NAME}
-  "plugins/${PROJECT_NAME}/plugin_description.xml")
+**原因：** CMakeLists.txt 缺少 `find_package(rclcpp REQUIRED)`
+
+**修复：** 在 `find_package` 区域添加：
+```cmake
+find_package(rclcpp REQUIRED)
+find_package(std_msgs REQUIRED)
 ```
 
----
+### 错误3: `ament_export_include_directories: .../include is not a directory`
 
-## 二、运行时崩溃
+**原因：** include 目录不存在或路径错误
 
-### 2.1 Segmentation Fault
-
+**修复：** 确认目录结构：
 ```bash
-# 诊断：使用 gdb
-ros2 run --debug --prefix 'gdb -ex run -ex bt' <pkg> <node>
-
-# 常见原因：
-# - SharedPtr 为空
-# - 访问已释放对象
-# - 线程安全问题
+ls -la <package>/include/<package>/
 ```
 
-### 2.2 "failed to initialize rcl"
+### 错误4: `Could not find a package 'ament_auto'`
+
+**修复：** 改用标准 ament_cmake：
+```cmake
+find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
+```
+
+### 错误5: `library path` 链接错误
+
+**原因：** install 名/库名不匹配
+
+**修复：** 检查 CMakeLists.txt 的 install 语句：
+```cmake
+install(TARGETS ${PROJECT_NAME}
+  RUNTIME DESTINATION ${AMENT_PACKAGE_BIN_DESTINATION}
+  LIBRARY DESTINATION ${AMENT_PACKAGE_LIB_DESTINATION}
+)
+```
+
+## 运行时崩溃
+
+### 段错误 (Segmentation fault)
+
+**定位方法：**
+```bash
+gdb -ex run -ex bt --args colcon test --packages-select <package> --event-handlers console_direct+
+# 或
+gdb ./install/<package>/lib/<package>/<node>
+(gdb) run
+# 等待崩溃
+(gdb) bt  # 打印堆栈
+```
+
+**常见原因：**
+- shared_ptr 管理不善（生命周期问题）
+- 线程安全问题（跨线程访问未加锁）
+- vector/map 越界访问
+
+### rclcpp::exceptions::InvalidNodeNameError
+
+**原因：** 节点名以 `/` 开头（绝对名），ROS2 不允许。
+
+**修复：**
+```cpp
+// ❌ 错误
+auto node = rclcpp::Node::make_shared("/my_node"); // 错误！
+
+// ✅ 正确
+auto node = rclcpp::Node::make_shared("my_node");  // 相对名称
+```
+
+### qos_policy_kind 错误
+
+**原因：** QoS 不兼容。
+
+**修复：** 见 `ros2-qos-checker` 技能。
+
+## Lifecycle 状态机问题
+
+### 节点卡在 UNCONFIGURED 不转换
 
 ```bash
-# 原因：多次调用 rclcpp::init()
-# 修复：确保只初始化一次
-if (!rclcpp::ok()) {
-  rclcpp::init(argc, argv);
+# 查看当前状态
+ros2 lifecycle list /my_lifecycle_node
+
+# 手动触发转换
+ros2 lifecycle set /my_lifecycle_node configure
+ros2 lifecycle set /my_lifecycle_node activate
+```
+
+### on_activate() 里卡住
+
+**常见原因：** 在 on_activate 里执行了阻塞操作。
+
+```cpp
+// ❌ on_activate 禁止阻塞
+rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
+on_activate() override {
+    // 不要在这里 sleep()、等待服务、循环查询
+    RCLCPP_INFO(get_logger(), "Activating...");
+    // ✅ 只做状态设置，立即返回
+    return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
 }
 ```
 
-### 2.3 定时器回调崩溃
+## 数据不通排查
 
+### 话题发布成功但订阅收不到
+
+**排查步骤：**
 ```bash
-# 原因：回调中访问已释放对象
-# 修复：捕获 shared_from_this
-auto self = shared_from_this();
-timer_ = this->create_wall_timer(1s, [this, self]() {
-  // self 确保对象存活
-});
-```
+# 1. 确认话题存在
+ros2 topic list | grep <topic>
 
----
+# 2. 查看 QoS 配置
+ros2 topic info /<topic> --verbose
 
-## 三、QoS 静默失败（最难调试）
-
-### 3.1 现象：数据发布但订阅端收不到
-
-```bash
-# 第一步：查看两端 QoS
-ros2 topic info /topic_name --verbose
-```
-
-### 3.2 QoS 兼容性矩阵
-
-| 发布者 | 订阅者 | 结果 |
-|--------|--------|------|
-| BestEffort | Reliable | ❌ |
-| Reliable | BestEffort | ✅ |
-| Volatile | TransientLocal | ❌ |
-
-### 3.3 修复
-
-```cpp
-// 发布端显式设置 QoS
-rclcpp::QoS qos(10);
-qos.best_effort();           // 传感器
-qos.reliable();              // 控制命令
-qos.transient_local();       // 迟到订阅者
-
-publisher_ = this->create_publisher<Msg>("/topic", qos);
-```
-
----
-
-## 四、TF 问题
-
-### 4.1 TF 广播频率不匹配
-
-```bash
-# 查看 TF 频率
-ros2 topic hz /tf
-ros2 topic hz /tf_static
-
-# 常见问题：定位漂移 = 频率不匹配
-# 解决：确保所有传感器频率一致
-```
-
-### 4.2 Frame not found
-
-```bash
-# 诊断
-ros2 run tf2_ros tf2_echo world base_link
-
-# 如果报错 "Frame not found"：
-# 1. 检查 broadcaster 是否发布
-# 2. 检查时间戳同步
-# 3. 检查是否存在循环引用
-```
-
----
-
-## 五、Lifecycle 调试
-
-### 5.1 查看 Lifecycle 状态
-
-```bash
-# 列出所有 lifecycle 节点
-ros2 lifecycle list /node_name
-
-# 触发状态转换
-ros2 lifecycle set /node_name configure
-ros2 lifecycle set /node_name activate
-ros2 lifecycle set /node_name deactivate
-```
-
-### 5.2 节点卡在 inactive
-
-```bash
-# 查看 /rosout 日志
-ros2 run rqt_console rqt_console
-
-# on_configure 回调返回 FAILURE 通常是原因
-```
-
----
-
-## 六、rclpy 问题
-
-### 6.1 节点无法退出
-
-```python
-# 错误
-def main():
-    rclpy.init()
-    node = MyNode()
-    rclpy.spin(node)
-    # Ctrl+C 无响应，没有 shutdown
-
-# 正确
-def main():
-    rclpy.init()
-    node = MyNode()
-    try:
-        rclpy.spin(node)
-    except KeyboardInterrupt:
-        pass
-    finally:
-        node.destroy_node()
-        rclpy.shutdown()
-```
-
-### 6.2 回调阻塞
-
-```python
-# 错误：在回调中使用 time.sleep()
-def callback(self, msg):
-    time.sleep(1)  # 阻塞整个事件循环
-
-# 正确：用 timer
-self.timer = self.create_timer(1.0, self.timer_callback)
-```
-
----
-
-## 七、性能问题
-
-### 7.1 高频消息丢帧
-
-```bash
-# 诊断
-ros2 topic hz /topic_name
-
-# 如果频率远低于预期：
-# 1. 检查 QoS 是否为 BestEffort（传感器）
-# 2. 检查是否用 SingleThreadedExecutor（改用 MultiThreaded）
-```
-
-### 7.2 CPU 占用高
-
-```bash
-# 使用 top 定位高 CPU 进程
-top -p $(pgrep -f <node_name>)
-
-# 常见原因：
-# - 回调中有耗时计算
-# - 日志输出过多
-# - 定时器间隔太短
-```
-
----
-
-## 八、常用调试命令速查
-
-```bash
-# 计算图
-rqt_graph
-
-# 话题
-ros2 topic list -v
-ros2 topic info /name --verbose
-ros2 topic echo /name
-ros2 topic hz /name
-ros2 topic bw /name
-
-# 节点
+# 3. 检查发布/订阅是否在同一命名空间
 ros2 node list
-ros2 node info /name
 
-# 服务
+# 4. 尝试直接 echo
+ros2 topic echo /<topic>
+```
+
+**常见原因：**
+- QoS 不兼容（最常见）
+- 命名空间不同（发布在 `/ns1`，订阅在 `/ns2`）
+- lifecycle 节点未激活（UNCONFIGURED/INACTIVE 状态不发布数据）
+
+### 服务调用失败
+
+```bash
+# 列出服务
 ros2 service list
-ros2 service call /name type "{...}"
 
-# 参数
-ros2 param list
-ros2 param set /node param value
-ros2 param get /node param
+# 查看服务类型
+ros2 service type /add_two_ints
 
-# Lifecycle
-ros2 lifecycle list /node
-ros2 lifecycle set /node state
+# 同步调用
+ros2 service call /add_two_ints example_interfaces/srv/AddTwoInts "{a: 2, b: 3}"
+```
 
-# TF
-ros2 run tf2_ros view_frames
-ros2 run tf2_ros tf2_echo frame1 frame2
+## AI 生成代码后的自动验证流程
 
-# 日志
-ros2 run rqt_console rqt_console
+```
+1. colcon build --packages-select <pkg> 2>&1
+2. 如有错误 → 提取错误类型 → 应用本技能修复建议
+3. 重新编译 → 直到 0 错误
+4. ros2 run <pkg> <node> --ros-args --log-level debug
+5. ros2 topic list / echo 验证数据流通
+```
+
+## 禁止的调试方式
+
+```bash
+# ❌ 禁止：只用 printf 调试（ROS2 用 RCLCPP_INFO）
+std::cout << "debug" << std::endl;  // 太原始
+RCLCPP_INFO(this->get_logger(), "Current value: %d", val);  // ✅
+
+# ❌ 禁止：kill -9 强制杀掉节点（导致状态机混乱）
+kill -9 <pid>  # 可能留下僵尸资源
+
+# ✅ 正确：优雅关闭
+ros2 lifecycle set /node shutdown
 ```

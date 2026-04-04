@@ -1,271 +1,197 @@
-# MCP 多智能体自主开发流程
+# MCP Workflow — 多智能体协作示例
 
-> 使用 MCP (Model Context Protocol) 连接 AI Agent 与真实 ROS2/Gazebo 环境，让多个 AI Agent 协作完成完整的机器人开发任务。
+## 概述
 
----
-
-## 🚀 快速启动
-
-### 前置要求
-
-```bash
-# 安装 Claude Code CLI（推荐）
-# https://docs.anthropic.com/en/docs/claude-code/overview
-
-# 或安装 OpenAI Codex CLI
-npm install -g @openai/codex
-
-# 或安装 GitHub Copilot CLI
-gh extension install github/gh-copilot
-```
-
-### 一键启动
-
-```bash
-cd /path/to/vibe-coding-ros2
-
-# 案例一：宇树 GO2 机器狗 S 曲线
-./scripts/mcp/mcp-agent-orchestrator.sh go2-scurve --agent claude
-
-# 案例二：机械臂自主抓取
-./scripts/mcp/mcp-agent-orchestrator.sh manipulator-pickplace --agent claude
-
-# 自定义任务（交互式）
-./scripts/mcp/mcp-agent-orchestrator.sh custom --agent claude
-```
-
-### 环境变量
-
-```bash
-# 指定模型
-AGENT_MODEL=claude-opus-4-20250514 \
-./scripts/mcp/mcp-agent-orchestrator.sh go2-scurve --agent claude
-
-# 指定超时（秒）
-AGENT_TIMEOUT=600 \
-./scripts/mcp/mcp-agent-orchestrator.sh manipulator-pickplace --agent claude
-
-# 指定工作区
-WORKSPACE=/opt/ros2_ws \
-./scripts/mcp/mcp-agent-orchestrator.sh go2-scurve --agent claude
-```
-
----
+MCP (Model Context Protocol) 工作流通过多个专业化 AI Agent 协作完成复杂 ROS2 开发任务。
 
 ## 架构
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│                    Orchestrator Agent                   │
-│         (首席 Agent，负责规划 + 分配 + 汇总)             │
-└────────────────────┬────────────────────────────────────┘
-                     │ MCP Tool Calls
-          ┌──────────┼──────────┬─────────────┐
-          │          │          │             │
-    ┌─────▼────┐ ┌──▼────┐ ┌─▼──────┐ ┌──▼─────┐
-    │  Skill   │ │ ROS2  │ │ Gazebo │ │ Deploy │
-    │  Router  │ │ Node  │ │  Env   │ │  Agent │
-    └──────────┘ └───────┘ └────────┘ └────────┘
-         ↓           ↓          ↓          ↓
-    agents/skills  colcon    gz sim   ssh/scp
-                   build
+用户需求
+    │
+    ▼
+┌─────────────────────┐
+│  Orchestrator Agent │  ← 主编排智能体，理解任务并分派
+└─────────────────────┘
+    │
+    ├──────────────────┬──────────────────┐
+    ▼                  ▼                  ▼
+┌─────────┐    ┌─────────────┐    ┌────────────┐
+│ MCP-SIM │    │ MCP-BUILD  │    │ MCP-DEBUG  │
+│ 仿真验证 │    │ 编译反馈    │    │ 调试诊断   │
+└─────────┘    └─────────────┘    └────────────┘
+    │                  │                  │
+    └──────────────────┴──────────────────┘
+                        │
+                        ▼
+               修正后的代码输出
 ```
+
+## 启用 MCP Server
+
+```bash
+# 启动 ROS2 MCP Server
+cd ~/vibe-coding-ros2
+./scripts/mcp/ros-mcp-integration.sh
+
+# 验证连接（在新终端）
+./scripts/mcp/ros-mcp-integration.sh --verify
+```
+
+## Case 1: go2-scurve — 足式机器人轨迹规划
+
+### Phase 0: 需求理解 + 环境检查
+
+**输入:** "让 go2 机器人走 S 曲线"
+
+**Orchestrator 分派:**
+1. `MCP-SIM`: 查询当前机器人状态 (`ros2 topic list`)
+2. `MCP-BUILD`: 检查是否有 `go2_scurve` 包
+
+```bash
+# 期望的 MCP 调用
+mcp__ros2__topic_list
+mcp__ros2__pkg_list
+mcp__ros2__node_info /go2_state_estimation
+```
+
+### Phase 1: 接口定义
+
+**MCP-SIM** 提供 URDF/状态反馈:
+- 当前关节角度
+- 足端力传感器读数
+- 地形信息（如果有）
+
+**生成:**
+```cpp
+// S曲线轨迹接口
+geometry_msgs/msg/TrajectoryPoint[]  // 路径点序列
+std_msgs/msg/Float64MultiArray       // 关节角度目标
+```
+
+### Phase 2: 代码生成
+
+**MCP-BUILD** 反馈:
+- CMakeLists.txt 依赖检查
+- 编译错误实时修正
+- 最多 3 轮重试
+
+### Phase 3: 仿真验证
+
+**MCP-SIM**:
+- Gazebo 仿真启动
+- 轨迹执行监控
+- 成功/失败判定
 
 ---
 
-## Agent 类型
+## Case 2: manipulator-pickplace — 机械臂抓取
 
-| Agent | CLI | 说明 |
-|-------|-----|------|
-| `claude` | Claude Code 官方 CLI | ⭐ 推荐，支持多轮对话 |
-| `codex` | OpenAI Codex CLI | 代码生成能力强 |
-| `copilot` | GitHub Copilot CLI | 与 GitHub 深度集成 |
-| `copilot-chat` | VS Code Copilot Chat | 需手动在 VS Code 中执行 |
+### Phase 0: 需求理解
 
----
+**输入:** "机械臂从货架抓取物品放到托盘"
 
-## MCP Tools (Agent 可调用的工具)
+**分解为:**
+1. 视觉定位 (Perception Agent)
+2. 运动规划 (Motion Agent)
+3. 抓取执行 (Control Agent)
 
-### Skill Router Agent
+### Phase 1: 接口定义
 
-```
-skill_router.search(robot_type, task_type) → SKILL.md path
-skill_router.list_skills(robot_type) → skill list
-skill_router.validate_skill(skill_path) → verified/draft/concept
-```
-
-### ROS2 Node Agent
-
-```
-ros2.create_package(name, type, deps) → package created
-ros2.generate_cpp_node(package, topic, msg_type, qos) → .cpp file
-ros2.generate_launch(package, nodes) → .launch.py
-ros2.build(package) → success/fail + error output
-ros2.run(node, params) → process started
-ros2.topic_echo(topic) → message stream
-ros2.topic_list() → active topics
-ros2.param_get(node, param) → value
-ros2.param_set(node, param, value) → success
+```yaml
+# 机械臂任务描述
+task:
+  type: pick_place
+  pick_pose: [x, y, z, qx, qy, qz, qw]  # 目标物体位置
+  place_pose: [x, y, z, qx, qy, qz, qw]  # 放置位置
+  approach_height: 0.15  # m
+  grasp_width: 0.08     # m
 ```
 
-### Gazebo Environment Agent
+### Phase 2: 代码生成
+
+**生成文件:**
+- `manipulator_pickplace.cpp` — 主节点
+- `grasp_planner.cpp` — 抓取规划
+- `trajectory_generator.cpp` — 轨迹生成
+- `pickplace.launch.py` — 启动文件
+
+**MCP-BUILD** 自动验证编译
+
+### Phase 3: 仿真验证
+
+**MCP-SIM**:
+- MoveIt! 仿真
+- 碰撞检测
+- 抓取成功率统计
+
+## Agent 提示词模板
+
+### Orchestrator
 
 ```
-gazebo.create_world(world_file, config) → .world file
-gazebo.spawn_model(model_name, urdf, pose) → model spawned
-gazebo.set_model_state(model, pose, twist) → state set
-gazebo.create_trajectory(model, waypoints, duration) → trajectory executed
-gazebo.record_trajectory(model, trajectory) → bag file saved
-gazebo.reset_world() → world reset
+你是一个 ROS2 机器人任务编排专家。
+
+任务：{user_task}
+
+请按以下步骤执行：
+1. 理解任务并分解为子任务
+2. 确定需要的 Agent 类型（MCP-SIM / MCP-BUILD / MCP-DEBUG）
+3. 定义 Agent 之间的消息传递格式
+4. 监控执行结果，失败时重新规划
+
+输出格式：
+## 任务分解
+1. [Agent类型] 子任务描述
+
+## 接口定义
+```yaml
+# 需要的 msg/srv/action 接口
 ```
 
-### Deploy Agent
-
-```
-deploy.ssh_exec(host, command) → output
-deploy.scp_upload(local_file, remote_path) → success
-deploy.ssh_tunnel(local_port, remote_port, host) → tunnel active
-deploy.install_deps(host, ros_distro) → deps installed
+## 执行计划
+1. Phase N: [Agent] — 做什么
 ```
 
----
-
-## 标准工作流
-
-### Phase 1: 规划 (Orchestrator)
+### MCP-BUILD
 
 ```
-Orchestrator:
-  1. 读取 i18n/zh-CN/AGENTS_CONCISE.md
-  2. 读取 i18n/zh-CN/ANTI_PATTERNS.md
-  3. 分析用户需求 → 拆解为子任务
-  4. 为每个子任务分配专业 Agent
-  5. 收集结果并汇总
-  6. 输出完整报告
+你是 ROS2 编译专家。当给你 ROS2 包源码时：
+1. 分析 CMakeLists.txt 的依赖完整性
+2. 如果缺少 ament_export_dependencies，标记并修复
+3. 执行 colcon build，捕获错误
+4. 如果有编译错误，给出精确修复建议
+5. 最多重试 3 轮，第 3 轮仍失败则报告"无法编译"
+
+输出格式：
+## 依赖检查
+✅ 完整 / ❌ 缺失: [具体依赖]
+
+## 编译结果
+✅ 成功（0 错误）/ ❌ 失败
+
+## 错误修复（如有）
+[具体修复命令或代码片段]
 ```
 
-### Phase 2: Skill 路由 (Skill Router)
+## 故障排查
 
-```
-Skill Router:
-  1. 确定机器人类型 → quadruped / humanoid / manipulator / wheeled_vehicle
-  2. 确定任务类型 → motion-control / perception / navigation / sim
-  3. 搜索对应 SKILL.md → 返回路径 + 内容摘要
-  4. 如有同名 skill 冲突 → 按 taxonomy 路径确定优先级
-  5. 返回技能清单及使用顺序
-```
+### MCP Server 连接失败
 
-### Phase 3: 代码生成 (ROS2 Node Agent)
+```bash
+# 检查 ROS2 环境
+ros2 env | grep ROS_DISTRO
 
-```
-ROS2 Node Agent:
-  1. 加载 SKILL.md 获取领域知识
-  2. 按 i18n/zh-CN/AGENTS_CONCISE.md 顺序生成:
-     package.xml → CMakeLists.txt → msg/srv → 节点代码 → launch
-  3. 运行 ros2-node-validator.sh 自检
-  4. colcon build 编译验证
-  5. 如编译失败 → 读错误输出 → 修复 → 重新编译
-  6. 返回编译成功的包路径
+# 检查 MCP server 进程
+ps aux | grep ros-mcp
+
+# 重启 MCP server
+./scripts/mcp/ros-mcp-integration.sh --restart
 ```
 
-### Phase 4: 仿真验证 (Gazebo Agent)
+### Agent 通信超时
 
+增加超时配置：
+```bash
+export MCP_TIMEOUT=60  # 秒
 ```
-Gazebo Agent:
-  1. 加载 gazebo-simulation-env SKILL.md
-  2. 创建/配置 .world 文件
-  3. 加载机器人 URDF/XACRO 模型
-  4. spawn 到 Gazebo 仿真环境
-  5. 运行目标任务（走S曲线/抓取/导航）
-  6. 记录数据
-  7. 评估结果 → PASS/FAIL
-```
-
-### Phase 5: 部署 (Deploy Agent)
-
-```
-Deploy Agent:
-  1. 打包工作区（install/ + src/）
-  2. scp 到目标机器
-  3. ssh 安装依赖（rosdep install）
-  4. 远程编译
-  5. 验证运行
-```
-
----
-
-## 输出格式
-
-每个任务完成后，Orchestrator 输出：
-
-```markdown
-# 开发报告
-
-## 任务
-描述
-
-## 执行流程
-
-### Phase 1: 规划
-- 拆解: [子任务列表]
-
-### Phase 2: Skill 路由
-- 使用技能: [skill路径]
-
-### Phase 3: 代码生成
-- 生成包: [路径]
-- 编译结果: ✅/❌
-
-### Phase 4: 仿真验证
-- Gazebo 世界: [路径]
-- 仿真结果: ✅/❌
-
-### Phase 5: 部署
-- 部署目标: [host]
-- 运行结果: ✅/❌
-
-## 完整代码清单
-- [文件路径]: [说明]
-```
-
----
-
-## 配置要求
-
-### MCP Server 配置
-
-```json
-// mcp.json（在用户的 VS Code / Cursor 中）
-{
-  "mcpServers": {
-    "skill-router": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/path/to/vibe-coding-ros2/agents/skills"]
-    },
-    "ros2": {
-      "command": "python3",
-      "args": ["/path/to/mcp-ros2-server.py"]
-    },
-    "gazebo": {
-      "command": "python3",
-      "args": ["/path/to/mcp-gazebo-server.py"]
-    }
-  }
-}
-```
-
-### 环境要求
-
-- ROS2 Humble + Gazebo Harmonic（对于宇树 GO2）
-- 或 ROS2 Humble + Gazebo Classic（对于早期版本）
-- colcon + rosdep 已安装
-- SSH 访问目标机器人（如需部署）
-
----
-
-## 案例入口
-
-| 案例 | 路径 |
-|------|------|
-| 宇树 GO2 机器狗 S 曲线 | `cases/go2-scurve/README.md` |
-| 机械臂自主抓取 | `cases/manipulator-pickplace/README.md` |
