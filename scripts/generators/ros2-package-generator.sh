@@ -262,3 +262,32 @@ echo "  2. 编辑 src/${PKG_NAME}_node.cpp — 填充业务逻辑"
 echo "  3. colcon build --packages-select $PKG_NAME --symlink-install"
 echo "  4. source install/setup.bash"
 echo "  5. ros2 run $PKG_NAME ${PKG_NAME}_node"
+
+
+# ========== 编译验证（新增）==========
+echo ""
+echo -e "${GREEN}=== 编译验证 ===${NC}"
+
+ROS2_WS=""
+for dir in /opt/ros/humble /opt/ros/iron /opt/ros/rolling; do
+    if [[ -d "$dir" ]]; then
+        ROS2_WS="$dir"; break
+    fi
+done
+
+if [[ -z "$ROS2_WS" ]]; then
+    echo -e "${YELLOW}! 未检测到 ROS2，跳过编译验证${NC}"
+    exit 0
+fi
+
+BUILD_OUTPUT=$(colcon build --packages-select "$PKG_NAME" --symlink-install 2>&1)
+BUILD_RC=$?
+
+if [[ $BUILD_RC -eq 0 ]]; then
+    echo -e "${GREEN}! 编译成功${NC}"
+else
+    echo -e "${RED}! 编译失败：${NC}"
+    echo "$BUILD_OUTPUT" | grep -E "Error|error|non-existent|undefined|FAILED" | head -20
+    echo ""
+    echo "修复: 在 CMakeLists.txt 添加缺失的 find_package(XXX REQUIRED)"
+fi

@@ -74,7 +74,7 @@
 **问题**：只是 markdown 模板，不是真正可执行的脚本。
 
 **交付物**：
-- [ ] `scripts/generators/ros2-package-generator.sh` — 接收包名/语言/依赖，生成完整 ROS2 包
+- [x] `scripts/generators/ros2-package-generator.sh` — 接收包名/语言/依赖，生成完整 ROS2 包
 - [ ] 自动处理 `ament_export_dependencies`、传递依赖
 - [ ] 支持 C++ 和 Python 两种语言
 - [ ] 生成后自动执行 `colcon build` 验证
