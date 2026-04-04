@@ -1,183 +1,209 @@
-# ROS2 开发常用提示词模板
+# ROS2 常用开发提示词模板
 
-> 用户可直接复制使用的高频提示词
-
----
-
-## 1. 创建项目上下文
-
-```
-请帮我创建一个 ROS2 项目上下文文档。
-信息如下：
-- 项目名称：巡检机器人
-- 目标平台：Jetson OrinNX
-- ROS2 版本：Humble
-- 核心功能：图像检测 + 激光雷达导航
-- 开发语言：C++
-
-请按照 vibe-coding-ros2 的模板生成完整的上下文文档。
-```
+> 适用于用户直接发起常见 ROS2 开发任务的场景
+> 每个模板都包含：描述 → 生成 → 验证 三步
 
 ---
 
-## 2. 创建功能包
+## 场景 1：创建激光扫描发布节点
 
+**用户输入**：
 ```
-请帮我创建一个 ROS2 功能包。
+创建一个发布激光扫描数据的 ROS2 节点
+```
 
-包名：image_processor
-语言：C++
-核心依赖：rclcpp, sensor_msgs, cv_bridge, image_transport
-功能：接收原始图像，进行预处理后输出
+**AI 提示词（内部使用）**：
+```
+为以下需求生成完整的 ROS2 节点：
+- 发布 /scan 话题，类型 sensor_msgs/msg/LaserScan
+- 使用 sensor_dataQoS()
+- 发布频率 10Hz
+- 包含距离和角度信息模拟
+- 节点名：laser_scan_publisher
 
-请生成完整的包结构，包括：
-1. CMakeLists.txt
-2. package.xml
-3. 基础节点代码
-4. Launch 文件
-5. 参数文件
+生成后必须：
+1. 创建 launch 文件启动节点
+2. 使用 ros2 topic echo /scan 验证数据发布
+3. 使用 ros2 topic hz /scan 验证频率
 ```
 
 ---
 
-## 3. 添加新节点
+## 场景 2：创建导航路径订阅节点
 
+**用户输入**：
 ```
-请在现有的 my_robot 包中添加一个新节点。
-
-节点名：patrol_node
-功能：实现巡检状态机
-- 订阅 /cmd_vel 接收运动指令
-- 发布 /odom 里程计数据
-- 接收 /patrol/path 路径数据
-- 状态机：IDLE -> PATROLLING -> RETURNING
-
-请生成完整的节点代码和状态机实现。
+订阅导航路径并可视化
 ```
 
----
-
-## 4. 调试 Topic 问题
-
+**AI 提示词（内部使用）**：
 ```
-我的 /camera/image_raw 话题没有数据。
+为以下需求生成完整的 ROS2 节点：
+- 订阅 /plan 话题，类型 nav_msgs/msg/Path
+- 使用 reliable QoS
+- 收到路径后打印起点和终点
+- 节点名：path_subscriber
 
-已尝试：
-1. ros2 topic list 显示话题存在
-2. 相机驱动节点正在运行
-3. ros2 doctor 无明显错误
-
-请帮我分析可能的原因，并给出调试步骤。
+生成后必须：
+1. 使用 ros2 run <pkg> path_subscriber 启动
+2. 使用 ros2 topic list 确认话题存在
+3. 使用 ros2 topic echo /plan 检查数据
 ```
 
 ---
 
-## 5. 配置交叉编译
+## 场景 3：创建 Service 服务器（路径重规划）
 
+**用户输入**：
 ```
-请帮我配置 ARM64 交叉编译环境。
-
-目标平台：Jetson OrinNX
-现有工具：
-- x86_64 开发机
-- Linux_for_Tegra/rootfs 已解压
-- ros:humble 镜像
-
-请生成：
-1. aarch64.toolchain.cmake 文件
-2. Dockerfile.arm64_cross
-3. colcon build 编译命令
+创建一个 Service 服务器实现路径重规划
 ```
 
----
-
-## 6. 创建 Launch 文件
-
+**AI 提示词（内部使用）**：
 ```
-请帮我创建一个 Launch 文件。
+为以下需求生成完整的 ROS2 节点：
+- Service 名：/replan_path
+- Request: geometry_msgs/PoseStamped start, geometry_msgs/PoseStamped goal
+- Response: nav_msgs/Path path
+- 使用 rclcpp::executors::MultiThreadedExecutor
+- 节点名：replan_server
 
-要求：
-- 启动 image_processor 节点
-- 启动 camera_driver 节点
-- camera_driver 的输出 remap 到 image_processor 的输入
-- 从 config/params.yaml 加载参数
-- 设置节点名称空间为 /robot1
-
-请生成 Python 格式的 launch 文件。
+生成后必须：
+1. 创建 .srv 文件（srv/Replan.srv）
+2. 在 CMakeLists.txt 添加 .srv 文件处理
+3. 使用 ros2 service call /replan_path <pkg>/srv/Replan "{...}" 测试
 ```
 
 ---
 
-## 7. 定义自定义消息
+## 场景 4：创建 Action 客户端（抓取任务）
 
+**用户输入**：
 ```
-请帮我定义一个自定义消息。
-
-消息用途：目标检测结果
-包含字段：
-- Header (时间戳和坐标系)
-- uint8 检测类型 (PERSON=0, CAR=1, OBSTACLE=2)
-- uint8 数量
-- float32[] 置信度数组
-- geometry_msgs/Box[] 边界框数组
-
-请生成 .msg 文件和对应的 CMakeLists.txt 配置。
+创建一个 Action 客户端执行抓取任务
 ```
 
----
-
-## 8. 优化性能
-
+**AI 提示词（内部使用）**：
 ```
-我的图像处理节点延迟太高 (100ms+)，请帮我优化。
+为以下需求生成完整的 ROS2 节点：
+- Action 名：/grasp_action
+- Goal: geometry_msgs/PoseStamped target_pose
+- Feedback: float32 progress
+- Result: bool success, string message
+- 节点名：grasp_action_client
+- 异步发送 goal 并处理 feedback/result 回调
 
-当前实现：
-- 订阅 /camera/image_raw (1920x1080 @ 30Hz)
-- OpenCV 处理 (缩放 + 格式转换)
-- 发布处理后的图像
-
-请给出：
-1. 可能的性能瓶颈分析
-2. 优化方案 (多线程/流水线/零拷贝)
-3. 优化后的代码示例
+生成后必须：
+1. 创建 action 文件（action/Grasp.action）
+2. 使用 ros2 action list 确认 action 存在
+3. 使用 ros2 action send_goal 测试
 ```
 
 ---
 
-## 9. 部署到 OrinNX
+## 场景 5：创建 Lifecycle 传感器节点
 
+**用户输入**：
 ```
-请帮我创建一个部署脚本。
+创建一个 Lifecycle 温度传感器节点
+```
 
-信息：
-- 目标机 IP：192.168.1.110
-- 用户名：ubuntu
-- 编译产物在 ./install 目录
-- 需要部署到 /opt/ros_ws/
+**AI 提示词（内部使用）**：
+```
+为以下需求生成 Lifecycle 节点：
+- 节点名：temp_sensor_lifecycle
+- 话题：/temperature，类型 std_msgs/msg/Float32
+- 使用 sensor_dataQoS()
+- on_configure: 创建 publisher
+- on_activate: 开始发布
+- on_deactivate: 停止发布
+- on_cleanup: 清理资源
+- 发布频率 1Hz 模拟数据
 
-请生成：
-1. 打包命令
-2. 传输命令
-3. 远程安装命令
-4. 验证命令
+生成后必须：
+1. 使用 ros2 lifecycle list 查看状态转换
+2. 使用 ros2 lifecycle set /temp_sensor_lifecycle configure/activate/deactivate
+3. 使用 ros2 topic echo /temperature 验证数据
 ```
 
 ---
 
-## 10. 代码审查
+## 场景 6：创建多传感器融合节点
 
+**用户输入**：
 ```
-请帮我审查以下代码的 ROS2 最佳实践。
+创建一个融合激光和相机的障碍物检测节点
+```
 
-文件：src/detection_node.cpp
-语言：C++
+**AI 提示词（内部使用）**：
+```
+为以下需求生成 ROS2 节点：
+- 订阅 /scan（sensor_msgs/LaserScan）和 /depth/image（sensor_msgs/Image）
+- 使用 message_filters::TimeSynchronizer 同步
+- 在回调中融合数据检测障碍物
+- 发布 /obstacles（visualization_msgs/MarkerArray）
+- 使用 MultiThreadedExecutor
+- 节点名：obstacle_fusion
 
-关注点：
-1. 内存管理 (是否有泄漏)
-2. 线程安全 (多线程访问)
-3. QoS 配置 (是否合理)
-4. 错误处理 (是否有遗漏)
-5. 日志规范 (是否适当)
+生成后必须：
+1. 在 CMakeLists.txt 添加 message_filters 依赖
+2. 使用 ros2 run <pkg> obstacle_fusion 启动
+3. 使用 ros2 topic hz /scan /depth/image 确认频率匹配
+```
 
-请给出审查报告和改进建议。
+---
+
+## 场景 7：创建参数服务节点
+
+**用户输入**：
+```
+创建一个支持动态参数调节的 PID 控制器节点
+```
+
+**AI 提示词（内部使用）**：
+```
+为以下需求生成 ROS2 节点：
+- 节点名：pid_controller
+- 参数：Kp（double, 1.0）, Ki（double, 0.1）, Kd（double, 0.01）
+- 支持 rclcpp::AsyncParametersClient 动态修改
+- 订阅 /error（std_msgs/Float64），发布 /control（std_msgs/Float64）
+- 使用 get_parameter() 获取当前参数值
+
+生成后必须：
+1. 使用 ros2 param list 查看参数
+2. 使用 ros2 param set /pid_controller Kp 2.0 动态调节
+3. 在 rviz2 中可视化 /control 输出
+```
+
+---
+
+## 通用验证命令速查
+
+```bash
+# 话题
+ros2 topic list              # 列出所有话题
+ros2 topic info /topic_name  # 查看话题类型/QoS
+ros2 topic echo /topic_name  # 查看实时数据
+ros2 topic hz /topic_name   # 查看发布频率
+
+# 节点
+ros2 node list              # 列出所有节点
+ros2 node info /node_name   # 查看节点订阅/发布/服务
+
+# 服务
+ros2 service list            # 列出所有服务
+ros2 service call /service_name pkg/type "{...}"
+
+# Action
+ros2 action list            # 列出所有 action
+ros2 action send_goal /action_name pkg/type "{goal}"
+
+# 参数
+ros2 param list             # 列出所有参数
+ros2 param set /node param value
+ros2 param get /node param
+
+# Lifecycle
+ros2 lifecycle list          # 列出所有 lifecycle 节点
+ros2 lifecycle set /node configure/activate/deactivate/cleanup
 ```
