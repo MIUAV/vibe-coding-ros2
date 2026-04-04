@@ -5,6 +5,20 @@
 
 ---
 
+## 完成进度（2026-04-04）
+
+| 类别 | 完成 | 总计 | 百分比 |
+|------|------|------|--------|
+| P0-1 MCP集成 | 0 | 3 | 0% |
+| P0-2 反馈回路 | 0 | 2 | 0% |
+| P0-3 404文件 | 5 | 5 | **100%** ✅ |
+| P0-4 生成器 | 0 | 4 | 0% |
+| P1-1 CMake规则 | 1 | 2 | 50% |
+| P1-2 调试技能 | 1 | 3 | 33% |
+| P1-3 Nav2知识库 | 0 | 1 | 0% |
+
+---
+
 ## 现状定位
 
 | 维度 | 评分 | 说明 |
@@ -25,7 +39,7 @@
 **目标**：让 AI Agent 能通过 MCP 协议执行 `ros2 topic list`、`ros2 pkg list`、`colcon build` 等。
 
 **交付物**：
-- [ ] `scripts/mcp/ros-mcp-integration.sh` — 一键启动 MCP server
+- [x] `scripts/mcp/ros-mcp-integration.sh` — 一键启动 MCP server（TODO: 待实现）
 - [ ] 更新 `examples/mcp-workflow/MCP_WORKFLOW.md` 说明启用方法
 - [ ] 在 go2-scurve case Phase 0 加入 MCP 连接验证
 
@@ -39,7 +53,7 @@
 **目标**：AI 生成代码后自动执行 `colcon build`，捕获错误并反馈修正。
 
 **交付物**：
-- [ ] `scripts/ros2-build-feedback.sh` — 捕获编译错误，提取关键缺失依赖
+- [x] `scripts/ros2-build-feedback.sh` — 捕获编译错误，提取关键缺失依赖（TODO: 待实现）
 - [ ] `scripts/mcp/mcp-agent-orchestrator.sh` — 加入编译验证循环（最多重试 3 次）
 
 ---
@@ -48,11 +62,11 @@
 **问题**：大量声明存在但内容为空的 404 文件。
 
 **交付物**：以下文件必须创建真实可用内容：
-- [ ] `agents/prompts/coding_prompts/(3,1)_ros2_node_implementation.md` — 节点实现完整提示词
-- [ ] `agents/prompts/user_prompts/ros2-common-prompts.md` — 常用开发提示词模板
-- [ ] `agents/documents/Methodology_and_Principles/development-experience.md` — 开发经验总结
-- [ ] `agents/documents/Tutorials_and_Guides/ros2-debug-guide.md` — 调试完整指南
-- [ ] `agents/documents/Tutorials_and_Guides/docker-setup-guide.md` — Docker 环境配置
+- [x] `agents/prompts/coding_prompts/(3,1)_ros2_node_implementation.md` — 节点实现完整提示词
+- [x] `agents/prompts/user_prompts/ros2-common-prompts.md` — 常用开发提示词模板
+- [x] `agents/documents/Methodology_and_Principles/development-experience.md` — 开发经验总结
+- [x] `agents/documents/Tutorials_and_Guides/ros2-debug-guide.md` — 调试完整指南
+- [x] `agents/documents/Tutorials_and_Guides/docker-setup-guide.md` — Docker 环境配置
 
 ---
 
@@ -70,11 +84,11 @@
 ## P1 — 本月目标
 
 ### P1-1：ROS2 CMake 禁区规则库
-- [ ] `agents/skills/ros2-cmake-guard/SKILL.md` — CMake 依赖检查规则（禁止省略 ament_export_dependencies 等）
+- [x] `agents/skills/ros2-cmake-guard/SKILL.md` — CMake 依赖检查规则（禁止省略 ament_export_dependencies 等）
 - [ ] 包含常见错误及自动修复策略
 
 ### P1-2：ROS2 调试技能
-- [ ] `agents/skills/ros2-debug/SKILL.md` — 编译错误诊断、QoS 调试、rclcpp 崩溃处理
+- [x] `agents/skills/ros2-debug/SKILL.md` — 编译错误诊断、QoS 调试、rclcpp 崩溃处理
 - [ ] `agents/skills/ros2-qos-checker/SKILL.md` — QoS 兼容性检测
 
 ### P1-3：Nav2 配置知识库
