@@ -19,7 +19,7 @@
 - **建议**：在 orchestrator 中加入编译循环，捕获 stderr 并反馈给 AI 修正
 - **状态**：未解决
 
-### 问题 3：大量 404 文件
+### 问题 3：大量 404 文件（已修复 5/5 ✅
 - **现象**：`agents/prompts/coding_prompts/(3,1)_ros2_node_implementation.md` 等 10+ 文件声明存在但内容为空
 - **影响**：用户点击文档得到 404，信任度归零
 - **建议**：优先填充最核心的 5 个文件（见 PROJECT_ROADMAP.md P0-3）
