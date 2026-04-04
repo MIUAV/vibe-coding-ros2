@@ -1,0 +1,93 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "ROS2: Build Current Package",
+      "type": "shell",
+      "command": "colcon build --packages-select ${workspaceFolderBasename} --event-handlers console_direct+",
+      "problemMatcher": ["$colcon"],
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "ROS2: Build All Packages",
+      "type": "shell",
+      "command": "colcon build --event-handlers console_direct+",
+      "problemMatcher": ["$colcon"],
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "ROS2: Clean and Rebuild",
+      "type": "shell",
+      "command": "rm -rf build/ install/ log/ && colcon build --event-handlers console_direct+",
+      "problemMatcher": ["$colcon"],
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "ROS2: Source Workspace",
+      "type": "shell",
+      "command": "source install/setup.bash && echo 'Workspace sourced'",
+      "problemMatcher": []
+    },
+    {
+      "label": "ROS2: Run Build Feedback",
+      "type": "shell",
+      "command": "bash scripts/ros2-build-feedback.sh ${workspaceFolderBasename}",
+      "problemMatcher": [],
+      "group": "test",
+      "presentation": {
+        "reveal": "always"
+      }
+    },
+    {
+      "label": "ROS2: Validate SKILL Files",
+      "type": "shell",
+      "command": "bash scripts/validators/skill-frontmatter-validator.sh agents/skills",
+      "problemMatcher": [],
+      "group": "test",
+      "presentation": {
+        "reveal": "always"
+      }
+    },
+    {
+      "label": "ROS2: List Topics",
+      "type": "shell",
+      "command": "source install/setup.bash && ros2 topic list",
+      "problemMatcher": [],
+      "group": "none"
+    },
+    {
+      "label": "ROS2: List Nodes",
+      "type": "shell",
+      "command": "source install/setup.bash && ros2 node list",
+      "problemMatcher": [],
+      "group": "none"
+    },
+    {
+      "label": "ROS2: Generate Package",
+      "type": "shell",
+      "command": "bash scripts/generators/ros2-package-generator.sh",
+      "problemMatcher": [],
+      "group": "none",
+      "prompt": "使用 ros2-package-generator.sh 创建新包"
+    },
+    {
+      "label": "ROS2: Inspect Dependencies",
+      "type": "shell",
+      "command": "source install/setup.bash && colcon graph ${workspaceFolderBasename} --verbosity 2",
+      "problemMatcher": [],
+      "group": "none"
+    }
+  ]
+}
