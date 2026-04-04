@@ -1,3 +1,10 @@
+---
+name: ros2-debug
+description: ROS2 调试技能 — 编译错误诊断、运行时崩溃处理、QoS 静默失败排查、Lifecycle 状态机调试
+argument-hint: ROS2编译错误 OR rclcpp崩溃 OR 话题不通 OR Lifecycle卡住 OR ros2 topic echo OR colcon build失败
+user-invocable: true
+---
+
 # ros2-debug — ROS2 调试技能
 
 ## 目的

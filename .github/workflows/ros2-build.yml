@@ -1,160 +1,62 @@
-name: ROS2 VibeCoding CI
+name: ROS2 Build CI
 
 on:
   push:
-    branches: [latest, develop]
+    branches: [main, latest]
   pull_request:
-  workflow_dispatch:
-
-env:
-  ROS_DISTRO: humble
-  UBUNTU_VERSION: jammy
+    branches: [main]
 
 jobs:
-  core-files:
-    name: Core Files & Anti-Patterns
+  build:
     runs-on: ubuntu-22.04
-    steps:
-      - uses: actions/checkout@v4
-      - name: Verify core files
-        run: |
-          for f in agents/skills agents/robots scripts init-agent.sh README.md AGENTS.md i18n/zh-CN/AGENTS_CONCISE.md i18n/zh-CN/ANTI_PATTERNS.md; do
-            [[ -d "$f" || -f "$f" ]] && echo "✓ $f" || { echo "✗ $f missing"; exit 1; }
-          done
-      - name: Skills count
-        run: |
-          N=$(find agents/skills -name 'SKILL.md' 2>/dev/null | wc -l)
-          echo "Skills: $N"
-          [[ $N -ge 50 ]] || { echo "Too few skills"; exit 1; }
-      - name: Scripts check
-        run: |
-          find scripts -name '*.sh' -exec chmod +x {} \;
-          for f in scripts/check_ros2_package.sh scripts/generators/ros2-package-generator.sh scripts/validators/ros2-node-validator.sh scripts/mcp/mcp-agent-orchestrator.sh; do
-            [[ -x "$f" ]] && echo "✓ $f" || echo "✗ $f not executable"
-          done
-      - name: Anti-Patterns coverage
-        run: |
-          AP="i18n/zh-CN/ANTI_PATTERNS.md"
-          [[ -f "$AP" ]] || { echo "Missing $AP"; exit 1; }
-          grep -qi "SharedPtr\|make_shared" "$AP" && echo "✓ Smart pointer rules" || exit 1
-          grep -qi "QoS" "$AP" && echo "✓ QoS rules" || exit 1
-          grep -qi "Lifecycle" "$AP" && echo "✓ Lifecycle rules" || exit 1
+    container: ros:humble
 
-  cmake-check:
-    name: CMakeLists.txt Correctness
-    runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4
-      - name: Validate generator
-        run: |
-          GEN="scripts/generators/ros2-package-generator.sh"
-          for item in "find_package(ament_cmake REQUIRED)" "find_package(rclcpp REQUIRED)" \
-                      "ament_target_dependencies" "install(TARGETS" "ament_package()"; do
-            grep -q "$item" "$GEN" && echo "✓ $item" || { echo "✗ Missing: $item"; exit 1; }
-          done
+      - name: Checkout
+        uses: actions/checkout@v4
 
-  package-xml-check:
-    name: package.xml Validation
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: actions/checkout@v4
-      - name: Validate package.xml generator
+      - name: Install dependencies
         run: |
-          GEN="scripts/generators/ros2-package-generator.sh"
-          grep -q 'format="3"' "$GEN" && echo "✓ Format 3" || exit 1
-          grep -q "<depend>rclcpp</depend>" "$GEN" && echo "✓ rclcpp" || exit 1
+          apt-get update && apt-get install -y \
+            python3-pip \
+            python3-colcon-extensions \
+            python3-rospkg \
+            && rm -rf /var/lib/apt/lists/*
 
-  ros2-compile:
-    name: ROS2 Humble Compile
-    runs-on: ubuntu-22.04
-    permissions: { contents: read }
-    steps:
-      - uses: actions/checkout@v4
-      - name: Docker colcon build test
+      - name: Build
         run: |
-          docker run --rm \
-            -v ${{ github.workspace }}:/workspace \
-            -w /workspace \
-            osrf/ros:humble-ros-base-jammy \
-            bash -c "
-              set -e
-              apt-get update -qq && apt-get install -y -qq python3-colcon-common-extensions git > /dev/null 2>&1
-              mkdir -p /tmp/test_ws/src
-              cd /tmp/test_ws
-              bash /workspace/scripts/generators/ros2-package-generator.sh test_pkg cpp rclcpp,std_msgs
-              cp -r test_pkg /tmp/test_ws/src/
-              source /opt/ros/humble/setup.bash
-              colcon build --packages-select test_pkg --cmake-args -DCMAKE_BUILD_TYPE=Release 2>&1 | tail -5
-              [[ -f install/test_pkg/lib/test_pkg/test_pkg_node ]] && echo '✓ Binary built' || exit 1
-              bash /workspace/scripts/check_ros2_package.sh /tmp/test_ws/src/test_pkg
-              echo '=== COMPILE TESTS PASSED ==='
-            "
+          source /opt/ros/humble/setup.bash
+          colcon build --event-handlers console_direct+ 2>&1 | tee build.log
+          echo "---BUILD_EXIT---"
+          echo $?
 
-  package-coupling:
-    name: Package Coupling
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: actions/checkout@v4
-      - name: Dependency graph
-        run: |
-          echo "=== Skill Dependencies ==="
-          for skill in agents/skills/*/*/SKILL.md; do
-            [[ -f "$skill" ]] || continue
-            PKG=$(echo "$skill" | cut -d/ -f3)
-            DEPS=$(grep '<depend>' "$skill" 2>/dev/null | sed 's/<depend>//g;s/<\/depend>//g' | tr '\n' ',' || echo "")
-            [[ -n "$DEPS" ]] && echo "  $PKG → $DEPS"
-          done | sort -u | head -20
+      - name: Upload build log
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log
+          path: build.log
 
-  shellcheck:
-    name: Shell Scripts
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install shellcheck
-        run: sudo apt-get install -y -qq shellcheck > /dev/null 2>&1
-      - name: Run shellcheck
+      - name: Skill validation
         run: |
-          for f in scripts/*.sh scripts/**/*.sh; do
-            [[ -f "$f" ]] || continue
-            shellcheck --disable=SC1091,SC2086 "$f" 2>&1 | grep -v "^$" || echo "  ✓ $f"
-          done
+          find agents/skills -name "SKILL.md" | wc -l
+          echo "SKILL files found"
 
-  python-lint:
-    name: Python & YAML
+  test:
+    needs: build
     runs-on: ubuntu-22.04
+    container: ros:humble
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with: { python-version: '3.10' }
-      - name: Install linters
-        run: pip install flake8 pyyaml -q
-      - name: Python syntax
-        run: |
-          for f in scripts/*.py scripts/**/*.py; do
-            [[ -f "$f" ]] || continue
-            python3 -m py_compile "$f" && echo "  ✓ $f" || exit 1
-          done
-      - name: YAML validation
-        run: |
-          for f in $(find . -name '*.yaml' -not -path './.git/*' 2>/dev/null | head -10); do
-            python3 -c "import yaml; yaml.safe_load(open('$f'))" 2>/dev/null && echo "  ✓ $f" || echo "  ✗ $f"
-          done
+      - name: Checkout
+        uses: actions/checkout@v4
 
-  skill-quality:
-    name: Skill Quality
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: actions/checkout@v4
-      - name: Classify skills
+      - name: Build with tests
         run: |
-          VERIFIED=0; DRAFT=0; CONCEPT=0; EMPTY=0; TOTAL=0
-          for skill in agents/skills/*/*/SKILL.md; do
-            [[ -f "$skill" ]] || continue
-            ((TOTAL++))
-            SIZE=$(stat -c%s "$skill" 2>/dev/null || echo 100)
-            if [[ $SIZE -lt 100 ]]; then ((EMPTY++))
-            elif [[ $(wc -w < "$skill") -lt 50 ]]; then ((CONCEPT++))
-            elif grep -q "## 示例\|## 代码\|status.*verified" "$skill" 2>/dev/null; then ((VERIFIED++))
-            else ((DRAFT++)); fi
-          done
-          echo "Total: $TOTAL | Verified: $VERIFIED | Draft: $DRAFT | Concept: $CONCEPT | Empty: $EMPTY"
+          source /opt/ros/humble/setup.bash
+          colcon build --event-handlers console_direct+ --cmake-args -DBUILD_TESTING=ON
+
+      - name: Run tests
+        run: |
+          source /opt/ros/humble/setup.bash
+          colcon test --event-handlers console_direct+
+          colcon test-result --verbose

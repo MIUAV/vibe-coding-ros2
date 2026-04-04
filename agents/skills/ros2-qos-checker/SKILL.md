@@ -1,3 +1,10 @@
+---
+name: ros2-qos-checker
+description: ROS2 QoS 兼容性检测 — Reliability/Durability/Deadline/Lifespan 四个维度的兼容性判断，控制命令/sensor数据/lifecycle节点的 QoS 配置规则
+argument-hint: QoS不兼容 OR ros2 topic info OR BEST_EFFORT OR RELIABLE OR TRANSIENT_LOCAL OR 话题收不到数据
+user-invocable: true
+---
+
 # ros2-qos-checker — QoS 兼容性检测
 
 ## 目的

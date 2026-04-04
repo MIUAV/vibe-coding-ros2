@@ -1,3 +1,10 @@
+---
+name: nav2-config
+description: Nav2 (Navigation2) 参数速查 — DWB/MPPI控制器、规划器、代价地图、行为树的 50+ 参数中文解释与调节范围，4大典型调优场景
+argument-hint: Nav2参数调节 OR navigation配置 OR DWB控制器 OR move_base参数 OR 机器人导航不走
+user-invocable: true
+---
+
 # nav2-config — Nav2 参数知识库
 
 ## 目的
