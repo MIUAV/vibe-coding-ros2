@@ -7,9 +7,23 @@ All notable changes to this project are documented here.
 ## [Unreleased] — Latest Development
 
 ### Added
-- `scripts/ros2-env-check.sh` — ROS2 environment diagnostic tool (7 checks)
-- `examples/lifecycle_controller/` — compilable LifecycleNode example with state machine
-- `CHECKLIST.md` — 6-step development quality checklist
+### Examples Added
+- `examples/ros2-action-server/` — Fibonacci Action Server (Goal/Feedback/Result)
+- `examples/ros2-service-server/` — AddTwoInts sync service server
+- `examples/ros2-composable-node/` — rclcpp_components dynamic loading (Zero-Copy)
+- `examples/ros2-param-service/` — Dynamic parameter node (on_parameter_changed callback)
+- `examples/ros2-launch-params/` — Launch argument passthrough (namespace/remapping)
+- `examples/ros2-tf2/` — TF2 broadcaster (static + dynamic transforms)
+- `examples/ros2-robot-description/` — Complete URDF (base_link + wheels + caster + laser)
+- `examples/ros2-imu-sensor/` — IMU publisher (BEST_EFFORT QoS, 200Hz)
+- `examples/lifecycle_controller/` — LifecycleNode with state machine
+- `examples/wheeled_diff_drive/` — Diff drive controller (cmd_vel → wheel velocity)
+
+### Tools & Scripts Added
+- `scripts/ros2-env-check.sh` — ROS2 environment diagnostic (7 checks)
+- `scripts/ros2-monitor.sh` — Runtime node/topic/service monitor
+- `scripts/ros2-bag-tool.sh` — ROS2 bag record/play/info
+- `scripts/generators/ros2-cpp-node.sh` — C++ node generator (6 types)
 - `CLAUDE.md` — AI agent development instructions
 - `CONTRIBUTING.md` — contribution guide
 - `.github/workflows/ros2-build.yml` — GitHub Actions CI (ubuntu-22.04 + ros:humble)
