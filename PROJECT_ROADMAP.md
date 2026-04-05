@@ -9,8 +9,10 @@
 ### 已完成 ✅
 
 **工具链（Toolchain）**
-- `ros2-package-generator` — 标准包生成（cpp/python/mixed）
+- `ros2-package-generator` — 标准包生成（cpp/python/mixed）+ `--verify` 标志
 - `ros2-interface-generator` — msg/srv/action 接口包生成
+- `ros2-msg-generator` — 交互式 CLI 向导生成 .msg 文件
+- `ros2-launch-generator` — launch.py 生成（lifecycle/normal/component）
 - `ros2-cpp-node` — C++ 节点骨架生成
 - `ros2-build-verify-loop` — 编译验证 + LLM 修复闭环
 - `ros2-build-feedback` — 编译错误解释 + 修复建议
@@ -19,9 +21,9 @@
 - `ros2-cmake-fix` — CMake 依赖问题诊断
 - `ros2-performance-monitor` — 运行时性能监控钩子
 
-**示例包（Examples）**
-- `ros2-lifecycle-demo` — 生产级 LifecycleNode 完整实现
-- `ros2-action-demo` — ROS2 Action Server + Client
+**示例包（Examples — 纯文档）**
+- 12 个案例全部包含 PLAN.md + SKILL.md + VERIFY.md
+- 不在 examples/ 目录存放 C++ 代码（案例为文档化流程）
 
 **CI/CD**
 - `ros2-ci.yml` — Matrix build（humble/iron/jazzy）+ clang-format + ament_lint
@@ -40,24 +42,32 @@
 
 | 功能 | 描述 | 优先级 |
 |------|------|--------|
-| `ros2-msg-generator` | 交互式消息定义向导（CLI 问答生成 .msg） | P1 |
-| `ros2-launch-gen` | 生成标准 launch.py + lifecycle_manager 配置 | P1 |
+| `ros2-srv-generator` | 交互式 .srv / .action 生成向导 | P1 |
 | `ros2-param-wizard` | 参数声明验证 + YAML 生成 | P2 |
 | `ros2-bag-analyzer` | ros2 bag 日志分析脚本（错误聚合） | P2 |
 
-### 📦 示例包
+### 📦 案例包
 
-| 示例 | 描述 | 状态 |
-|------|------|------|
-| `ros2-controller-demo` | PID 控制器 + ros2_control | TODO |
-| `ros2-nav2-minimal` | 最简 Nav2 集成 | TODO |
-| `ros2-multi-agent` | 两个机器人通过 topic 通信 | TODO |
+| 案例 | 状态 |
+|------|------|
+| wheeled-nav2 | ✅ PLAN+SKILL+VERIFY |
+| drone-exploration | ✅ PLAN+SKILL+VERIFY |
+| go2-scurve | ✅ PLAN+SKILL+VERIFY |
+| manipulator-pickplace | ✅ PLAN+SKILL+VERIFY |
+| multi-robot-swarm | ✅ PLAN+SKILL+VERIFY |
+| underwater-nav | ✅ PLAN+SKILL+VERIFY |
+| industrial-integration | ✅ PLAN+SKILL+VERIFY |
+| aerial-photography | ✅ PLAN+SKILL+VERIFY |
+| sensor-fusion-locate | ✅ PLAN+SKILL+VERIFY |
+| biped-walk | ✅ PLAN+SKILL+VERIFY |
+| lifecycle-node-demo | ✅ PLAN+SKILL+VERIFY |
+| action-fibonacci-demo | ✅ PLAN+SKILL+VERIFY |
 
 ### 🧪 测试覆盖
 
 - 所有 scripts/ 有 bash -n 语法验证 ✅
 - 单元测试：C++ GoogleTest 模板（`test-templates/`）
-- 集成测试：Launch 联调测试脚本
+- CI 脚本语法验证 ✅
 
 ---
 
@@ -87,9 +97,10 @@
 用户: "帮我生成一个订阅 /scan 激光雷达，检测到障碍物时停车的节点"
 AI Agent:
   1. 调用 ros2-package-generator 创建包
-  2. 生成 .msg 定义激光雷达数据
-  3. 调用 ros2-build-verify-loop 验证
-  4. 通过 → 完成
+  2. 调用 ros2-msg-generator 定义消息格式
+  3. 生成节点代码
+  4. 调用 ros2-build-verify-loop 验证
+  5. 通过 → 完成
 ```
 
 **里程碑：**
@@ -103,5 +114,6 @@ AI Agent:
 
 | 版本 | 日期 | 主要内容 |
 |------|------|---------|
+| v0.1.x | 2026-04 | 工具链完善 + CI 升级 + 案例文档化 |
 | v0.1.0 | 2026-04 | 初始版本：工具链 + CI + 示例包 |
 | v0.0.x | 2026-03 | 实验阶段 |
