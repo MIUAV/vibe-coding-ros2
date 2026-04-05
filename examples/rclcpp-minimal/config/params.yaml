@@ -1,9 +1,0 @@
-# params.yaml - 参数配置文件
-# 用法: ros2 run rclcpp_minimal demo_parameters --ros-args --params_file path/to/params.yaml
-
-/**:
-  ros__parameters:
-    robot_name: "my_robot"
-    publish_frequency: 1.0
-    enable_debug: false
-    log_level: "info"  # info, warn, error, debug
