@@ -1,67 +1,49 @@
-# Examples — 复杂任务工作流
+# Examples — 复杂任务工作流案例库
 
-> examples/ 不是代码片段仓库，而是**基于 SKILL 的复杂机器人任务工作流**。
-> 每个 example 都是一个完整的多阶段任务，包含 Phase 分解、MCP 调用、验证回路。
+> 所有复杂机器人任务案例已移至 `mcp-workflow/cases/`。
 
----
-
-## 标准结构
-
-每个 example 目录包含：
+## 结构
 
 ```
-example-name/
-├── README.md              # 任务描述 + Phase 分解
-├── SKILL.md             # 任务专属 SKILL（引用 agents/skills/）
-├── PLAN.md              # Agent 执行计划（Orchestrator 用）
-└── VERIFY.md           # 验证标准（什么叫"完成"）
+examples/
+├── mcp-workflow/         ← MCP 多智能体框架
+│   ├── cases/            ← 10 个复杂任务案例
+│   │   ├── go2-scurve/
+│   │   ├── manipulator-pickplace/
+│   │   ├── drone-exploration/
+│   │   ├── wheeled-nav2/
+│   │   ├── multi-robot-swarm/
+│   │   ├── biped-walk/
+│   │   ├── underwater-nav/
+│   │   ├── sensor-fusion-locate/
+│   │   ├── aerial-photography/
+│   │   └── industrial-integration/
+│   ├── MCP_WORKFLOW.md   ← 框架说明
+│   └── MCP_ORCHESTRATOR.md ← 编排脚本
+└── memory-bank-example/  ← 项目记忆库模板
 ```
 
-## 已有工作流
+## 案例列表
 
-### `mcp-workflow/`
-多智能体协作框架。MCP-SIM / MCP-BUILD / MCP-DEBUG 三种 Agent 协作。
+| Case | 机器人 | 任务 |
+|------|--------|------|
+| `go2-scurve/` | 四足 | S 曲线轨迹 |
+| `manipulator-pickplace/` | 机械臂 | 抓取放置 |
+| `drone-exploration/` | 无人机 | 自主探索 |
+| `wheeled-nav2/` | 轮式 | Nav2 导航 |
+| `multi-robot-swarm/` | 多机 | 蜂群协同 |
+| `biped-walk/` | 双足 | 步行控制 |
+| `underwater-nav/` | AUV | 水下导航 |
+| `sensor-fusion-locate/` | 通用 | 传感器融合定位 |
+| `aerial-photography/` | 无人机 | 航拍任务 |
+| `industrial-integration/` | 工业 | ROS2-PLC 集成 |
 
-### `memory-bank-example/`
-项目记忆库模板。记录机器人类型、已实现模块、接口定义。
+## 快速开始
 
----
-
-## 新建工作流指引
-
-### 命名规范
-- 机器人类型 + 任务：`go2-scurve`、`manipulator-pickplace`、`drone-exploration`
-- 小写 + 连字符
-
-### 必须包含
-
-1. **SKILL.md** — 引用 agents/skills/ 中的通用技能，定义本任务专用检查项
-2. **PLAN.md** — 按 Phase 分阶段的 Agent 执行计划
-3. **VERIFY.md** — 通过/失败标准（量化指标）
-
-### Phase 标准格式
-
-```markdown
-## Phase N: <阶段名称>
-
-### 目标
-<具体目标>
-
-### Agent
-<使用哪个 Agent（MCP-SIM / MCP-BUILD / MCP-DEBUG）>
-
-### MCP 调用
 ```bash
-mcp__ros2__topic_list
-mcp__ros2__pkg_list
-```
+# 查看案例计划
+cat examples/mcp-workflow/cases/go2-scurve/PLAN.md
 
-### 验证
-- [ ] <验证项 1>
-- [ ] <验证项 2>
+# 运行 MCP 编排
+./scripts/mcp/mcp-agent-orchestrator.sh go2-scurve --agent claude
 ```
-
-### 禁止出现
-- ❌ 裸 C++/Python 代码片段（除非作为 VERIFY 的对比示例）
-- ❌ 完整的 package.xml / CMakeLists.txt（那是生成的输出，不是输入）
-- ❌ 与 SKILL 无关的内容
