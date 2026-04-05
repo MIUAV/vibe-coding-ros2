@@ -21,16 +21,7 @@
 
 [![Star History Chart](https://api.star-history.com/svg?repos=MIUAV/vibe-coding-ros2&type=Date)](https://star-history.com/#MIUAV/vibe-coding-ros2&Date)
 
-
 **Latest commit:** `be074f4` · 2026-04-05
-
-[![Stars](https://img.shields.io/github/stars/MIUAV/vibe-coding-ros2?style=flat-square)](https://github.com/MIUAV/vibe-coding-ros2/stargazers)
-[![Forks](https://img.shields.io/github/forks/MIUAV/vibe-coding-ros2?style=flat-square)](https://github.com/MIUAV/vibe-coding-ros2/network/members)
-[![Issues](https://img.shields.io/github/issues/MIUAV/vibe-coding-ros2?style=flat-square)](https://github.com/MIUAV/vibe-coding-ros2/issues)
-[![License](https://img.shields.io/github/license/MIUAV/vibe-coding-ros2?style=flat-square)](https://github.com/MIUAV/vibe-coding-ros2/blob/main/LICENSE)
-[![ROS2](https://img.shields.io/badge/ROS2-Humble-blue?style=flat-square)](https://docs.ros.org/en/humble/)
-
-
 
 ## ⚡ 1 分钟快速开始
 
