@@ -1,6 +1,6 @@
 # Vibe-Coding-ROS2
 
-> 用 LLM 辅助编写 ROS2 代码的工具集。不是哲学，不是玄学，是能实际生成可编译 ROS2 C++ 代码的工程框架。
+> 用 LLM 辅助编写 ROS2 代码的工具集。能实际生成可编译 ROS2 C++ 代码的工程框架。
 
 [comment]: # (ZH: AI agent reads SOUL.md + SYSTEM.md first | EN: AI agent reads CLAUDE.md for workflow)
 
@@ -8,15 +8,23 @@
 
 ## 🔥 GitHub Stats
 
-| 指标 | 数值 |
-|------|------|
-| ⭐ Stars | 17 |
-| 🍴 Forks | 1 |
-| 🐛 Issues | 0 |
-| 📝 Commits | 100+ |
-| 📦 Packages | 276 SKILLs |
-| 🌐 Language | Shell + Python + C++ |
-| 📅 创建日期 | 2026-04-01 |
+```
+
+<p align="left">
+    <img src="https://visitor-badge.laobi.icu/badge?page_id=MIUAV.vibe-coding-ros2" alt="Visitor Badge" />
+    <img src="https://img.shields.io/badge/version-v0.0.1--beta-blue?style=flat-square" alt="Version" />
+    <img src="https://img.shields.io/badge/ROS2-Humble%20%7C%20Iron%20%7C%20Jazzy-green?style=flat-square" alt="ROS2 Distros" />
+    <img src="https://img.shields.io/badge/C%2B%2B-17%2B-blue?style=flat-square" alt="C++ Standard" />
+    <img src="https://img.shields.io/badge/workflows-5%20CI%20jobs-blue?style=flat-square" alt="CI Status" />
+</p>
+
+## 📊 仓库活跃度
+
+[![Star History Chart](https://api.star-history.com/svg?repos=MIUAV/vibe-coding-ros2&type=Date)](https://star-history.com/#MIUAV/vibe-coding-ros2&Date)
+
+---
+
+
 
 **Latest commit:** `be074f4` · 2026-04-05
 
@@ -26,14 +34,7 @@
 [![License](https://img.shields.io/github/license/MIUAV/vibe-coding-ros2?style=flat-square)](https://github.com/MIUAV/vibe-coding-ros2/blob/main/LICENSE)
 [![ROS2](https://img.shields.io/badge/ROS2-Humble-blue?style=flat-square)](https://docs.ros.org/en/humble/)
 
-**Star 曲线（近 30 天）:**
 
-```
-⭐ 17 ████████████████████████████████
-                  2026-04-05 (最新)
-```
-
----
 
 ## ⚡ 1 分钟快速开始
 
