@@ -1,8 +1,8 @@
 #!/bin/bash
 # ros2-package-generator.sh — 生成标准 ROS2 包
-# 用法: bash ros2-package-generator.sh <pkg_name> <type> [deps...]
+# 用法: bash ros2-package-generator.sh <pkg_name> <type> [deps...] [--verify]
 # 示例: bash ros2-package-generator.sh my_robot cpp rclcpp,std_msgs,geometry_msgs
-# 示例: bash ros2-package-generator.sh my_python_pkg python
+# 示例: bash ros2-package-generator.sh my_python_pkg python --verify
 
 set -e
 
@@ -11,16 +11,32 @@ RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'; BLUE='\033[0;34m'; NC
 PKG_NAME="${1:-}"
 PKG_TYPE="${2:-cpp}"
 shift 2 || true
-DEPS="${*:-rclcpp,std_msgs}"
+
+# 解析 --verify 标志
+VERIFY=0
+REMAINING_DEPS=""
+for arg in "$@"; do
+    if [[ "$arg" == "--verify" ]]; then
+        VERIFY=1
+    else
+        if [[ -n "$REMAINING_DEPS" ]]; then
+            REMAINING_DEPS="$REMAINING_DEPS,$arg"
+        else
+            REMAINING_DEPS="$arg"
+        fi
+    fi
+done
+DEPS="${REMAINING_DEPS:-rclcpp,std_msgs}"
 
 if [[ -z "$PKG_NAME" ]]; then
-    echo -e "${RED}用法: $0 <包名> <类型> [依赖...]${NC}"
+    echo -e "${RED}用法: $0 <包名> <类型> [依赖...] [--verify]${NC}"
     echo "  包名: my_robot_control (小写+下划线，ROS2 允许)"
     echo "  类型: cpp | python | mixed"
     echo "  依赖: rclcpp,std_msgs,geometry_msgs (逗号分隔)"
+    echo "  --verify: 生成后自动运行编译验证"
     echo ""
     echo "示例: $0 my_robot cpp rclcpp,std_msgs,geometry_msgs"
-    echo "示例: $0 my_sensor python rclpy,std_msgs"
+    echo "示例: $0 my_sensor python rclpy,std_msgs --verify"
     exit 1
 fi
 
@@ -415,6 +431,22 @@ echo -e "${GREEN}✓ 包已生成: $PKG_NAME/${NC}"
 echo ""
 echo "生成的文件:"
 find "$PKG_NAME" -type f | sort | sed 's/^/  /'
+echo ""
+
+# ── 自动编译验证 ─────────────────────────────────────────
+if [[ $VERIFY -eq 1 ]]; then
+    VERIFY_SCRIPT="$(dirname "$0")/../ros2-build-verify-loop.sh"
+    if [[ -f "$VERIFY_SCRIPT" ]]; then
+        echo -e "${BLUE}🔍 运行编译验证...${NC}"
+        if bash "$VERIFY_SCRIPT" "$PKG_NAME"; then
+            echo -e "${GREEN}✓ 编译验证通过${NC}"
+        else
+            echo -e "${YELLOW}⚠ 编译验证失败，请检查上面的错误${NC}"
+        fi
+    else
+        echo -e "${YELLOW}⚠ ros2-build-verify-loop.sh 未找到，跳过验证${NC}"
+    fi
+fi
 echo ""
 echo -e "${YELLOW}下一步:${NC}"
 echo "  1. 编辑 $PKG_NAME/package.xml — 补全描述和维护者"
