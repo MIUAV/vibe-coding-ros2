@@ -247,6 +247,10 @@ bash scripts/ros2-env-check.sh                                   # 环境 7 项�
 bash scripts/ros2-monitor.sh                                    # 运行时监控
 bash scripts/ros2-bag-tool.sh record /scan                     # bag 录制
 bash scripts/validators/skill-frontmatter-validator.sh agents/skills  # SKILL 格式验证
+
+# ── TDD + 验证闭环（新增）──
+bash scripts/ros2-build-verify-loop.sh <pkg> [max_retries]  # 编译→静态检查→AI修复建议→重试（最多3轮）
+cp -r scripts/test-templates/test my_package/test/              # 复制 gtest 单元测试模板
 ```
 
 ### MCP 多智能体
@@ -341,11 +345,13 @@ vibe-coding-ros2/
 |------|------|------|
 | `ros2-package-generator.sh` | ✅ 可用 | 生成 C++/Python ROS2 包 |
 | `ros2-build-feedback.sh` | ✅ 可用 | 编译错误自动分析 |
+| `ros2-build-verify-loop.sh` | ✅ 新增 | TDD 验证闭环（4步循环）|
 | `ros2-cpp-node.sh` | ✅ 可用 | 7 种节点类型生成 |
 | `ros2-env-check.sh` | ✅ 可用 | 环境诊断 |
 | `ros2-monitor.sh` | ✅ 可用 | 运行时监控 |
 | `skill-frontmatter-validator.sh` | ✅ 可用 | 276 SKILL 格式验证 |
 | `ros2-bag-tool.sh` | ✅ 可用 | bag 录制回放 |
+| `test-templates/` | ✅ 新增 | gtest 单元测试模板 |
 
 ### 复杂任务案例（10 个）
 

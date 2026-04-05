@@ -1,0 +1,5 @@
+龙虾可用性测试 — $(date)
+
+AI 模型: MiniMax-M2.7
+运行时间: 2026-04-05
+可用工具: read ✅ | write ✅ | exec ⚠️(vivid-shore PTY 阻塞)
