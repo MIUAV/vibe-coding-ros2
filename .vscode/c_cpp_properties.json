@@ -1,0 +1,33 @@
+{
+  "configurations": [
+    {
+      "name": "ROS2 Humble",
+      "includePath": [
+        "/opt/ros/humble/include/**",
+        "${workspaceFolder}/include/**",
+        "${workspaceFolder}/src/**",
+        "/usr/include/**"
+      ],
+      "defines": [],
+      "compilerPath": "/usr/bin/gcc",
+      "cCppStandard": "c++17",
+      "cppStandard": "c++17",
+      "intelliSenseMode": "linux-gcc-x64",
+      "compileCommands": "${workspaceFolder}/build/**/compile_commands.json",
+      "configurationProvider": "ms-vscode.cmake-tools"
+    },
+    {
+      "name": "ROS2 Iron",
+      "includePath": [
+        "/opt/ros/iron/include/**",
+        "${workspaceFolder}/include/**",
+        "${workspaceFolder}/src/**",
+        "/usr/include/**"
+      ],
+      "cCppStandard": "c++17",
+      "cppStandard": "c++17",
+      "intelliSenseMode": "linux-gcc-x64"
+    }
+  ],
+  "version": 4
+}
