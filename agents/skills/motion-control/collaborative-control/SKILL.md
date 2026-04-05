@@ -1,19 +1,32 @@
 ---
 name: collaborative-control
-description: 协作控制技能集合 - 多臂协调、人机协作
-argument-hint: 协作控制 OR multi-arm OR human-robot OR collaborative OR cooperation
+description: 多机器人协同控制 — 编队保持、任务分配、冲突协调、leader-follower，适用于多移动机器人协同作业
+argument-hint: 协同控制 OR collaborative OR 多机编队 OR formation control OR leader-follower OR 任务分配
 user-invocable: true
 ---
 
-# 协作控制技能
+# collaborative-control — 多机器人协同控制 SKILL
 
-> 多机器人协作控制
+## 引用技能
 
----
+- `agents/skills/wheeled_vehicle/`
+- `agents/skills/ros2-qos-checker/`
 
-## 子技能
+## 编队控制
 
-| 技能 | 描述 |
-|---|---|
-| multi-arm-coordination | 多臂协调 |
-| human-robot-collaboration | 人机协作 |
+### Leader-Follower
+
+```
+u_follower = Kp × (p_formation - p_current) + Kd × (v_target - v_current)
+```
+
+| 参数 | 值 |
+|------|-----|
+| 编队间距 | 1.0 m |
+| 安全距离 | 0.5 m |
+| 控制频率 | 10 Hz |
+
+## 禁止
+
+- ❌ 安全距离 < 0.3m（碰撞风险）
+- ❌ 通信用 BEST_EFFORT（协调命令必须可靠）
