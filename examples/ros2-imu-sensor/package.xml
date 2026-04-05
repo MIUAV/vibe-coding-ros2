@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd"?>
+<package format="3">
+  <name>ros2_imu_sensor</name>
+  <version>0.1.0</version>
+  <description>ROS2 IMU 传感器节点 — 发布 sensor_msgs/Imu + TF2 姿态</description>
+  <maintainer email="dev@miuav.com">MIUAV Developer</maintainer>
+  <license>Apache-2.0</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <depend>rclcpp</depend>
+  <depend>sensor_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>tf2_ros</depend>
+
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <export><build_type>ament_cmake</build_type></export>
+</package>
