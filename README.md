@@ -4,65 +4,61 @@
 
 ---
 
-## 一句话介绍
-
-**Vibe-Coding-ROS2** 是一个以「AI 为主」的开发框架，帮你用自然语言驱动、让 LLM 生成大部分代码，专攻 ROS2 机器人开发中 CMake 依赖地狱、QoS 静默失败、Lifecycle 状态机错误三大痛点。
-
----
-
-## ⚡ 1 分钟快速开始
+## 快速开始
 
 ```bash
-# 第 1 步：克隆项目
 git clone git@github.com:MIUAV/vibe-coding-ros2.git
 cd vibe-coding-ros2
 
-# 第 2 步：生成一个 ROS2 包（AI 帮你写代码）
+# 生成一个 ROS2 包
 bash scripts/generators/ros2-package-generator.sh my_robot cpp rclcpp,std_msgs,geometry_msgs
 
-# 第 3 步：编译验证
+# 编译
 cd my_robot && colcon build
 
-# 第 4 步：自动检查编译错误
+# 自动检查编译错误
 bash ../scripts/ros2-build-feedback.sh .
 ```
 
-> 跟着做，AI 会帮你完成剩余步骤。每完成一步问 AI：「成功了吗？」再继续。
-
 ---
 
-## 核心理念
+## 开发准则
 
-```
-AI 是打字员，不是架构师
-AI 生成 → 编译验证 → 错误修正 → 重新生成
+AI Agent 开发前必须阅读：
 
-可编译 > 看起来对
-```
+| 文件 | 作用 |
+|------|------|
+| `SOUL.md` | 项目哲学（必读）|
+| `SYSTEM.md` | AI 强制规则（必读）|
+| `CLAUDE.md` | AI 开发指南（必读）|
 
-**三个致命弱点，ROS2 开发中 LLM 的：**
+**三个致命弱点（见 `SYSTEM.md`）：**
 
-| 弱点 | 后果 | 解法 |
-|------|------|------|
-| CMake 依赖地狱 | 链接失败 | `ros2-cmake-guard` 强制规则 |
-| QoS 静默失败 | 数据不通 | `ros2-qos-checker` 兼容性检测 |
-| Lifecycle 状态机 | 节点卡住 | `ros2-debug` 调试指南 |
+| 问题 | 解法 |
+|------|------|
+| CMake 依赖地狱 | `ament_export_dependencies` 三行必须同时存在 |
+| QoS 静默失败 | 控制命令用 RELIABLE，sensor 用 BEST_EFFORT |
+| Lifecycle 状态机 | 生产环境用 LifecycleNode，不是 rclcpp::Node |
 
 ---
 
 ## 工具链
 
-| 工具 | 做什么 |
-|------|--------|
-| `ros2-package-generator.sh` | 一键生成可编译 ROS2 包 |
-| `ros2-build-feedback.sh` | 编译后自动分析错误，给出修复建议 |
-| `ros2-cpp-node.sh` | 生成 publisher/subscriber/lifecycle/service/timer 节点 |
-| `ros2-env-check.sh` | 诊断 ROS2 环境问题（7 项检查）|
-| `ros2-monitor.sh` | 运行时节点/话题/服务监控 |
-| `ros2-bag-tool.sh` | ROS2 bag 录制与回放 |
-| `skill-frontmatter-validator.sh` | 验证 276 个 SKILL.md 格式正确 |
-| `ros2-qos-checker` | QoS 兼容性判断（附代码模板）|
-| `nav2-config` | Nav2 50+ 参数速查 + 4 大调优场景 |
+```bash
+# 代码生成
+bash scripts/generators/ros2-package-generator.sh <pkg> cpp <deps>   # C++ 包
+bash scripts/generators/ros2-package-generator.sh <pkg> python        # Python 包
+
+# 编译验证
+bash scripts/ros2-build-feedback.sh .   # 自动分析编译错误
+
+# 环境诊断
+bash scripts/ros2-env-check.sh           # ROS2 环境 7 项检查
+bash scripts/ros2-monitor.sh            # 运行时节点监控
+
+# SKILL 验证
+bash scripts/validators/skill-frontmatter-validator.sh agents/skills
+```
 
 ---
 
@@ -70,81 +66,57 @@ AI 生成 → 编译验证 → 错误修正 → 重新生成
 
 ```
 vibe-coding-ros2/
-├── SOUL.md                          # 项目哲学
-├── SYSTEM.md                        # AI Agent 系统指令（强制规则）
-├── CLAUDE.md                        # AI 开发指南
-├── CHECKLIST.md                     # 开发质量检查清单
-├── QUICKREF.md                      # ROS2 命令速查卡
-├── ANTI_PATTERNS.md                 # 反模式文档
+├── SOUL.md                      # 项目哲学
+├── SYSTEM.md                    # AI 强制规则
+├── CLAUDE.md                    # AI 开发指南
+├── README.md                    # 本文件
 │
 ├── agents/
-│   ├── skills/                      # 276 个技能定义（强制规则库）
-│   │   ├── ros2-cmake-guard/       # CMake 禁区
-│   │   ├── ros2-qos-checker/       # QoS 兼容性
-│   │   ├── ros2-debug/             # 调试指南
-│   │   └── navigation/nav2-config/ # Nav2 参数
+│   ├── skills/                 # 276 个技能定义（强制规则）
+│   │   ├── ros2-cmake-guard/
+│   │   ├── ros2-qos-checker/
+│   │   ├── ros2-debug/
+│   │   └── navigation/nav2-config/
 │   │
-│   ├── prompts/                    # AI 提示词模板
-│   ├── documents/                   # 开发文档
-│   └── robots/                     # 机器人类型
+│   ├── prompts/               # AI 提示词
+│   ├── documents/             # 项目文档（已从根目录移入）
+│   │   ├── Methodology_and_Principles/  # 开发方法论
+│   │   ├── Tutorials_and_Guides/       # 教程指南
+│   │   ├── Project_Management/         # 项目管理
+│   │   └── Templates_and_Resources/    # 模板资源
+│   │
+│   ├── robots/              # 机器人类型
+│   └── memory-bank/          # 项目记忆库
 │
 ├── scripts/
-│   ├── generators/                  # 代码生成器
-│   │   ├── ros2-package-generator.sh
-│   │   └── ros2-cpp-node.sh
-│   ├── mcp/                         # MCP 多智能体
-│   │   ├── ros-mcp-integration.sh
-│   │   └── mcp-agent-orchestrator.sh
-│   ├── validators/                 # 验证工具
-│   └── ros2-build-feedback.sh      # 编译验证
+│   ├── generators/          # 代码生成器
+│   ├── mcp/                # MCP 多智能体
+│   ├── validators/          # SKILL 验证器
+│   └── ros2-build-feedback.sh  # 编译验证
 │
 └── examples/
     └── mcp-workflow/
-        └── cases/                   # 10 个复杂任务案例
-            ├── go2-scurve/          # 四足 S 曲线
-            ├── manipulator-pickplace/ # 机械臂抓取
-            ├── drone-exploration/    # 无人机探索
-            ├── wheeled-nav2/        # 轮式导航
-            ├── multi-robot-swarm/  # 多机器人蜂群
-            ├── biped-walk/         # 双足步行
-            ├── underwater-nav/     # 水下 AUV
-            ├── sensor-fusion-locate/ # 传感器融合
-            ├── aerial-photography/  # 无人机航拍
-            └── industrial-integration/ # 工业集成
+        └── cases/           # 10 个复杂任务案例
 ```
 
 ---
 
-## AI Agent 使用指南
+## AI Agent 工作流
 
-**第一步：** 克隆本仓库，AI 阅读 `SOUL.md` + `SYSTEM.md` 了解项目哲学和强制规则。
-
-**第二步：** 选择你要做的任务类型（对应 `examples/mcp-workflow/cases/` 中的 case）。
-
-**第三步：** 用 `ros2-package-generator.sh` 生成代码框架，AI 在 `SYSTEM.md` 规则下填充实现。
-
-**第四步：** `ros2-build-feedback.sh` 自动验证编译错误，AI 修正直到零错误。
+```
+用户需求 → 接口定义 (msg/srv/action)
+         → 生成 CMakeLists.txt + C++ 代码
+         → colcon build 验证
+         → 编译报错 → 分析 → 修正 → 重新生成
+```
 
 ---
 
-## 质量保证
+## 质量标准
 
-- **276 个 SKILL.md** 全部通过 frontmatter 格式验证
-- 所有生成代码必须 `colcon build` 零错误
+- `colcon build` 零错误
 - 违反 `SYSTEM.md` 规则 = 编译失败
-
----
-
-## 快速链接
-
-| 资源 | 说明 |
-|------|------|
-| `SOUL.md` | 项目哲学（必读）|
-| `SYSTEM.md` | AI 强制规则（必读）|
-| `CHECKLIST.md` | 开发质量清单 |
-| `ANTI_PATTERNS.md` | 常见反模式 |
-| `QUICKREF.md` | ROS2 命令速查 |
-| `examples/mcp-workflow/` | MCP 案例库 |
+- 所有 SKILL.md 通过 frontmatter 验证
 
 ---
 
