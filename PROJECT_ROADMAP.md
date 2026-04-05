@@ -20,6 +20,8 @@
 - `ros2-format` — clang-format 格式化
 - `ros2-cmake-fix` — CMake 依赖问题诊断
 - `ros2-performance-monitor` — 运行时性能监控钩子
+- `ros2-bag-tool` — Bag 日志分析（录制信息 + 频率分析 + 错误检测）
+- `ros2-param-wizard` — 参数声明验证 + YAML 生成向导
 
 **示例包（Examples — 纯文档）**
 - 12 个案例全部包含 PLAN.md + SKILL.md + VERIFY.md
@@ -40,11 +42,11 @@
 
 ### 🔧 工具链增强
 
-| 功能 | 描述 | 优先级 |
+| 功能 | 描述 | 状态 |
 |------|------|--------|
-| `ros2-srv-generator` | 交互式 .srv / .action 生成向导 | P1 |
-| `ros2-param-wizard` | 参数声明验证 + YAML 生成 | P2 |
-| `ros2-bag-analyzer` | ros2 bag 日志分析脚本（错误聚合） | P2 |
+| `ros2-srv-generator` | 交互式 .srv / .action 生成向导 | TODO |
+| `ros2-param-wizard` | 参数声明验证 + YAML 生成 | ✅ |
+| `ros2-bag-analyzer` | ros2 bag 日志分析脚本（错误聚合） | ✅ |
 
 ### 📦 案例包
 

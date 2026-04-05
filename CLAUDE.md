@@ -87,6 +87,11 @@ After writing code, ALWAYS verify:
 - `agents/skills/ros2-qos-checker/` — QoS compatibility
 - `agents/skills/ros2-debug/` — Compile/runtime debugging
 - `scripts/ros2-build-feedback.sh` — Auto-build verifier
+- `scripts/ros2-debug.sh` — 8-category ROS2 error auto-diagnosis
+- `scripts/ros2-msg-generator.sh` — Interactive .msg file wizard
+- `scripts/ros2-launch-generator.sh` — launch.py generator (lifecycle/normal/component)
+- `scripts/ros2-bag-tool.sh` — Bag log analysis
+- `scripts/ros2-param-wizard.sh` — Parameter YAML generator
 
 ## Prohibited
 
