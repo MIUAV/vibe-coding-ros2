@@ -17,7 +17,7 @@ MCP (Model Context Protocol) 工作流通过多个专业化 AI Agent 协作完�
     ├──────────────────┬──────────────────┐
     ▼                  ▼                  ▼
 ┌─────────┐    ┌─────────────┐    ┌────────────┐
-│ MCP-SIM │    │ MCP-BUILD  │    │ MCP-DEBUG  │
+│ MCP-SIM │    │ MCP-BUILD  │    │ MCP-DEBUG │
 │ 仿真验证 │    │ 编译反馈    │    │ 调试诊断   │
 └─────────┘    └─────────────┘    └────────────┘
     │                  │                  │
@@ -36,6 +36,44 @@ cd ~/vibe-coding-ros2
 
 # 验证连接（在新终端）
 ./scripts/mcp/ros-mcp-integration.sh --verify
+```
+
+## Case 列表
+
+所有复杂任务案例位于 `mcp-workflow/cases/` 目录：
+
+| Case | 机器人类型 | 任务 |
+|------|-----------|------|
+| `go2-scurve/` | 四足 | S 曲线轨迹规划 |
+| `manipulator-pickplace/` | 机械臂 | 抓取放置 |
+| `drone-exploration/` | 无人机 | 自主探索 |
+| `wheeled-nav2/` | 轮式 | Nav2 自主导航 |
+| `multi-robot-swarm/` | 多机器人 | 蜂群协同 |
+| `biped-walk/` | 双足 | 步行控制 |
+| `underwater-nav/` | AUV | 水下导航 |
+| `sensor-fusion-locate/` | 通用 | 多传感器融合定位 |
+| `aerial-photography/` | 无人机 | 航拍任务 |
+| `industrial-integration/` | 工业 | ROS2-PLC 集成 |
+
+## Case 结构
+
+每个 case 目录包含：
+
+```
+cases/<name>/
+├── SKILL.md     # 任务描述 + 约束参数 + 引用 agents/skills/
+├── PLAN.md      # Phase 分阶段计划 + MCP 调用
+└── VERIFY.md   # 量化通过/失败标准
+```
+
+## 使用方式
+
+```bash
+# 运行指定 case
+./scripts/mcp/mcp-agent-orchestrator.sh go2-scurve --agent claude
+
+# 或手动阅读 case 文档
+cat mcp-workflow/cases/go2-scurve/PLAN.md
 ```
 
 ## Case 1: go2-scurve — 足式机器人轨迹规划
@@ -84,46 +122,6 @@ std_msgs/msg/Float64MultiArray       // 关节角度目标
 - 成功/失败判定
 
 ---
-
-## Case 2: manipulator-pickplace — 机械臂抓取
-
-### Phase 0: 需求理解
-
-**输入:** "机械臂从货架抓取物品放到托盘"
-
-**分解为:**
-1. 视觉定位 (Perception Agent)
-2. 运动规划 (Motion Agent)
-3. 抓取执行 (Control Agent)
-
-### Phase 1: 接口定义
-
-```yaml
-# 机械臂任务描述
-task:
-  type: pick_place
-  pick_pose: [x, y, z, qx, qy, qz, qw]  # 目标物体位置
-  place_pose: [x, y, z, qx, qy, qz, qw]  # 放置位置
-  approach_height: 0.15  # m
-  grasp_width: 0.08     # m
-```
-
-### Phase 2: 代码生成
-
-**生成文件:**
-- `manipulator_pickplace.cpp` — 主节点
-- `grasp_planner.cpp` — 抓取规划
-- `trajectory_generator.cpp` — 轨迹生成
-- `pickplace.launch.py` — 启动文件
-
-**MCP-BUILD** 自动验证编译
-
-### Phase 3: 仿真验证
-
-**MCP-SIM**:
-- MoveIt! 仿真
-- 碰撞检测
-- 抓取成功率统计
 
 ## Agent 提示词模板
 
