@@ -1,36 +1,55 @@
 ---
 name: control-systems
-description: MuJoCo 控制系统技能 - PD 控制器、阻抗控制、轨迹跟踪
-argument-hint: MuJoCo控制 OR PD控制 OR 阻抗控制
+description: MuJoCo 控制系统仿真 — PD 控制器、阻抗控制、轨迹跟踪、QP 优化控制，适用于机器人控制算法验证
+argument-hint: MuJoCo 控制 OR PD 控制器 OR 阻抗控制 OR 轨迹跟踪 OR QP 优化
 user-invocable: true
 ---
 
-# MuJoCo Control Systems Skill
+# control-systems — MuJoCo 控制系统 SKILL
 
-> 用于 MuJoCo 控制系统
+## 引用技能
 
----
+- `agents/skills/simulation/mujoco/`
+- `agents/skills/ros2-debug/`
 
-## 快速参考
-
-### PD 控制器
+## PD 控制器
 
 ```python
-import mujoco
-
-def pd_control(model, data, target_pos):
-    kp = 100.0
-    kd = 10.0
-    
-    error = target_pos - data.qpos
-    derivative = -data.qvel
-    
-    control = kp * error + kd * derivative
-    data.ctrl = control
+# MuJoCo PD 控制器
+def pd_control(q_desired, q_current, qd_current, kp, kd):
+    torque = kp * (q_desired - q_current) + kd * (qd_desired - qd_current)
+    return torque
 ```
 
----
+## 阻抗控制
 
-## 另见
+```python
+# 阻抗控制（末端力控制）
+F_desired = Kp × (x_desired - x) + Kd × (xd_desired - xd)
+```
 
-- [mjcf-models](../mjcf-models/) - MJCF 模型
+## QP 优化控制
+
+```python
+# QP 求解关节力矩
+H = q.T @ K @ q + R
+g = -q.T @ K @ x_desired
+q_solution = qp(H, g)
+```
+
+## ROS2 集成
+
+```python
+# mujoco_ros2_joint_control
+from mujoco_ros2 import MujocoNode
+
+class MujocoController(MujocoNode):
+    def __init__(self):
+        super().__init__('mujoco_controller')
+        self.ctrl = np.zeros(njnt)
+```
+
+## 禁止
+
+- ❌ MuJoCo 仿真参数不校准就用于真实机器人
+- ❌ 控制频率不匹配（MuJoCo 1000Hz ≠ 真实 400Hz）
