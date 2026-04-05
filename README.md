@@ -8,7 +8,6 @@
 
 ## 🔥 GitHub Stats
 
-```
 
 <p align="left">
     <img src="https://visitor-badge.laobi.icu/badge?page_id=MIUAV.vibe-coding-ros2" alt="Visitor Badge" />
@@ -21,9 +20,6 @@
 ## 📊 仓库活跃度
 
 [![Star History Chart](https://api.star-history.com/svg?repos=MIUAV/vibe-coding-ros2&type=Date)](https://star-history.com/#MIUAV/vibe-coding-ros2&Date)
-
----
-
 
 
 **Latest commit:** `be074f4` · 2026-04-05
