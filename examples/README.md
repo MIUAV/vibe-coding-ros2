@@ -1,49 +1,52 @@
-# Examples — 复杂任务工作流案例库
+# Examples — 案例索引
 
-> 所有复杂机器人任务案例已移至 `mcp-workflow/cases/`。
+> 每个案例包含 `PLAN.md` + `SKILL.md` + `VERIFY.md`，说明如何用工具链生成对应的 ROS2 代码。
 
-## 结构
+---
 
-```
-examples/
-├── mcp-workflow/         ← MCP 多智能体框架
-│   ├── cases/            ← 10 个复杂任务案例
-│   │   ├── go2-scurve/
-│   │   ├── manipulator-pickplace/
-│   │   ├── drone-exploration/
-│   │   ├── wheeled-nav2/
-│   │   ├── multi-robot-swarm/
-│   │   ├── biped-walk/
-│   │   ├── underwater-nav/
-│   │   ├── sensor-fusion-locate/
-│   │   ├── aerial-photography/
-│   │   └── industrial-integration/
-│   ├── MCP_WORKFLOW.md   ← 框架说明
-│   └── MCP_ORCHESTRATOR.md ← 编排脚本
-└── memory-bank-example/  ← 项目记忆库模板
-```
+## 案例目录
 
-## 案例列表
-
-| Case | 机器人 | 任务 |
-|------|--------|------|
-| `go2-scurve/` | 四足 | S 曲线轨迹 |
-| `manipulator-pickplace/` | 机械臂 | 抓取放置 |
-| `drone-exploration/` | 无人机 | 自主探索 |
-| `wheeled-nav2/` | 轮式 | Nav2 导航 |
-| `multi-robot-swarm/` | 多机 | 蜂群协同 |
-| `biped-walk/` | 双足 | 步行控制 |
-| `underwater-nav/` | AUV | 水下导航 |
-| `sensor-fusion-locate/` | 通用 | 传感器融合定位 |
-| `aerial-photography/` | 无人机 | 航拍任务 |
-| `industrial-integration/` | 工业 | ROS2-PLC 集成 |
+| 案例 | 类型 | 描述 |
+|------|------|------|
+| `mcp-workflow/cases/lifecycle-node-demo/` | 节点 | 生产级 LifecycleNode 生成流程 |
+| `mcp-workflow/cases/action-fibonacci-demo/` | Action | ROS2 Action Server 生成流程 |
+| `mcp-workflow/cases/wheeled-nav2/` | 导航 | 轮式机器人 Nav2 导航 |
+| `mcp-workflow/cases/drone-exploration/` | 导航 | 无人机自主探索 |
+| `mcp-workflow/cases/go2-scurve/` | 控制 | 四足机器人 S 曲线轨迹 |
+| `mcp-workflow/cases/manipulator-pickplace/` | 机械臂 | 机械臂抓取任务 |
+| `mcp-workflow/cases/multi-robot-swarm/` | 协同 | 多机器人编队 |
+| `mcp-workflow/cases/industrial-integration/` | 集成 | 工业机器人集成 |
+| `mcp-workflow/cases/aerial-photography/` | 应用 | 航测摄影 |
 
 ## 快速开始
 
-```bash
-# 查看案例计划
-cat examples/mcp-workflow/cases/go2-scurve/PLAN.md
+每个案例结构一致：
 
-# 运行 MCP 编排
-./scripts/mcp/mcp-agent-orchestrator.sh go2-scurve --agent claude
 ```
+cases/<name>/
+├── PLAN.md     # 工具链使用步骤 + 生成的代码
+├── SKILL.md     # 关键技术点 + 规范
+└── VERIFY.md    # 验证步骤 + 预期结果
+```
+
+按以下顺序使用：
+
+```bash
+# 1. 阅读 PLAN.md，按步骤执行
+# 2. 生成包骨架
+bash scripts/generators/ros2-package-generator.sh <pkg_name> cpp <deps> --verify
+
+# 3. 按 PLAN.md 生成代码
+# 4. 按 VERIFY.md 验证
+bash scripts/ros2-build-verify-loop.sh <pkg_name>
+
+# 5. 运行测试
+ros2 run <pkg_name> <node_name>
+```
+
+## 案例贡献指南
+
+新增案例需包含：
+- `PLAN.md`：使用工具链的完整步骤，代码块可直接复制
+- `SKILL.md`：核心技术点，规范和常见错误
+- `VERIFY.md`：编译/运行验证命令，预期输出表格
