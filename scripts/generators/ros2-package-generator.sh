@@ -456,9 +456,11 @@ if [[ $VERIFY -eq 1 ]]; then
     fi
 fi
 echo ""
+echo ""
+echo -e "${BLUE}📦 依赖安装（首次必须）${NC}"
+echo "  rosdep install --from-paths . --ignore-src -r -y"
+echo ""
 echo -e "${YELLOW}下一步:${NC}"
-echo "  1. 编辑 $PKG_NAME/package.xml — 补全描述和维护者"
-echo "  2. 编辑 $PKG_NAME/src/${PKG_NAME}_node.cpp — 填充业务逻辑"
-echo "  3. colcon build --packages-select $PKG_NAME --symlink-install"
-echo "  4. source install/setup.bash"
-echo "  5. ros2 run $PKG_NAME ${PKG_NAME}_node"
+echo "  1. colcon build --packages-select $PKG_NAME --symlink-install"
+echo "  2. source install/setup.bash"
+echo "  3. ros2 run $PKG_NAME ${PKG_NAME}_node"

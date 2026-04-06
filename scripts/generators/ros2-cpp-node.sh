@@ -303,7 +303,9 @@ private:
 int main(int argc, char* argv[]) {
   rclcpp::init(argc, argv);
   auto node = std::make_shared<LifecycleNode>();
-  rclcpp::spin(node->get_node_base_interface());
+  rclcpp::executors::MultiThreadedExecutor executor;
+  executor.add_node(node->get_node_base_interface());
+  executor.spin();
   rclcpp::shutdown();
   return 0;
 }
@@ -384,6 +386,130 @@ int main(int argc, char* argv[]) {
   rclcpp::spin(std::make_shared<AddTwoIntsService>());
   rclcpp::shutdown();
   return 0;
+}
+CPPEOF
+    ;;
+
+  action)
+    cat > "$NODE_FILE" <<'CPPEOF'
+// action node — Action Server 节点（rclcpp_action）
+#include <rclcpp/rclcpp.hpp>
+#include <rclcpp_action/rclcpp_action.hpp>
+#include <example_interfaces/action/fibonacci.hpp>
+
+using Fibonacci = example_interfaces::action::Fibonacci;
+using GoalHandle = rclcpp_action::ServerGoalHandle<Fibonacci>;
+
+class FibonacciActionNode : public rclcpp::Node {
+public:
+  FibonacciActionNode() : Node("fibonacci_action") {
+    action_server_ = rclcpp_action::create_server<Fibonacci>(
+      this, "fibonacci",
+      std::bind(&FibonacciActionNode::handle_goal, this, _1, _2),
+      std::bind(&FibonacciActionNode::handle_cancel, this, _1),
+      std::bind(&FibonacciActionNode::handle_accepted, this, _1));
+    RCLCPP_INFO(get_logger(), "Action Server ready: /fibonacci");
+  }
+
+private:
+  rclcpp_action::GoalResponse handle_goal(
+      const rclcpp_action::GoalUUID&, std::shared_ptr<const Fibonacci::Goal> goal) {
+    RCLCPP_INFO(get_logger(), "Received goal order: %d", goal->order);
+    if (goal->order <= 0 || goal->order > 93) {
+      return rclcpp_action::GoalResponse::REJECT;
+    }
+    return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
+  }
+
+  rclcpp_action::CancelResponse handle_cancel(std::shared_ptr<GoalHandle>) {
+    return rclcpp_action::CancelResponse::ACCEPT;
+  }
+
+  void handle_accepted(std::shared_ptr<GoalHandle> gh) {
+    std::thread{[this, gh]() { execute(gh); }}.detach();
+  }
+
+  void execute(std::shared_ptr<GoalHandle> gh) {
+    auto goal = gh->get_goal();
+    Fibonacci::Feedback fb; fb.sequence = {0, 1};
+    for (int i = 1; i < goal->order; ++i) {
+      if (gh->is_canceling()) { gh->canceled(fb); return; }
+      fb.sequence.push_back(fb.sequence[i] + fb.sequence[i-1]);
+      gh->publish_feedback(fb);
+      std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
+    Fibonacci::Result r; r.sequence = fb.sequence;
+    gh->succeed(r);
+    RCLCPP_INFO(get_logger(), "Goal succeeded: Fibonacci(%d) = %zu", goal->order, r.sequence.back());
+  }
+
+  rclcpp_action::Server<Fibonacci>::SharedPtr action_server_;
+};
+
+int main(int argc, char* argv[]) {
+  rclcpp::init(argc, argv);
+  rclcpp::spin(std::make_shared<FibonacciActionNode>());
+  rclcpp::shutdown(); return 0;
+}
+CPPEOF
+    ;;
+
+  parameters)
+    cat > "$NODE_FILE" <<'CPPEOF'
+// parameters node — 参数节点（动态参数读写）
+#include <rclcpp/rclcpp.hpp>
+#include <std_msgs/msg/string.hpp>
+
+class ParametersNode : public rclcpp::Node {
+public:
+  ParametersNode() : Node("parameters_node"), int_param_(42), str_param_("hello") {
+    // 声明参数（类型 + 默认值）
+    this->declare_parameter("int_param", int_param_);
+    this->declare_parameter("str_param", str_param_);
+    this->declare_parameter("double_param", 3.14);
+
+    // 参数变更回调
+    param_callback_ = this->add_on_set_parameters_callback(
+      std::bind(&ParametersNode::on_param_change, this, std::placeholders::_1));
+
+    timer_ = this->create_wall_timer(
+      2s, std::bind(&ParametersNode::timer_callback, this));
+
+    RCLCPP_INFO(get_logger(), "Parameters node started");
+  }
+
+private:
+  rcl_interfaces::msg::SetParametersResult on_param_change(
+      const std::vector<rclcpp::Parameter>& params) {
+    rcl_interfaces::msg::SetParametersResult result;
+    result.successful = true;
+    for (const auto& param : params) {
+      if (param.get_name() == "int_param") {
+        int_param_ = param.as_int();
+        RCLCPP_INFO(get_logger(), "int_param changed to: %d", int_param_);
+      } else if (param.get_name() == "str_param") {
+        str_param_ = param.as_string();
+        RCLCPP_INFO(get_logger(), "str_param changed to: %s", str_param_.c_str());
+      }
+    }
+    return result;
+  }
+
+  void timer_callback() {
+    RCLCPP_INFO(get_logger(), "Params: int=%d str=%s",
+                int_param_, str_param_.c_str());
+  }
+
+  rclcpp::TimerBase::SharedPtr timer_;
+  rclcpp::node_parameters::OnSetParametersCallbackHandle::SharedPtr param_callback_;
+  int int_param_;
+  std::string str_param_;
+};
+
+int main(int argc, char* argv[]) {
+  rclcpp::init(argc, argv);
+  rclcpp::spin(std::make_shared<ParametersNode>());
+  rclcpp::shutdown(); return 0;
 }
 CPPEOF
     ;;
