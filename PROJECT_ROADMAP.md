@@ -54,6 +54,7 @@
 | `ros2-multi-agent-generator` | 多机器人协调（编队/任务分配/蜂群/ORCA） | ✅ P3 |
 | `ros2-control-node-generator` | ros2_control 硬件接口节点 | ✅ P2-2 |
 | `ros2-moveit-generator` | MoveIt2 运动规划节点 | ✅ P2-3 |
+| `ros2-safety-generator` | 机器人安全模块（碰撞检测/急停/地理围栏/HITL） | ✅ P0 |
 
 ### 📦 案例包
 
