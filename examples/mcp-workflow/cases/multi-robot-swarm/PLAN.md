@@ -1,122 +1,91 @@
-# multi-robot-swarm — Agent 执行计划
+# multi-robot-swarm Case — 多机器人编队协同控制
 
-## Phase 0: 单机控制验证
+## 背景
 
-### Agent
-`MCP-SIM`
+多机器人编队（Swarm Robotics）是机器人领域的前沿方向。多台机器人在共享空间中协同作业，需要解决：防碰撞、编队保持、目标分配、分布式通信等核心问题。
 
-### 目标
-在多机器人之前，确认每台机器人都能独立导航。
+**应用场景：**
+- 无人机群表演（灯光秀、搜救）
+- 仓库多 AGV 协同搬运
+- 水面无人艇（USV）编队巡逻
 
-### MCP 调用
+---
+
+## 用户需求
+
+```
+用户：控制 5 台 TurtleBot3 在 10m×10m 区域内，以菱形编队从 (0,0) 移动到 (5,5)，保持 1m 间距
+```
+
+---
+
+## 约束
+
+- ROS2 humble
+- Robot 数量：3-10 台
+- 通信：ROS2 Topic（DDS）+ 可选局域网 UDP
+- 定位：OptiTrack 或激光雷达 SLAM
+
+---
+
+## 技术方案
+
+### 编队控制算法
+
+**Leader-Follower 模式：**
+```
+Leader 发布 /formation/target
+Follower 订阅 /formation/target 并计算相对位置偏差
+```
+
+**虚拟结构（Virtual Structure）：**
+```
+整个编队视为一个刚体
+每个机器人保持相对于刚体中心的固定坐标
+```
+
+### 冲突避免
+
+```
+基于 ORCA（Optimal Reciprocal Collision Avoidance）
+每台机器人计算其他机器人的速度障碍锥
+在锥外选择安全速度
+```
+
+---
+
+## 执行流程
+
+### Step 1: 包生成
+
 ```bash
-mcp__ros2__topic_list | grep -E "robot_1|robot_2|robot_3"
-mcp__ros2__node_list | grep -E "nav|cmd_vel"
+bash scripts/generators/ros2-package-generator.sh swarm_control python
 ```
 
-### 验证
-- [ ] 每台机器人的 `/robot_N/cmd_vel` 有输出
-- [ ] 每台机器人可以独立导航到目标点
-- [ ] 激光雷达数据正常
+### Step 2: 启动多机器人
 
----
-
-## Phase 1: 通信中间件
-
-### Agent
-`MCP-BUILD`
-
-### 目标
-建立机器人间通信（P2P 或广播）。
-
-### 实现检查点
-- [ ] `robot_pair_broadcast` 节点（每对机器人通信）
-- [ ] 或使用 `ros2 topic echo` / `pub` 做广播
-- [ ] QoS: RELIABLE（协调命令不能丢）
-- [ ] 通信延迟 < 100ms
-
-### 验证
-- [ ] `ros2 topic list` 看到 `robot_1/position`、`robot_2/position` 等
-- [ ] 位置信息跨机器人可达
-
----
-
-## Phase 2: 编队控制器
-
-### Agent
-`MCP-BUILD`
-
-### 目标
-实现 leader-follower 编队控制。
-
-### 实现检查点
-- [ ] `FormationController` 类
-- [ ] Leader 发布路径
-- [ ] Follower 计算相对位置误差
-- [ ] PID 控制消除误差
-- [ ] 编队形状可切换（直线/三角/菱形）
-
-### Leader-Follower 控制律
-
-```
-u_follower = Kp × (p_formation - p_current) +Kd × (v_target - v_current)
+```bash
+# 每台机器人启动一个实例（namespace 区分）
+ros2 run swarm_control formation_node --ros-args -r __ns:=/robot1
 ```
 
-### 验证
-- [ ] 编队间距误差 < 0.1m
-- [ ] 编队形状保持正确（三角/菱形）
-- [ ] Leader 加速时 Follower 能跟踪（延迟 < 1s）
+### Step 3: 启动编队控制
+
+```bash
+ros2 launch swarm_control formation.launch.py formation_type:=diamond num_robots:=5
+```
+
+### Step 4: 验证
+
+```bash
+bash scripts/ros2-build-verify-loop.sh swarm_control
+```
 
 ---
 
-## Phase 3: 分布式任务分配
+## 预期结果
 
-### Agent
-`MCP-BUILD`
-
-### 目标
-实现拍卖/竞拍任务分配算法。
-
-### 实现检查点
-- [ ] `TaskAllocator` 类
-- [ ] 区域网格化（N×N 格子）
-- [ ] 距离成本计算
-- [ ] 竞拍协议
-- [ ] 分配结果广播
-
-### 验证
-- [ ] 任务分配在 < 5s 内完成（≤10 台机器人）
-- [ ] 所有机器人都有任务（或无任务时正确 IDLE）
-- [ ] 分配结果一致性（无冲突分配）
-
----
-
-## Phase 4: 碰撞协调
-
-### Agent
-`MCP-BUILD`
-
-### 目标
-防止机器人间碰撞。
-
-### 实现检查点
-- [ ] `CollisionDetector` 类（圆形碰撞检测）
-- [ ] 速度限制区（机器人接近时减速）
-- [ ] 优先级机制（直线通过的机器人优先）
-
-### 验证
-- [ ] 100 次随机路径测试，0 碰撞
-- [ ] 安全距离内机器人相对速度 < 0.1 m/s
-
----
-
-## Phase 5: 仿真验证
-
-### Agent
-`MCP-SIM`
-
-### 验证
-- [ ] 3 台机器人成功覆盖指定区域
-- [ ] 无碰撞（100m 总路程）
-- [ ] 任务分配一致性
-- [ ] 编队形状保持
+- ✅ 5 台机器人形成菱形编队到达目标点
+- ✅ 任意两台机器人距离始终 ≥ 0.5m（防碰撞）
+- ✅ 允许临时队形调整以避障，之后恢复原队形
+- ✅ `colcon build` 编译通过，无 error

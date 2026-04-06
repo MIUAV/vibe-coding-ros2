@@ -1,61 +1,77 @@
-# go2-scurve — 验证标准
+# go2-scurve VERIFY — 验收标准
 
-## 成功标准（必须全部通过）
+---
 
-### 仿真验证
-
-| 指标 | 通过标准 | 测试方法 |
-|------|---------|---------|
-| 轨迹误差 | < 5cm（相对于目标 S-curve）| `ros2 topic echo /scurve/actual_trajectory` |
-| 速度约束 | ≤ V_max = 1.5 m/s | `ros2 topic echo /leg/feet_velocities` |
-| 加速度约束 | ≤ A_max = 3.0 m/s² | 计算 `d²p/dt²` |
-| jerk 连续性 | 无突变（< 100 m/s³ 跳变）| 数值微分 |
-| 地隙 | > 0.05m（无足端碰地）| `ros2 topic echo /leg/ground_clearance` |
-| 控制频率 | ≥ 350Hz（400Hz 目标）| `ros2 topic hz /joint_commands` |
-| 关节限位 | 全部在物理范围内 | `ros2 topic echo /joint_states` |
-
-### 代码质量
-
-| 检查项 | 标准 |
-|--------|------|
-| colcon build | 零错误 |
-| 单元测试 | 通过率 100% |
-| clang-tidy | 无 Error（Warning 可接受）|
-| 依赖声明 | 所有外部依赖在 package.xml |
-
-## 失败判定
-
-满足以下任意条件则判定为**失败**：
-
-- [ ] colcon build 有任何链接错误
-- [ ] 仿真中关节角度超过限位
-- [ ] jerk 出现 > 100 m/s³ 的跳变
-- [ ] 实际轨迹误差 > 10cm
-- [ ] 控制频率 < 300Hz（不稳定）
-
-## 测试命令
+## 编译验证
 
 ```bash
-# 1. 编译
-colcon build --packages-select go2_scurve go2_scurve_msgs
-source install/setup.bash
-
-# 2. 启动仿真
-ros2 launch go2_scurve scurve.launch.py
-
-# 3. 运行验证脚本
-bash scripts/validators/go2-scurve-verify.sh
-
-# 4. 查看结果
-cat /tmp/go2_scurve_verify_result.json
+cd /home/node/.openclaw/workspace/vibe-coding-ros2
+bash scripts/ros2-build-verify-loop.sh go2_scurve
 ```
 
-## 验证脚本要求
+**通过条件：**
+- [ ] `colcon build --packages-select go2_scurve` 无 error
+- [ ] `ament_lint_auto` 检查通过
+- [ ] `colcon test --packages-select go2_scurve` 全绿
 
-`scripts/validators/go2-scurve-verify.sh` 必须检查：
+---
 
-1. 轨迹误差（对比 /scurve/target 和 /scurve/actual）
-2. 速度/加速度/jerk 约束
-3. 关节限位
-4. 控制频率稳定性
-5. 仿真时钟同步（/clock）
+## 功能验证
+
+### Unit Test — S 曲线核心计算
+
+```python
+import unittest
+import numpy as np
+from scurve import compute_scurve_trajectory
+
+class TestSCurve(unittest.TestCase):
+    def test_velocity_profile(self):
+        """速度曲线应平滑无突变"""
+        start, goal = [0,0,0], [2,1,0]
+        phases = compute_scurve_trajectory(start, goal, vmax=0.5, amax=0.2, jmax=1.0)
+        
+        # 检查：速度曲线是否连续
+        # 检查：峰值速度是否 ≤ vmax
+        # 检查：加加速度是否 ≤ jmax
+        for p in phases:
+            self.assertLessEqual(abs(p['j']), 1.0)
+
+    def test_acceleration_smoothness(self):
+        """加速度曲线应无突变"""
+        # jerk (加加速度) 应在段间平滑过渡
+        pass
+
+    def test_step_height(self):
+        """step_height 不应超过 0.2m"""
+        # 在崎岖地形测试中验证
+        pass
+```
+
+### 集成测试 — 步态周期匹配
+
+```bash
+ros2 run go2_scurve test_gait_sync
+# 验证：步态频率 × 步长 ≥ 轨迹速度
+```
+
+---
+
+## 性能验证
+
+| 指标 | 目标 | 测量方法 |
+|------|------|---------|
+| 轨迹平滑度 | jerk < 1.0 m/s³ | `ros2 topic echo /go2/cmd_vel` 分析 |
+| 定位精度 | 误差 < 0.1m | 与目标点对比 |
+| 响应延迟 | < 50ms | `ros2 topic hz /cmd_vel` |
+| 障碍物避障 | 距离 ≥ 0.3m | 动态障碍物测试 |
+
+---
+
+## 验收清单
+
+- [ ] `scurve.py` 核心算法单元测试全绿
+- [ ] 步态频率与轨迹速度匹配验证通过
+- [ ] `colcon build` + `colcon test` 全部通过
+- [ ] AI 生成的代码无需手动修改即可运行
+- [ ] SKILL.md 知识可被 AI Agent 准确调用

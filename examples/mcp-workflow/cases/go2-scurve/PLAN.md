@@ -1,140 +1,96 @@
-# go2-scurve — Agent 执行计划
+# go2-scurve Case — Unitree Go2 四足机器人 S 曲线运动规划
 
-## Phase 0: 环境检查 + 需求确认
+## 背景
 
-### 目标
-确认 ROS2 Humble 环境正常，获取 Go2 机器人当前状态。
+Unitree Go2 是宇树科技的四足机器人，支持 ROS2 控制。本案例展示如何为 Go2 生成符合 S 曲线加减速的运动轨迹，实现平滑、稳定的步态运动。
 
-### Agent
-`MCP-SIM`
+**应用场景：**
+- 复杂地形导航（楼梯、斜坡）
+- 平滑轨迹跟踪（避免冲击）
+- 运动模式切换（walk/trot/gallop）
 
-### MCP 调用
+---
+
+## 用户需求
+
+```
+用户：让 Go2 从当前位置平滑移动到 (2.0, 1.0)，使用 S 曲线加减速，避开途中障碍物
+```
+
+---
+
+## 约束
+
+- ROS2 humble/iron/jazzy
+- Go2 固件版本 ≥ 2.0（支持 ROS2 指令接口）
+- Python 3.8+
+- 障碍物检测依赖激光雷达数据 `/scan`
+
+---
+
+## 执行流程
+
+### Step 1: 包生成
+
 ```bash
-mcp__ros2__topic_list                    # 列出所有话题
-mcp__ros2__pkg_list                      # 列出所有包
-mcp__ros2__node_info /go2_state_estimation  # 查看状态估计节点
+cd /home/node/.openclaw/workspace/vibe-coding-ros2
+bash scripts/generators/ros2-package-generator.sh go2_scurve mixed
 ```
 
-### 验证
-- [ ] `ros2 topic list` 返回非空
-- [ ] `go2_scurve` 包存在（或需要创建）
-- [ ] Go2 的 UDP 通信端口正常
+### Step 2: S 曲线轨迹生成
 
----
-
-## Phase 1: 接口定义
-
-### 目标
-定义 S-curve 轨迹的话题和服务接口。
-
-### Agent
-`MCP-BUILD`
-
-### 输出
-
-```yaml
-# 轨迹目标话题
-/scurve/target:
-  type: geometry_msgs/msg/Pose2D
-  说明: S曲线目标点 (x, y, theta)
-
-# 足端位置话题
-/leg/feet_positions:
-  type: geometry_msgs/msg/Vector3Stamped[4]
-  说明: 4条腿的足端位置（世界坐标系）
-
-# S曲线参数服务
-/scurve/set_params:
-  type: example_interfaces/srv/SetBool
-  说明: 设置 A_max, V_max, J_max 参数
-
-# 轨迹状态话题
-/scurve/status:
-  type: std_msgs/msg/String
-  说明: "planning" | "executing" | "completed" | "error"
-```
-
-### 验证
-- [ ] msg/srv/action 文件已创建在 `go2_scurve_msgs/` 包
-- [ ] `colcon build --packages-select go2_scurve_msgs` 编译通过
-- [ ] `ros2 interface show` 能查到新接口
-
----
-
-## Phase 2: 轨迹生成器实现
-
-### 目标
-实现 S-curve 数学生成器（位置/速度/加速度/jerk）。
-
-### Agent
-`MCP-BUILD`
-
-### 实现检查点
-- [ ] `ScurveGenerator` 类实现（位置 `get_position(t)`、速度 `get_velocity(t)`、加速度 `get_acceleration(t)`、jerk）
-- [ ] 参数可动态调整（A_max, V_max, J_max）
-- [ ] `colcon build --packages-select go2_scurve` 零错误
-- [ ] 单元测试：输入 T=1.0, A_max=1.0, V_max=1.0, J_max=10.0，输出轨迹点序列
-
-### MCP 调用
 ```bash
-mcp__ros2__pkg_create go2_scurve cpp "rclcpp,geometry_msgs,std_msgs"
-mcp__colcon_build --package go2_scurve
+python3 go2_scurve/src/scurve_planner.py \
+  --start 0.0,0.0,0.0 \
+  --goal 2.0,1.0,0.0 \
+  --vmax 0.5 \
+  --amax 0.2 \
+  --step_height 0.15
 ```
 
-### 验证
-- [ ] 轨迹生成器输出jerk连续（无突变）
-- [ ] 速度不超过 V_max
-- [ ] 加速度不超过 A_max
+### Step 3: 障碍物检测
 
----
-
-## Phase 3: 逆运动学（IK）
-
-### 目标
-将笛卡尔空间 S-curve 轨迹转换为关节角度序列。
-
-### Agent
-`MCP-BUILD`
-
-### 实现检查点
-- [ ] `Go2IK` 类实现（12个关节角度输出）
-- [ ] 腿长参数化（从 URDF 或参数服务器读取）
-- [ ] 奇异点处理（膝盖向后时）
-- [ ] 限位检查（每个关节的角度限制）
-
-### 验证
-- [ ] IK 输出在物理限位内
-- [ ] 足端位置误差 < 1mm（相对于目标）
-
----
-
-## Phase 4: 仿真验证
-
-### 目标
-在 Gazebo/Ignition 中验证 S-curve 轨迹执行。
-
-### Agent
-`MCP-SIM`
-
-### MCP 调用
 ```bash
-mcp__ros2__service_call /controller_manager/list_controllers  # 确认控制器运行
-mcp__ros2__topic_pub /scurve/start std_msgs/msg/Bool "{data: true}"  # 触发轨迹执行
+ros2 run go2_scurve obstacle_avoider --ros-args -p scan_topic:/scan
 ```
 
-### 验证
-- [ ] 机器人实际行走轨迹与规划 S-curve 误差 < 5cm
-- [ ] 无关节超限位告警
-- [ ] 轨迹完成时间与理论值误差 < 10%
+### Step 4: 编译验证
+
+```bash
+bash scripts/ros2-build-verify-loop.sh go2_scurve
+```
 
 ---
 
-## Phase 5: 真实机器人验证（可选）
+## 技术要点
 
-### 目标
-在真实 Go2 机器人上执行 S-curve 轨迹。
+### S 曲线生成算法
 
-### 验证
-- [ ] UDP 通信正常
-- [ ] 轨迹执行中关节温度正常（< 80°C）
-- [ ] 机器人无异常抖动
+```
+S 曲线 = 5段：T_acc → T_jerk → T_const → T_decel → T_settle
+```
+
+| 参数 | 含义 | 默认值 |
+|------|------|--------|
+| vmax | 最大速度 | 0.5 m/s |
+| amax | 最大加速度 | 0.2 m/s² |
+| jmax | 最大加加速度（冲击限制） | 1.0 m/s³ |
+
+### Go2 步态周期
+
+```
+步态周期 T = 1 / frequency
+trot:   T = 0.3s, 50% 占空比
+walk:   T = 0.6s, 70% 占空比
+gallop: T = 0.2s, 40% 占空比
+```
+
+---
+
+## 预期结果
+
+- ✅ 生成的轨迹经过 S 曲线加减速，无突变
+- ✅ 步态频率与轨迹速度匹配
+- ✅ 障碍物检测触发局部路径重规划
+- ✅ colcon build 编译通过，无 error
+- ✅ 单元测试覆盖 scurve 计算核心逻辑
