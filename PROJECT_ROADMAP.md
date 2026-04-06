@@ -1,52 +1,55 @@
 # PROJECT_ROADMAP — Vibe-Coding-ROS2
 
-> 项目路线图。v0.x 阶段目标：成为 ROS2 Vibe Coding 的标准工具链。
+> 项目路线图。当前版本 v0.2.x（2026-04-06 完成）。
 
 ---
 
-## 当前版本: v0.1.x
+## 当前版本: v0.2.x ✅
 
-### 已完成 ✅
+### 已完成功能
 
 **工具链（Toolchain）**
 - `ros2-package-generator` — 标准包生成（cpp/python/mixed）+ `--verify` 标志
 - `ros2-interface-generator` — msg/srv/action 接口包生成
 - `ros2-msg-generator` — 交互式 CLI 向导生成 .msg 文件
+- `ros2-srv-generator.sh` — 交互式 .srv/.action 向导
 - `ros2-launch-generator` — launch.py 生成（lifecycle/normal/component）
-- `ros2-cpp-node` — C++ 节点骨架生成
-- `ros2-build-verify-loop` — 编译验证 + LLM 修复闭环
+- `ros2-cpp-node` — 7种节点类型（publisher/sub/lifecycle/service/action/timer/parameters）
+- `ros2-tf2-broadcaster` — TF2 广播节点生成器
+- `ros2-build-verify-loop` — 编译验证 + LLM 修复闭环（3次重试）
 - `ros2-build-feedback` — 编译错误解释 + 修复建议
 - `ros2-debug` — 8类 ROS2 错误自动诊断
 - `ros2-format` — clang-format 格式化
 - `ros2-cmake-fix` — CMake 依赖问题诊断
-- `ros2-performance-monitor` — 运行时性能监控钩子
-- `ros2-bag-tool` — Bag 日志分析（录制信息 + 频率分析 + 错误检测）
-- `ros2-param-wizard` — 参数声明验证 + YAML 生成向导
+- `ros2-bag-tool` — Bag 日志分析
+- `ros2-param-wizard` — 参数 YAML 生成
 
-**示例包（Examples — 纯文档）**
-- 12 个案例全部包含 PLAN.md + SKILL.md + VERIFY.md
-- 不在 examples/ 目录存放 C++ 代码（案例为文档化流程）
+**测试模板**
+- `test-templates/src/publisher_test.cpp` — gtest 发布者测试（atomic 线程安全）
+- `test-templates/src/lifecycle_test.cpp` — gtest 生命周期测试（6个测试用例）
+- `test-templates/src/service_test.cpp` — gtest 服务测试（并发线程安全）
+- `test-templates/src/action_test.cpp` — gtest Action 测试
 
 **CI/CD**
-- `ros2-ci.yml` — Matrix build（humble/iron/jazzy）+ clang-format + ament_lint
+- `ros2-ci.yml` — Matrix build（humble/iron/jazzy）+ clang-format + ament_lint + coverage + concurrency
 
-**文档（Docs）**
-- CLAUDE.md / SOUL.md / SYSTEM.md — AI Agent 核心规则
-- AI-Generated-ROS2-Anti-Patterns.md — 8类错误反模式
-- TDD-for-ROS2.md — 测试驱动开发流程
-- LLM-Model-Selection.md — 模型选择指导
+**文档**
+- README 重构（痛点→解决→差异化 + 工具链架构图）
+- CLAUDE.md 精简（58行，核心规则）
+- CONTRIBUTING.md（SKILL.md 编写规范 + commit 格式）
+- PROJECT_ROADMAP.md（本文件）
 
 ---
 
-## v0.2.x 目标（下一个冲刺）
+## v0.3.x 目标
 
 ### 🔧 工具链增强
 
-| 功能 | 描述 | 状态 |
+| 功能 | 描述 | 优先级 |
 |------|------|--------|
-| `ros2-srv-generator` | 交互式 .srv / .action 生成向导 | TODO |
-| `ros2-param-wizard` | 参数声明验证 + YAML 生成 | ✅ |
-| `ros2-bag-analyzer` | ros2 bag 日志分析脚本（错误聚合） | ✅ |
+| `ros2-nav2-node-generator` | Nav2 compatible 节点模板 | P1 |
+| `ros2-control-node-generator` | ros2_control 硬件接口节点 | P2 |
+| `ros2-moveit-generator` | MoveIt2 运动规划节点 | P2 |
 
 ### 📦 案例包
 
@@ -67,27 +70,10 @@
 
 ### 🧪 测试覆盖
 
-- 所有 scripts/ 有 bash -n 语法验证 ✅
-- 单元测试：C++ GoogleTest 模板（`test-templates/`）
-- CI 脚本语法验证 ✅
-
----
-
-## v0.3.x 目标
-
-### AI 集成层
-
-| 功能 | 描述 |
-|------|------|
-| **MCP Server** | 提供 ROS2 工具的 MCP 协议接口 |
-| **LLM Context Injector** | 自动注入 ROS2 编译上下文给 LLM |
-| **Auto-Fix Pipeline** | colcon build error → LLM fix → verify → PR |
-
-### 知识库增强
-
-- `agents/skills/ros2-nav2/` — Nav2 行为树 + 规划器 SKILL
-- `agents/skills/ros2-control/` — ros2_control + 硬件接口 SKILL
-- `agents/skills/ros2-moveit/` — MoveIt2 运动规划 SKILL
+- ✅ 所有 scripts/ 有 bash -n 语法验证
+- ✅ C++ GoogleTest 模板（4个测试文件）
+- ⚠️ CI 中无 ros2 bag integration test
+- ⚠️ 无 lint 覆盖率统计
 
 ---
 
@@ -116,6 +102,6 @@ AI Agent:
 
 | 版本 | 日期 | 主要内容 |
 |------|------|---------|
-| v0.1.x | 2026-04 | 工具链完善 + CI 升级 + 案例文档化 |
-| v0.1.0 | 2026-04 | 初始版本：工具链 + CI + 示例包 |
+| v0.2.x | 2026-04-06 | 工具链完整 + CI升级 + README重构 + P0-P2迭代完成 |
+| v0.1.x | 2026-04-05 | 初始版本：工具链 + CI + 案例文档化 |
 | v0.0.x | 2026-03 | 实验阶段 |
