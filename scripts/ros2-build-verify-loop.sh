@@ -16,6 +16,10 @@ set -e
 RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'; BLUE='\033[0;34m'; CYAN='\033[0;36m'; NC='\033[0m'
 
 PKG_PATH="${1:-.}"
+# 解析为绝对路径
+if [[ "$PKG_PATH" != /* ]]; then
+  PKG_PATH="$(pwd)/$PKG_PATH"
+fi
 MAX_RETRIES="${2:-3}"
 RETRIES=0
 
@@ -32,14 +36,31 @@ run_build() {
 
   cd "$PKG_PATH"
 
+  # 检查 colcon 是否可用
+  if ! command -v colcon &>/dev/null; then
+    warn "colcon not found — skipping build (install: apt install python3-colcon-common-extensions)"
+    warn "Package generated at: $PKG_PATH"
+    echo ""
+    echo "Next steps:"
+    echo "  1. apt install ros-${ROS_DISTRO:-humble}-colcon-common-extensions"
+    echo "  2. cd $PKG_PATH"
+    echo "  3. rosdep install --from-paths . --ignore-src -r -y"
+    echo "  4. colcon build --packages-select $(basename "$PKG_PATH")"
+    return 0
+  fi
+
   # 首次清理
   if [ $RETRIES -eq 0 ] && { [ -d build ] || [ -d install ]; }; then
     warn "Cleaning previous artifacts..."
     rm -rf build install log
   fi
 
-  # 编译
+  # 编译（用 PIPESTATUS 检测 colcon 真实退出码）
   colcon build --event-handlers console_direct+ 2>&1 | tee "$BUILD_LOG"
+  local colcon_exit=${PIPESTATUS[0]}
+  if [ $colcon_exit -ne 0 ]; then
+    warn "colcon exited with code $colcon_exit"
+  fi
 }
 
 # ── Step 2: 静态分析 ─────────────────────────
