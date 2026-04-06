@@ -19,7 +19,7 @@ Closes #
 
 ## 自检清单 / Checklist
 - [ ] 新 Skill 有完整 Frontmatter（`name`/`description`/`argument-hint`/`user-invocable`）
-- [ ] 代码示例遵循 i18n/zh-CN/ANTI_PATTERNS.md（C++: SharedPtr / QoS / Lifecycle）
+- [ ] 代码示例遵循 agents/documents/Methodology_and_Principles/ANTI_PATTERNS.md（C++: SharedPtr / QoS / Lifecycle）
 - [ ] `scripts/check_ros2_package.sh` 验证通过
 - [ ] `scripts/validators/ros2-node-validator.sh` 验证通过（如果改动代码）
 - [ ] `colcon build` 编译通过（如果添加了 ROS2 包）
@@ -40,4 +40,4 @@ Closes #
 **提示 / Tips**:
 - 运行 `./init-agent.sh` 可以自动生成本地配置文件
 - 使用 `scripts/validators/skill-frontmatter-validator.sh` 检查 Skill 格式
-- 参考 `i18n/zh-CN/CONTRIBUTING.md` 了解贡献规范
+- 参考 `CONTRIBUTING.md` 了解贡献规范
