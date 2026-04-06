@@ -1,18 +1,35 @@
-# aerial-photography — 验证标准
+# aerial-photography VERIFY — 验收标准
 
-## 成功标准
+---
 
-| 指标 | 通过标准 | 测试方法 |
-|------|---------|---------|
-| 区域覆盖率 | ≥ 95% | 图像地理标记分析 |
-| 重叠率 | ≥ 80% 前向，60% 旁向 | 图像匹配 |
-| 飞行路径误差 | < 5m | GPS 轨迹对比 |
-| 快门触发率 | ≥ 90% | 触发日志 |
-| 电池消耗 | < 90% | 电池状态 |
+## 编译验证
 
-## 失败条件
+```bash
+bash scripts/ros2-build-verify-loop.sh aerial_photo
+```
 
-- [ ] 区域覆盖率 < 90%
-- [ ] 有禁区闯入
-- [ ] 图像模糊（云台跟踪不足）
-- [ ] 电池耗尽
+- [ ] `colcon build` 无 error
+- [ ] `colcon test` 全绿
+
+---
+
+## 功能验证
+
+### Unit Test — 航点计算
+
+```python
+class TestWaypoint(unittest.TestCase):
+    def test_waypoint_distance(self):
+        """航点间距离计算正确"""
+        pass
+
+    def test_geo_fence(self):
+        """飞行器不飞出电子围栏"""
+        pass
+```
+
+### 验收清单
+
+- [ ] 航点距离测试通过
+- [ ] GPS 锁定验证
+- [ ] `colcon build` + `colcon test` 全部通过

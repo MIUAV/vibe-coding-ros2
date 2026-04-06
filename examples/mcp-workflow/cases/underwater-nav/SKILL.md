@@ -1,58 +1,52 @@
----
-name: underwater-nav
-description: 水下机器人导航 — DVL 多普勒计程仪 + IMU + USBL 超短基线定位，适用于 AUV 自主导航和水面母船协同
-argument-hint: 水下 OR underwater OR AUV OR DVL OR USBL OR 潜航器 OR 导航 OR 定位
-user-invocable: true
+# underwater-nav SKILL — 水下导航指南
+
 ---
 
-# underwater-nav — 水下机器人导航 SKILL
+## 核心规则
 
-## 任务描述
+1. **无 GPS**：水下只能用 DVL + IMU + USBL 融合定位
+2. **深度优先**：深度计数据最可靠（压力传感器），作为高度基准
+3. **声呐数据低频**：声呐图像处理频率低（< 5Hz），导航决策需预留提前量
+4. **水声通信延迟**：USBL 定位延迟可达 2-5s，不可用于实时控制
 
-水下机器人（AUV）实现三维空间导航，包含 DVL 速度计、IMU 惯性导航、压力传感器深度测量、USBL 水面定位修正。
+---
 
-## 引用技能
+## 知识库
 
-- `agents/skills/navigation/` — 导航基础
-- `agents/skills/motion-control/underwater/` — 水下机器人控制
-- `agents/skills/ros2-qos-checker/` — QoS（水声通信用 RELIABLE）
-- `agents/skills/ros2-debug/` — 调试
+### DVL 数据格式
 
-## 水下导航架构
-
-```
-传感器层:
-  DVL ──► 速度积分 ──► 位置估计 (drift累积)
-  IMU  ──► 姿态估计   ──► 欧拉角
-  Pressure ──► 深度估计
-
-修正层:
-  USBL ──► 绝对位置修正 (水面信标)
-
-融合层:
-  EKF ──► 融合 DVL + IMU + USBL ──► 最优位置/速度/姿态估计
+```python
+# /dvl/data (DVL)
+# velocity in body frame: [vx, vy, vz] m/s
+# altitude: 距离海底高度 m
+# 速度积分 → 位置估计（Dead Reckoning）
+def dead_reckoning(vx, vy, vz, heading, dt):
+    dx = (vx * np.cos(heading) - vy * np.sin(heading)) * dt
+    dy = (vx * np.sin(heading) + vy * np.cos(heading)) * dt
+    return dx, dy
 ```
 
-## DVL 参数
+### 深度传感器
 
-| 参数 | 值 | 说明 |
-|------|-----|------|
-| 测速范围 | ±20 m/s | 相对海底速度 |
-| 频率 | 300/600 kHz | 频率越高精度越高 |
-| 最大深度 | 300/600/1000 m | 取决于型号 |
-| 精度 | 0.2% ± 0.002 m/s | 速度精度 |
+```python
+# /depth (Depthometer)
+# z = -50.0 → 水下 50m（正深度）
+```
 
-## 水声通信约束
+### 水声定位（USBL）
 
-| 参数 | 值 |
-|------|-----|
-| 通信延迟 | 0.5-2.0 s（距离相关）|
-| 带宽 | 几百 bps（低带宽）|
-| 可靠性 | 低（水下环境）|
-| USBL 刷新率 | 0.5-2 Hz |
+```python
+# /usbl/position (UsblFix)
+# lat, lon → 转换到局部坐标系（NED）
+# USBL 更新频率：0.1-0.5 Hz（极低）
+# 用于周期性修正 DR 累积误差
+```
 
-## 禁止
+---
 
-- ❌ 水声通信用 BEST_EFFORT（延迟高，丢包不重传浪费带宽）
-- ❌ 不做 EKF 融合直接用 DVL 积分（位置漂移会爆炸）
-- ❌ DVL 丢失时不做特殊处理（DVL 高度变化大时会失效）
+## 快速启动
+
+```bash
+bash scripts/generators/ros2-package-generator.sh underwater_nav cpp
+bash scripts/ros2-build-verify-loop.sh underwater_nav
+```

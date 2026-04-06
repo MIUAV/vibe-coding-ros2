@@ -1,105 +1,61 @@
-# aerial-photography — Agent 执行计划
+# aerial-photography Case — 航拍无人机控制
 
-## Phase 0: 相机 + 云台确认
+## 背景
 
-### Agent
-`MCP-SIM`
+航拍无人机（UAV）需要同时管理飞行控制、相机云台、任务规划。ROS2 可以对接 PX4/ArduPilot 的 MAVLink 协议，实现自主飞行和拍照任务。
 
-### MCP 调用
-```bash
-mcp__ros2__topic_list | grep -E "camera|gimbal|image"
-mcp__ros2__param_list /gimbal_controller
+**应用场景：**
+- 测绘建模（3D reconstruction）
+- 电力巡检
+- 影视航拍
+
+---
+
+## 用户需求
+
+```
+用户：控制无人机从起飞点 (0,0,20) 飞往 5 个航点，执行拍照任务，然后返回
 ```
 
-### 验证
-- [ ] 相机话题存在（`/camera/image_raw`）
-- [ ] 云台控制话题存在（`/gimbal/angle`）
-- [ ] 相机内参已知（fx, fy, cx, cy）
+---
+
+## 技术方案
+
+### MAVLink + ROS2
+
+```
+ROS2 → mavros → MAVLink → PX4/ArduPilot
+```
+
+### 航点任务
+
+```
+WP1: (0, 0, 20) — 起飞
+WP2: (10, 5, 20) — 拍照点1
+WP3: (20, 0, 20) — 拍照点2
+WP4: (10, -5, 20) — 拍照点3
+WP5: (0, 0, 30) — 悬停
+WP6: (0, 0, 20) — 返航
+```
 
 ---
 
-## Phase 1: 航线规划器
+## 执行流程
 
-### Agent
-`MCP-BUILD`
+### Step 1: 生成包
 
-### 目标
-根据目标区域多边形生成航线条带。
+```bash
+bash scripts/generators/ros2-package-generator.sh aerial_photo python
+```
 
-### 实现检查点
-- [ ] `WaypointPlanner` 类
-- [ ] 区域网格化（根据重叠率计算）
-- [ ] 条带方向选择（顺风方向减少偏流影响）
-- [ ] 航点序列生成（x, y, z, yaw）
-- [ ] 相机快门触发点标记
+### Step 2: 启动 MAVROS
 
-### 验证
-- [ ] 航点覆盖完整区域
-- [ ] 重叠率满足要求（> 80% 前向，> 60% 旁向）
-- [ ] 航点之间距离平滑（无急转弯）
+```bash
+ros2 launch mavros apm.launch fcu_url:=serial:///dev/ttyUSB0:57600
+```
 
----
+### Step 3: 验证
 
-## Phase 2: 云台控制器
-
-### Agent
-`MCP-BUILD`
-
-### 目标
-云台角度跟踪飞行方向，保持相机始终对准地面。
-
-### 实现检查点
-- [ ] `GimbalController` 类（PID）
-- [ ] 飞行方向 → 云台俯仰角映射
-- [ ] 实时图传角度平滑
-- [ ] 云台控制 QoS: RELIABLE（控制命令）
-
-### 验证
-- [ ] 云台俯仰角跟踪误差 < 5°
-- [ ] 图传画面抖动 < 10%
-
----
-
-## Phase 3: 航线执行
-
-### Agent
-`MCP-BUILD`
-
-### 目标
-按航点序列执行飞行和拍摄。
-
-### 实现检查点
-- [ ] `FlightController` 类
-- [ ] 航点到达判定（距离 < 2m）
-- [ ] 相机快门触发（定时或位置触发）
-- [ ] 航点间速度规划（匀速通过）
-
-### 验证
-- [ ] 飞行路径与规划误差 < 5m
-- [ ] 相机快门触发正确（> 90% 航点有触发）
-- [ ] 电池消耗 < 80%
-
----
-
-## Phase 4: 图传监控
-
-### Agent
-`MCP-SIM`
-
-### 验证
-- [ ] 实时图传延迟 < 500ms
-- [ ] 图传画面质量（无明显压缩伪影）
-- [ ] 图像 GPS 坐标记录正确
-
----
-
-## Phase 5: 仿真验证
-
-### Agent
-`MCP-SIM`
-
-### 验证
-- [ ] 覆盖目标区域 > 95%
-- [ ] 图像数量符合预期（重叠率计算正确）
-- [ ] 无禁区闯入
-- [ ] 电池消耗 < 90%
+```bash
+bash scripts/ros2-build-verify-loop.sh aerial_photo
+```
