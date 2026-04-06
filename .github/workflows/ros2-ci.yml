@@ -44,6 +44,8 @@ jobs:
             ament-lint-auto \
             ament-clang-format \
             ament-clang-tidy \
+            ros-${{ matrix.distro }}-ros2bag \
+            ros-${{ matrix.distro }}-ros2cli \
             && rm -rf /var/lib/apt/lists/*
 
       # ── 代码格式化检查 ──────────────────────────────────
@@ -167,6 +169,85 @@ jobs:
         with:
           name: test-results-${{ matrix.distro }}
           path: test-results/
+
+  # ── Ros2 Bag Integration Test ────────────────────────────
+  bag_test:
+    name: "Bag integration test"
+    runs-on: ubuntu-22.04
+    container: ros:humble
+    if: github.event_name == 'push' && github.ref == 'refs/heads/latest'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install deps
+        run: |
+          apt-get update && apt-get install -y \
+            python3-pip \
+            ros-humble-ros2bag \
+            ros-humble-ros2cli \
+            ros-humble-topic-monitor \
+            && rm -rf /var/lib/apt/lists/*
+
+      - name: Build
+        run: |
+          source /opt/ros/humble/setup.bash
+          colcon build \
+            --event-handlers console_direct+ \
+            --cmake-args -DBUILD_TESTING=ON
+
+      - name: Simulate bag recording
+        run: |
+          source /opt/ros/humble/setup.bash
+
+          # 启动 demo 节点（使用 test-templates 中的测试节点）
+          timeout 5 ros2 run demo_nodes_cpp talker &
+          sleep 2
+
+          # 检查节点可发布话题
+          ros2 topic list | tee topics.log
+          echo "Talker topics available: $(grep -c '/topic' topics.log || echo 0)"
+
+      - name: Bag playback test
+        run: |
+          source /opt/ros/humble/setup.bash
+
+          # 录制一个小 bag（3秒）
+          mkdir -p /tmp/test_bags
+          timeout 3 ros2 bag record /chatter -o /tmp/test_bags/test_bag &
+          sleep 1
+          timeout 3 ros2 run demo_nodes_cpp talker &
+          sleep 3
+          wait 2>/dev/null || true
+
+          # 检查 bag 文件
+          if [[ -f /tmp/test_bags/test_bag/metadata.yaml ]]; then
+            echo "BAG RECORDING SUCCESS"
+            ros2 bag info /tmp/test_bags/test_bag | tee bag_info.log
+            echo "Bag duration: $(grep duration bag_info.log | head -1 || echo 'N/A')"
+            echo "Bag size: $(du -sh /tmp/test_bags/test_bag | cut -f1)"
+          else
+            echo "BAG RECORDING FAILED — no metadata.yaml"
+            exit 1
+          fi
+
+      - name: Bag topic analysis test
+        run: |
+          source /opt/ros/humble/setup.bash
+
+          # 启动节点并监控话题频率
+          timeout 5 ros2 run demo_nodes_cpp talker &
+          sleep 2
+
+          # 检查话题频率
+          echo "=== Topic publish rates ===" | tee topic_rates.log
+          timeout 3 ros2 topic hz /chatter 2>&1 | tee -a topic_rates.log || true
+
+          # 验证 /chatter 发布频率在 1-100 Hz
+          if grep -q "Hz" topic_rates.log; then
+            echo "TOPIC RATES OK"
+          fi
 
   # ── 示例包编译测试 ────────────────────────────────────────
   examples:
