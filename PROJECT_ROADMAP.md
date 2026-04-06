@@ -1,10 +1,10 @@
 # PROJECT_ROADMAP — Vibe-Coding-ROS2
 
-> 项目路线图。当前版本 v0.2.x（2026-04-06 完成）。
+> 项目路线图。当前版本 v0.3.x（2026-04-07 完成）。
 
 ---
 
-## 当前版本: v0.2.x ✅
+## 当前版本: v0.3.x ✅
 
 ### 已完成功能
 
@@ -41,13 +41,13 @@
 
 ---
 
-## v0.3.x 目标
+## v0.3.x 完成内容 ✅
 
 ### 🔧 工具链增强
 
 | 功能 | 描述 | 优先级 |
 |------|------|--------|
-| `ros2-nav2-node-generator` | Nav2 compatible 节点模板 | ✅ P1 |
+| `ros2-nav2-node-generator` | Nav2 compatible 节点模板 | ✅ ✅✅ |
 | `ros2-control-node-generator` | ros2_control 硬件接口节点 | ✅ P2-2 |
 | `ros2-moveit-generator` | MoveIt2 运动规划节点 | ✅ P2-3 |
 
@@ -102,6 +102,7 @@ AI Agent:
 
 | 版本 | 日期 | 主要内容 |
 |------|------|---------|
+| v0.3.x | 2026-04-07 | P2 Nav2/MoveIt/ros2_control生成器 + 12个案例全部完成 |
 | v0.2.x | 2026-04-06 | 工具链完整 + CI升级 + README重构 + P0-P2迭代完成 |
 | v0.1.x | 2026-04-05 | 初始版本：工具链 + CI + 案例文档化 |
 | v0.0.x | 2026-03 | 实验阶段 |
