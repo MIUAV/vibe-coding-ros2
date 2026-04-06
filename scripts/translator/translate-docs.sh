@@ -13,7 +13,7 @@ TRANSLATOR="${3:---deepl}"
 if [[ -z "$SOURCE" ]]; then
     echo "用法: $0 <文件或目录> <目标语言> [--deepl|--google]"
     echo "  例: $0 AGENTS.md zh-CN --deepl"
-    echo "  例: $0 i18n/ ja-JP --google"
+    echo "  例: $0 docs/ ja-JP --google"
     exit 1
 fi
 

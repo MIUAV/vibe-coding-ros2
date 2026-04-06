@@ -223,7 +223,6 @@ robots/
 - **方法论**: [../documents/Methodology_and_Principles/](../documents/Methodology_and_Principles/)
 - **技能索引**: [../skills/README.md](../skills/README.md)
 - **提示词库**: [../prompts/](../prompts/)
-- **记忆银行**: [../memory-bank/](../memory-bank/)
 
 ---
 
