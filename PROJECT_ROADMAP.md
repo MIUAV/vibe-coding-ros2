@@ -48,6 +48,10 @@
 | 功能 | 描述 | 优先级 |
 |------|------|--------|
 | `ros2-nav2-node-generator` | Nav2 compatible 节点模板 | ✅ ✅✅ |
+| `ros2-simulator-generator` | Gazebo 仿真包生成器（5种机器人类型） | ✅ P3 |
+| `ros2-diagnostics-generator` | 机器人健康诊断（general/mobile/manipulator/drone） | ✅ P3 |
+| `ros2-slam-generator` | SLAM 配置包（2D/3D/IMU-fusion/visual/cartographer） | ✅ P3 |
+| `ros2-multi-agent-generator` | 多机器人协调（编队/任务分配/蜂群/ORCA） | ✅ P3 |
 | `ros2-control-node-generator` | ros2_control 硬件接口节点 | ✅ P2-2 |
 | `ros2-moveit-generator` | MoveIt2 运动规划节点 | ✅ P2-3 |
 
@@ -102,7 +106,9 @@ AI Agent:
 
 | 版本 | 日期 | 主要内容 |
 |------|------|---------|
-| v0.3.x | 2026-04-07 | P2 Nav2/MoveIt/ros2_control生成器 + 12个案例全部完成 |
+| v0.3.x | 2026-04-07 | P2 Nav2/MoveIt/ros2_control + P3 仿真/SLAM/诊断/多机协调生成器 + 12案例 |
+| v0.3.x | 2026-04-07-am | P2 Nav2/MoveIt/ros2_control + 12案例（v0.3第一阶段） |
+| v0.3.x | 2026-04-07-pm | P3 仿真/SLAM/诊断/多机协调生成器（v0.3第二阶段） |
 | v0.2.x | 2026-04-06 | 工具链完整 + CI升级 + README重构 + P0-P2迭代完成 |
 | v0.1.x | 2026-04-05 | 初始版本：工具链 + CI + 案例文档化 |
 | v0.0.x | 2026-03 | 实验阶段 |
