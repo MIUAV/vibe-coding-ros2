@@ -5,6 +5,11 @@ on:
     branches: [main, latest]
   pull_request:
     branches: [main]
+    types: [opened, synchronize, reopened]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   # ── 矩阵：多 distro + 多 job ───────────────────────────────
@@ -139,6 +144,23 @@ jobs:
           colcon test-result --verbose --all | tee test-result.log
           ! grep -qi "failed\|error" test-result.log || exit 1
 
+      - name: Coverage (humble only)
+        if: matrix.distro == 'humble'
+        run: |
+          source /opt/ros/humble/setup.bash
+          colcon build --packages-select ${{ matrix.pkg }} \
+            --cmake-args -DCMAKE_BUILD_TYPE=Coverage \
+            --event-handlers console_direct+ || true
+        continue-on-error: true
+
+      - name: Upload coverage
+        if: matrix.distro == 'humble'
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./coverage.xml
+          fail_ci_if_error: false
+          verbose: true
+
       - name: Upload test results
         if: failure()
         uses: actions/upload-artifact@v4
@@ -172,7 +194,7 @@ jobs:
   quality:
     name: "Code quality"
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
+    if: github.event_name != 'pull_request' || true
 
     steps:
       - name: Checkout
