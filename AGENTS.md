@@ -1,4 +1,4 @@
-# AGENTS.md
+# AGENTS.md — AI Agent 开发规则
 
 ## 项目定位
 
@@ -24,26 +24,27 @@ ROS2 开发中 LLM 的三大致命弱点：
 
 ```
 vibe-coding-ros2/
-├── SOUL.md              # 项目定位
-├── SYSTEM.md            # AI Agent 系统指令
-├── AGENTS.md            # 本文件
-├── PROJECT_ROADMAP.md   # 技术路线图
-├── CRITICAL_ISSUES.md   # 关键问题追踪
-├── ARCHITECTURE_REPORT.md # 架构健康报告
-├── examples/
-│   ├── rclcpp-minimal/  # 真实可编译的 C++ 节点
-│   ├── mcp-workflow/    # MCP 多智能体工作流
-│   └── memory-bank-example/
+├── README.md              # 快速开始 + 工具链索引
+├── AGENTS.md             # 本文件 — AI Agent 工作规则
+├── CLAUDE.md              # AI Agent 开发指南
+├── SOUL.md               # 项目哲学
+├── PROJECT_ROADMAP.md    # 技术路线图
+│
 ├── agents/
-│   ├── prompts/          # 提示词模板
-│   ├── skills/           # 技能定义（强制规则）
-│   └── documents/        # 开发文档
+│   ├── skills/           # 276 个技能定义（SKILL.md）
+│   ├── robots/           # 机器人类型指南
+│   ├── documents/        # 方法论文档（TDD/反模式/模型选择等）
+│   └── prompts/          # 提示词模板
+│
 ├── scripts/
-│   ├── mcp/              # MCP 集成
-│   ├── generators/        # ROS2 包生成器
-│   ├── translators/      # 多语言翻译
-│   └── validators/       # SKILL 验证器
-└── i18n/                # 多语言文档
+│   ├── generators/       # 21 个 ROS2 包生成器
+│   ├── validators/       # SKILL 格式验证
+│   ├── debugger/         # ros2-debug.sh 8类错误诊断
+│   └── ros2-*.sh         # 各类工具脚本
+│
+└── examples/
+    └── mcp-workflow/
+        └── cases/        # 12 个完整案例（PLAN+SKILL+VERIFY）
 ```
 
 ## AI Agent 工作流
@@ -61,3 +62,10 @@ vibe-coding-ros2/
 2. **具体代码模板** — 给出完整可编译的代码片段
 3. **验证回路** — 生成代码后必须执行编译验证
 4. **错误自动修复** — 编译错误直接告诉 AI 怎么修
+
+## 关键规则
+
+- 所有 ROS2 C++ 节点必须用 `rclcpp::Node::SharedPtr` 而非裸指针
+- `ament_target_dependencies` 后必须跟随 `ament_export_dependencies`
+- `QoS` 组合必须匹配：sensor 用 `best_effort`，control 用 `reliable`，state 用 `transient_local`
+- 生命周期节点必须实现全部 5 个回调：`on_configure / on_activate / on_deactivate / on_cleanup / on_shutdown`

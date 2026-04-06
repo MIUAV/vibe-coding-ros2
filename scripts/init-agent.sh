@@ -4,7 +4,7 @@
 #
 # 功能：生成本地配置文件 + AI Agent 索引
 # 原则：
-#   1. 根目录文档仅保留 README.md 和 AGENTS.md，其他文档统一放到 i18n/ 下
+#   1. 根目录文档仅保留必要文件（README.md, AGENTS.md, CLAUDE.md 等）
 #   2. .github/ .gitignore 等本地配置由本脚本生成，不进入版本控制
 #   3. 用户 clone → 运行 init-agent.sh → 立刻开始 ROS2 包开发 → 编译 → 提交
 #
@@ -52,16 +52,7 @@ usage() {
 生成的文件:
   本地配置（不在版本控制）:
     .gitignore                         Git 忽略配置
-    .github/workflows/ros2-build.yml   GitHub Actions CI
-    .vscode/mcp.json                   VS Code MCP 配置
     .vscode/settings.json              VS Code 工作区设置
-
-  AI Agent 索引（已提交到仓库）:
-    agents/generated/skill-index.md    技能总索引（270+ skills）
-    agents/generated/skill-routing.md  技能路由表
-    agents/generated/context-index.md   项目上下文索引
-    agents/generated/agent-bootstrap.md Agent 引导规则
-    agents/generated/skill-bootstrap.md 技能引导规则
 EOF
 }
 
