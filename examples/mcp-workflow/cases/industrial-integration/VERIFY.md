@@ -1,26 +1,45 @@
-# industrial-integration — 验证标准
+# industrial-integration VERIFY — 验收标准
 
-## 成功标准
+---
 
-| 指标 | 通过标准 |
-|------|---------|
-| 通信延迟 | < 50ms |
-| 急停响应 | < 10ms |
-| 任务完成率 | 100% |
-| 连续生产 | > 100 工件无错误 |
-
-## 失败条件
-
-- [ ] 急停响应 > 20ms
-- [ ] 通信错误率 > 1%
-- [ ] 任务完成率 < 99%
-- [ ] 断网时机器人进入不安全状态
-
-## 测试命令
+## 编译验证
 
 ```bash
-colcon build --packages-select industrial_integration
-source install/setup.bash
-ros2 launch industrial_integration line.launch.py
-ros2 run industrial_integration integration_test --ros-args -p test_count:=100
+bash scripts/ros2-build-verify-loop.sh kuka_iiwa_control
 ```
+
+- [ ] `colcon build` 无 error
+- [ ] `colcon test` 全绿
+
+---
+
+## 功能验证
+
+### Unit Test — RSI 协议
+
+```python
+class TestRSI(unittest.TestCase):
+    def test_xml_format_valid(self):
+        """RSI XML 格式应符合规范"""
+        pass
+
+    def test_ipoc_increment(self):
+        """IPOC 应每次递增"""
+        pass
+```
+
+### 性能验证
+
+| 指标 | 目标 | 测量方法 |
+|------|------|---------|
+| 关节位置误差 | < 0.01rad | 与示教器对比 |
+| 通信周期 | 4ms (±0.5ms) | 示波器/抓包 |
+| E-Stop 响应 | < 10ms | 物理测试 |
+
+---
+
+## 验收清单
+
+- [ ] RSI 单元测试全绿
+- [ ] E-Stop 安全回路测试通过
+- [ ] `colcon build` + `colcon test` 全部通过

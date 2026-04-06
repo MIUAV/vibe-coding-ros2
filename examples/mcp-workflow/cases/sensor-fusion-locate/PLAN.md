@@ -1,90 +1,63 @@
-# sensor-fusion-locate — Agent 执行计划
+# sensor-fusion-locate Case — 多传感器融合定位
 
-## Phase 0: 传感器话题确认
+## 背景
 
-### Agent
-`MCP-SIM`
+移动机器人需要精确的定位能力。单一传感器（Lidar SLAM、视觉 odometry、IMU、GPS）都有局限，多传感器融合（Sensor Fusion）可以取长补短，实现厘米级定位精度。
 
-### MCP 调用
-```bash
-mcp__ros2__topic_list | grep -E "scan|imu|gps|camera"
-mcp__ros2__node_list | grep -E "laser|ekf|localization"
+**传感器：**
+- 激光雷达（LiDAR）：环境轮廓扫描
+- IMU：高频加速度 + 角速度
+- 轮式里程计（Wheel Odometry）：直接测量位移
+- GPS/RTK：绝对位置（室外）
+
+**融合算法：EKF（扩展卡尔曼滤波）**
+
+---
+
+## 用户需求
+
+```
+用户：室外机器人，融合 LiDAR SLAM + IMU + Wheel Odometry，定位精度目标 < 5cm
 ```
 
-### 验证
-- [ ] 激光雷达 `/scan` 话题存在
-- [ ] IMU `/imu/data` 话题存在
-- [ ] GPS `/gps/fix` 话题存在（如适用）
-- [ ] 各传感器数据频率正常（激光 > 10Hz, IMU > 100Hz）
+---
+
+## 技术方案
+
+### EKF 状态向量
+
+```
+X = [x, y, theta, vx, vy, omega, ax, ay]ᵀ
+```
+
+### 传感器观测模型
+
+| 传感器 | 观测 | 噪声模型 |
+|--------|------|---------|
+| LiDAR | (x, y, theta) from scan matching | 高斯噪声 |
+| IMU | (ax, ay, omega) | 偏置+高斯 |
+| Wheel | (vx, vy) | 高斯噪声 |
+| GPS | (x, y) | 高斯噪声 |
 
 ---
 
-## Phase 1: 时间同步
+## 执行流程
 
-### Agent
-`MCP-BUILD`
+### Step 1: 生成包
 
-### 目标
-硬件时间同步（传感器数据时间戳对齐）。
+```bash
+bash scripts/generators/ros2-package-generator.sh sensor_fusion python
+```
 
-### 实现检查点
-- [ ] `MessageSynchronizer`（或 `approximate_time`）
-- [ ] IMU 频率与激光雷达同步
-- [ ] GPS 时间同步（如使用）
+### Step 2: 配置 EKF 参数
 
-### 验证
-- [ ] 同步后消息对数量 > 90%
-- [ ] 时间戳差 < 50ms
+```bash
+# 编辑 config/ekf.yaml
+ros2 launch sensor_fusion ekf.launch.py
+```
 
----
+### Step 3: 验证
 
-## Phase 2: EKF 定位节点
-
-### Agent
-`MCP-BUILD`
-
-### 目标
-实现 robot_localization EKF 节点。
-
-### 实现检查点
-- [ ] `ekf_filter_node` 配置
-- [ ] sensor_inputs: laser scan + IMU + GPS
-- [ ] 状态向量：[x, y, z, roll, pitch, yaw, vx, vy, vz]
-- [ ] Process noise covariance
-- [ ] Sensor noise covariance
-
-### 验证
-- [ ] EKF 输出频率 ≥ 50Hz
-- [ ] 定位精度 < 0.1m（激光+IMU）
-
----
-
-## Phase 3: Scan Matching
-
-### Agent
-`MCP-BUILD`
-
-### 目标
-激光扫描匹配提高定位精度。
-
-### 实现检查点
-- [ ] ICP 或 NDT 算法
-- [ ] 从点云估计机器人位姿
-- [ ] 输出到 EKF 作为观测
-
-### 验证
-- [ ] 匹配成功率 > 95%
-- [ ] 定位误差 < 0.05m
-
----
-
-## Phase 4: 精度评估
-
-### Agent
-`MCP-SIM`
-
-### 验证
-- [ ] 静态定位精度 < 0.05m
-- [ ] 移动定位精度 < 0.1m
-- [ ] GPS 可用时精度 < 0.5m（室外）
-- [ ] IMU 单独运行时漂移 < 0.5m/min
+```bash
+bash scripts/ros2-build-verify-loop.sh sensor_fusion
+```

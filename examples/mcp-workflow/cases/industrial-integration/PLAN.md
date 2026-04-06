@@ -1,94 +1,67 @@
-# industrial-integration — Agent 执行计划
+# industrial-integration Case — 工业机械臂 ROS2 集成
 
-## Phase 0: PLC 通信确认
+## 背景
 
-### Agent
-`MCP-SIM`
+工业机械臂（ABB、KUKA、FANUC、UR）传统使用专用控制器（IRC5、KUKA KRC、Cyberware）。ROS2 集成层将这些专有协议转换为标准 ROS2 接口，实现与 MoveIt2、Industrial Core 的无缝对接。
 
-### MCP 调用
-```bash
-mcp__ros2__topic_list | grep -E "plc|modbus|opcua"
-mcp__ros2__service_list | grep -E "emergency|stop"
+**核心协议：**
+- Modbus TCP：寄存器读写（IO、状态字）
+- PROFINET：实时控制（PN 机器人）
+- EtherCAT：高速运动控制（总线型机器人）
+- Socket TCP：自定义协议（UR、ABB）
+
+---
+
+## 用户需求
+
+```
+用户：KUKA iiwa 7轴机械臂，集成到 ROS2，控制末端以 0.5m/s 速度画圆，目标位置 (0.5, 0, 0.3)
 ```
 
-### 验证
-- [ ] PLC IP 地址已知
-- [ ] Modbus/OPCUA 配置正确
-- [ ] 网络连通性正常
+---
+
+## 技术方案
+
+### KUKA RSI（Robot Sensor Interface）
+
+```
+ROS2 → RSI → KUKA 控制器 → 电机驱动器
+```
+
+### 运动控制架构
+
+```
+MoveIt2（轨迹规划）
+    ↓
+ros2_controllers（关节轨迹控制器）
+    ↓
+KUKA RSI（位置/力矩指令）
+```
 
 ---
 
-## Phase 1: Modbus/OPCUA 驱动
+## 执行流程
 
-### Agent
-`MCP-BUILD`
+### Step 1: 生成包
 
-### 目标
-实现 ROS2 与 PLC 的通信驱动。
+```bash
+bash scripts/generators/ros2-package-generator.sh kuka_iiwa_control cpp
+```
 
-### 实现检查点
-- [ ] `ModbusClient` 或 `OPCUAClient` 节点
-- [ ] 读取寄存器映射（机器人状态 → PLC）
-- [ ] 写入寄存器映射（PLC → 机器人指令）
-- [ ] 通信超时检测（> 100ms）
-- [ ] QoS: RELIABLE（工业控制必须可靠）
+### Step 2: 启动 RSI 连接
 
-### 验证
-- [ ] 读/写寄存器正确
-- [ ] 通信延迟 < 50ms
-- [ ] 通信超时检测工作
+```bash
+ros2 launch kuka_iiwa_control rsi.launch.py
+```
 
----
+### Step 3: MoveIt2 控制
 
-## Phase 2: IEC 任务调度
+```bash
+ros2 launch kuka_iiwa_moveit_config move_group.launch.py
+```
 
-### Agent
-`MCP-BUILD`
+### Step 4: 验证
 
-### 目标
-实现 IEC 61131-3 风格的顺序功能图（SFC）任务调度。
-
-### 实现检查点
-- [ ] `TaskScheduler` 类（SFC 状态机）
-- [ ] 任务状态：WAIT → READY → RUNNING → DONE → WAIT
-- [ ] PLC 指令解码（工序号 → 目标位置）
-- [ ] 任务完成确认回传
-
-### 验证
-- [ ] 正确响应 PLC 生产指令
-- [ ] 任务切换时间 < 1s
-
----
-
-## Phase 3: 急停安全
-
-### Agent
-`MCP-BUILD`
-
-### 目标
-急停信号的双通道安全处理。
-
-### 实现检查点
-- [ ] `SafetyMonitor` 类
-- [ ] 急停信号检测（订阅 `/emergency_stop`）
-- [ ] 急停时立即停止所有运动
-- [ ] PLC 报警状态回传
-- [ ] 恢复序列（急停解除 → 复位 → 继续）
-
-### 验证
-- [ ] 急停响应时间 < 10ms
-- [ ] 急停后机器人立即停止
-- [ ] 恢复流程正确
-
----
-
-## Phase 4: 生产线集成测试
-
-### Agent
-`MCP-SIM`
-
-### 验证
-- [ ] 连续生产 100 个工件
-- [ ] 无通信错误
-- [ ] 无急停误触发
-- [ ] 任务完成率 100%
+```bash
+bash scripts/ros2-build-verify-loop.sh kuka_iiwa_control
+```

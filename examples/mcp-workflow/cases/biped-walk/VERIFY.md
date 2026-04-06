@@ -1,36 +1,36 @@
-# biped-walk — 验证标准
+# biped-walk VERIFY — 验收标准
 
-## 成功标准
+---
 
-### 步态质量
-
-| 指标 | 通过标准 | 测试方法 |
-|------|---------|---------|
-| 连续步行步数 | > 10 步 | 仿真器状态 |
-| 步行速度 | 0.3-0.6 m/s | 位置差/时间 |
-| ZMP 安全余量 | > 0.02m | ZMP 轨迹分析 |
-| 脚跟着地冲击 | < 10N | 力学传感器 |
-
-### 平衡控制
-
-| 指标 | 通过标准 |
-|------|---------|
-| 站立倾斜角 | < 5° |
-| 外力干扰恢复 | < 1.0s |
-| 关节力矩 | < 额定 80% |
-
-## 失败条件
-
-- [ ] ZMP 超出支撑多边形
-- [ ] 摔倒（任意关节接触地面）
-- [ ] 关节超限位
-- [ ] 步态周期不连续
-
-## 测试命令
+## 编译验证
 
 ```bash
-colcon build --packages-select biped_walk
-source install/setup.bash
-ros2 launch biped_walk walk.launch.py
-ros2 run biped_walk walk_test --ros-args -p step_count:=10
+bash scripts/ros2-build-verify-loop.sh biped_walk
 ```
+
+- [ ] `colcon build` 无 error
+- [ ] `colcon test` 全绿
+
+---
+
+## 功能验证
+
+### Unit Test — ZMP 稳定性
+
+```python
+class TestZMP(unittest.TestCase):
+    def test_zmp_inside_support_polygon(self):
+        """ZMP 必须在支撑多边形内"""
+        pass
+
+    def test_com_continuity(self):
+        """CoM 位置、速度、加速度连续"""
+        pass
+```
+
+### 验收清单
+
+- [ ] ZMP 单元测试全绿
+- [ ] 步行周期测试（1.2s ± 0.05s）
+- [ ] 步长验证（0.3m ± 0.02m）
+- [ ] `colcon build` + `colcon test` 全部通过
