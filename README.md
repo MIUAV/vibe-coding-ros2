@@ -120,7 +120,7 @@ class RobotController : public rclcpp::Node { };
 <details>
 <summary><b>点击展开 — 所有脚本一览</b></summary>
 
-### 生成器（scripts/generators/ — 共 21 个）
+### 生成器（scripts/generators/ — 共 22 个）
 
 | 脚本 | 用途 |
 |------|------|
@@ -145,6 +145,7 @@ class RobotController : public rclcpp::Node { };
 | `ros2-mission-generator.sh` | 任务脚本（patrol/survey/inspection/delivery/exploration） |
 | `ros2-data-logger.sh` | 数据记录回放（full/sensors/nav） |
 | `ros2-orchestrate.sh` | **统一编排器**：描述 → 完整项目 |
+| `ros2-safety-generator.sh` | 机器人安全（碰撞检测/急停/地理围栏/HITL） |
 
 ### 验证与修复
 

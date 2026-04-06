@@ -58,6 +58,7 @@ QoS(10).transient_local() // state broadcast ✅
 - `ros2-simulator-generator.sh` — Gazebo simulation (diff/manipulator/drone/quadruped/ackermann)
 - `ros2-slam-generator.sh` — SLAM configs (2D/3D/cartographer/lidar_imu_fusion/visual)
 - `ros2-diagnostics-generator.sh` — robot diagnostics (general/mobile/manipulator/drone)
+- `scripts/generators/ros2-safety-generator.sh` — robot safety (collision/E-Stop/geo-fence/HITL)
 - `ros2-multi-agent-generator.sh` — multi-robot coordination (formation/auction/BOIDs/ORCA)
 - `ros2-behavior-tree-generator.sh` — Behavior Tree (patrol/navigation/pick_place/exploration)
 - `ros2-rl-controller-generator.sh` — Deep RL controller (DDPG/PPO/SAC/TD3)
