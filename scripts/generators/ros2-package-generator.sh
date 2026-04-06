@@ -167,11 +167,19 @@ ament_export_libraries(\${PROJECT_NAME})
 $(if [[ $HAS_INTERFACE -gt 0 ]]; then
 echo ""
 echo "# ── 接口生成 ──────────────────────"
-echo "rosidl_generate_interfaces(\${PROJECT_NAME}"
-echo "  msg/"
-echo "  srv/"
-echo "  action/"
-echo ")"
+echo "# 自动发现 msg/srv/action 文件（避免空目录导致构建失败）"
+echo "file(GLOB_RECURSE INTERFACE_MSGS \"\${CMAKE_CURRENT_SOURCE_DIR}/msg/*.msg\" 2>/dev/null)"
+echo "file(GLOB_RECURSE INTERFACE_SRVS  \"\${CMAKE_CURRENT_SOURCE_DIR}/srv/*.srv\" 2>/dev/null)"
+echo "file(GLOB_RECURSE INTERFACE_ACTIONS \"\${CMAKE_CURRENT_SOURCE_DIR}/action/*.action\" 2>/dev/null)"
+echo ""
+echo "if(INTERFACE_MSGS OR INTERFACE_SRVS OR INTERFACE_ACTIONS)"
+echo "  rosidl_generate_interfaces(\${PROJECT_NAME}"
+echo "    \${INTERFACE_MSGS}"
+echo "    \${INTERFACE_SRVS}"
+echo "    \${INTERFACE_ACTIONS}"
+echo "    DEPENDENCIES builtin_interfaces"
+echo "  )"
+echo "endif()"
 fi)
 
 install(TARGETS \${PROJECT_NAME}

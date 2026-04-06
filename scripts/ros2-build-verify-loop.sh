@@ -69,6 +69,56 @@ run_static() {
   fi
 }
 
+# ── Step 3: LLM API 调用（带重试）─────────────────────
+call_llm_with_retry() {
+  local error_log="$1"
+  local attempt=1
+  local max_attempts=3
+  local response=""
+
+  while [ $attempt -le $max_attempts ]; do
+    log "LLM API call attempt $attempt/$max_attempts..."
+
+    # 检查 LLM 命令是否可用
+    if ! command -v llm &>/dev/null; then
+      warn "llm CLI not found — skipping AI fix (install: pip install llm)"
+      return 1
+    fi
+
+    # 构造 prompt
+    local prompt=""
+    prompt+="Fix this ROS2 colcon build error. Reply ONLY with fixed CMakeLists.txt content."
+    prompt+=" No explanations, just the corrected CMakeLists.txt content."
+    prompt+=""
+    prompt+="Build error:"
+    prompt+="$(cat "$error_log" 2>/dev/null | head -50)"
+
+    # 调用 LLM（带超时）
+    response=$(echo "$prompt" | timeout 30 llm -m gpt-4 2>&1) || true
+
+    # 检查 LLM 是否成功返回
+    if [ -z "$response" ]; then
+      warn "LLM returned empty response (attempt $attempt/$max_attempts)"
+    elif echo "$response" | grep -qi "error\|rate.limit\|timeout\|unavailable"; then
+      warn "LLM error detected: $(echo "$response" | head -1)"
+    else
+      log "LLM returned valid response"
+      echo "$response"
+      return 0
+    fi
+
+    attempt=$((attempt + 1))
+    if [ $attempt -le $max_attempts ]; then
+      warn "Retrying LLM in 5s..."
+      sleep 5
+    fi
+  done
+
+  error "LLM API failed after $max_attempts attempts — no AI fix available"
+  echo "FALLBACK: manual fix required. See build log: $error_log"
+  return 1
+}
+
 # ── Step 3: 错误分类与修复建议 ─────────────────
 analyze_errors() {
   log "Step 3/4: error analysis"
@@ -95,6 +145,23 @@ analyze_errors() {
   [ $hdr_errs -gt 0 ]  && echo "2. Missing headers — add find_package and include_directories"
   [ $cmake_errs -gt 0 ] && echo "3. CMake config error — check find_package with REQUIRED"
   echo ""
+
+  # 尝试 LLM 自动修复（带重试）
+  echo -e "${CYAN}=== Attempting AI-assisted fix ===${NC}"
+  if call_llm_with_retry "$BUILD_LOG" >/tmp/llm_fix_output.txt 2>&1; then
+    llm_response=$(cat /tmp/llm_fix_output.txt)
+    if [[ -n "$llm_response" && "$llm_response" != "FALLBACK: manual fix required" ]]; then
+      echo ""
+      echo -e "${GREEN}✓ LLM generated a fix suggestion (review before applying)${NC}"
+      echo ""
+      echo "--- LLM Output ---"
+      echo "$llm_response" | head -30
+      echo ""
+      echo -e "${YELLOW}To apply: manually update CMakeLists.txt with the LLM suggestion${NC}"
+    fi
+  else
+    echo -e "${YELLOW}⚠ LLM fix unavailable — please apply fixes manually${NC}"
+  fi
 }
 
 # ── Step 4: 生成测试计划 ──────────────────────
