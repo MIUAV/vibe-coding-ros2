@@ -8,7 +8,7 @@
 
 <p align="left">
     <img src="https://visitor-badge.laobi.icu/badge?page_id=MIUAV.vibe-coding-ros2" alt="Visitor Badge" />
-    <img src="https://img.shields.io/badge/version-v0.0.1--beta-blue?style=flat-square" alt="Version" />
+    <img src="https://img.shields.io/badge/version-v0.3.0-green?style=flat-square" alt="Version" />
     <img src="https://img.shields.io/badge/ROS2-Humble%20%7C%20Iron%20%7C%20Jazzy-green?style=flat-square" alt="ROS2 Distros" />
     <img src="https://img.shields.io/badge/C%2B%2B-17%2B-blue?style=flat-square" alt="C++ Standard" />
     <img src="https://img.shields.io/badge/workflows-5%20CI%20jobs-blue?style=flat-square" alt="CI Status" />
@@ -120,7 +120,7 @@ class RobotController : public rclcpp::Node { };
 <details>
 <summary><b>点击展开 — 所有脚本一览</b></summary>
 
-### 生成器（scripts/generators/）
+### 生成器（scripts/generators/ — 共 21 个）
 
 | 脚本 | 用途 |
 |------|------|
@@ -130,6 +130,21 @@ class RobotController : public rclcpp::Node { };
 | `ros2-srv-generator.sh` | 交互式 .srv/.action 向导 |
 | `ros2-launch-generator.sh` | 生成 launch.py（lifecycle/normal/component） |
 | `ros2-cpp-node.sh` | 生成 C++ 节点（publisher/subscriber/lifecycle/service/action/timer） |
+| `ros2-nav2-node-generator.sh` | Nav2 兼容节点（lifecycle/costmap/controller） |
+| `ros2-control-node-generator.sh` | ros2_control 硬件接口（DiffDrive/JointTrajectory） |
+| `ros2-moveit-generator.sh` | MoveIt2 运动规划（move_group/cartesian/pick_place） |
+| `ros2-simulator-generator.sh` | Gazebo 仿真包（diff/manipulator/drone/quadruped） |
+| `ros2-slam-generator.sh` | SLAM 配置（2D/3D/cartographer/lidar_imu_fusion） |
+| `ros2-diagnostics-generator.sh` | 机器人诊断（general/mobile/manipulator/drone） |
+| `ros2-multi-agent-generator.sh` | 多机协调（formation/auction/BOIDs/ORCA） |
+| `ros2-behavior-tree-generator.sh` | 行为树（patrol/navigation/pick_place/exploration） |
+| `ros2-rl-controller-generator.sh` | 强化学习控制器（DDPG/PPO/SAC/TD3） |
+| `ros2-camera-calibration-generator.sh` | 相机标定（内参/外参/手眼/lidar_camera） |
+| `ros2-param-generator.sh` | 参数配置（diff/arm/quadrotor/ackermann） |
+| `ros2-gazebo-world-generator.sh` | Gazebo 场景（warehouse/office/outdoor/maze/factory） |
+| `ros2-mission-generator.sh` | 任务脚本（patrol/survey/inspection/delivery/exploration） |
+| `ros2-data-logger.sh` | 数据记录回放（full/sensors/nav） |
+| `ros2-orchestrate.sh` | **统一编排器**：描述 → 完整项目 |
 
 ### 验证与修复
 
