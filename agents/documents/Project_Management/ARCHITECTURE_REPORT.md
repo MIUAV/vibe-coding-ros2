@@ -1,123 +1,77 @@
 # 项目架构健康报告
 
-> 生成时间：2026-04-04
-> 评审依据：技术评审 + git 文件审计
+> 生成时间：2026-04-07
+> 当前版本：v0.3.0
 
 ---
 
-## 1. 文件存在性检查
-
-### prompts/ 目录
-
-| 路径 | 状态 | 说明 |
-|------|------|------|
-| `agents/prompts/coding_prompts/(3,1)_ros2_node_implementation.md` | ✅ 已填充 | 文件不存在 |
-| `agents/prompts/coding_prompts/(2,1)_ros2_package_creation.md` | ⚠️ 存在 | 内容未知，需审计 |
-| `agents/prompts/user_prompts/ros2-common-prompts.md` | ✅ 已填充 | 文件不存在 |
-
-### documents/ 目录
-
-| 路径 | 状态 | 说明 |
-|------|------|------|
-| `agents/documents/Methodology_and_Principles/development-experience.md` | ✅ 已填充 | 文件不存在 |
-| `agents/documents/Methodology_and_Principles/ros2-architecture-principles.md` | ❌ 404 | 文件不存在 |
-| `agents/documents/Tutorials_and_Guides/ros2-debug-guide.md` | ✅ 已填充 | 文件不存在 |
-| `agents/documents/Tutorials_and_Guides/cross-compile-guide.md` | ⚠️ 存在 | 需审计内容完整性 |
-| `agents/documents/Tutorials_and_Guides/docker-setup-guide.md` | ✅ 已填充 | 文件不存在 |
-
-### robots/ 目录
-
-| 路径 | 状态 | 说明 |
-|------|------|------|
-| `agents/robots/wheeled_vehicle/` | ⚠️ 目录存在 | 需审计是否有真实内容 |
-| `agents/robots/quadruped/` | ⚠️ 目录存在 | 需审计 |
-| `agents/robots/manipulator/` | ⚠️ 目录存在 | 需审计 |
-| `agents/robots/humanoid/` | ⚠️ 目录存在 | 需审计 |
-| `agents/robots/multi_rotor_uav/` | ⚠️ 目录存在 | 需审计 |
-
-### skills/ 目录
-
-| 状态 | 数量 |
-|------|------|
-| 总 SKILL.md 文件 | 77 |
-| 小于 500 字节（内容残缺） | 约 20+ |
-| 有实质内容的 | < 50 |
-
----
-
-## 2. 目录结构检查
+## 1. 目录结构
 
 ```
 vibe-coding-ros2/
-├── README.md                    ✅ 存在，12860 字节
-├── AGENTS.md                    ✅ 存在于 i18n/zh-CN/，根目录已删除
-├── PROJECT_ROADMAP.md           ✅ 新增，完整路线图
-├── CRITICAL_ISSUES.md           ✅ 新增，关键问题追踪
-├── ARCHITECTURE_REPORT.md       ✅ 本报告
+├── README.md                    ✅ 项目主文档
+├── AGENTS.md                   ✅ AI Agent 开发规则
+├── CLAUDE.md                   ✅ AI Agent 指南（核心规则）
+├── SOUL.md                     ✅ 项目哲学
+├── PROJECT_ROADMAP.md           ✅ 技术路线图
+│
 ├── agents/
-│   ├── prompts/                 ⚠️ 部分 404
-│   ├── documents/               ❌ 大部分 404
-│   ├── robots/                  ⚠️ 目录存在，内容待审计
-│   ├── skills/                  ⚠️ 部分充实，部分占位
-│   └── memory-bank/             ⚠️ 部分 404
-├── examples/                    ✅ 完整（MCP workflow + memory-bank）
-├── scripts/                     ✅ 基本完整
-│   ├── mcp/                     ✅ mcp-agent-orchestrator.sh
-│   ├── generators/              ⚠️ ros2-package-generator.sh 需可执行化
-│   └── validators/              ✅ skill-frontmatter-validator.sh
-└── i18n/zh-CN/                 ✅ 9 个文档完整
+│   ├── skills/                ✅ 276 个技能定义（SKILL.md）
+│   ├── robots/                ✅ 机器人类型指南
+│   ├── documents/              ✅ 方法论文档（TDD/反模式/模型选择）
+│   └── prompts/               ✅ 提示词模板
+│
+├── scripts/
+│   ├── generators/            ✅ 21 个生成器
+│   ├── validators/            ✅ SKILL 格式验证
+│   ├── debugger/              ✅ 8类错误诊断
+│   ├── mcp/                  ✅ MCP 集成
+│   └── ros2-*.sh             ✅ 各类工具脚本
+│
+└── examples/
+    └── mcp-workflow/
+        └── cases/             ✅ 12 个完整案例（PLAN+SKILL+VERIFY）
 ```
 
 ---
 
-## 3. SKILL.md 内容抽查（最差列表）
+## 2. 关键文件状态
 
-以下文件小于 500 字节，内容严重不足：
-
-| 路径 | 大小 | 说明 |
+| 文件 | 状态 | 说明 |
 |------|------|------|
-| `agents/skills/simulation/mujoco/SKILL.md` | ~100 字节 | 只有 frontmatter |
-| `agents/skills/motion-control/biped-control/SKILL.md` | ~150 字节 | 只有 frontmatter |
-| `agents/skills/perception/3d-reconstruction/SKILL.md` | ~100 字节 | 占位内容 |
+| `README.md` | ✅ | v0.3.0，含 21 个生成器表格 |
+| `AGENTS.md` | ✅ | 2026-04-07 更新，精简至 1755 字节 |
+| `CLAUDE.md` | ✅ | 核心规则 + 工具索引 |
+| `PROJECT_ROADMAP.md` | ✅ | v0.3.0 完整路线图 |
+| `scripts/init-agent.sh` | ✅ | 已重构，移除废弃 i18n 引用 |
+| `.github/workflows/ros2-ci.yml` | ✅ | CI（humble/iron/jazzy + bag_test）|
 
 ---
 
-## 4. P0 缺陷清单（必须修复）
+## 3. 已删除的无效内容
 
-| 优先级 | 文件 | 当前状态 | 目标 |
-|--------|------|----------|------|
-| P0 | `(3,1)_ros2_node_implementation.md` | 404 | 创建完整节点实现提示词 |
-| P0 | `ros2-common-prompts.md` | 404 | 创建常用提示词模板 |
-| P0 | `development-experience.md` | 404 | 创建开发经验文档 |
-| P0 | `ros2-debug-guide.md` | 404 | 创建调试指南 |
-| P0 | `docker-setup-guide.md` | 404 | 创建 Docker 配置指南 |
-| P0 | `ros2-package-generator.sh` | 功能不足 | 重写为可执行脚本 |
-| P0 | 无 MCP 集成 | 缺失 | 集成 ros-mcp-server |
-| P0 | 无编译反馈 | 缺失 | 实现 colcon build 循环 |
+以下历史遗留内容已在 2026-04-07 清理：
 
----
-
-## 5. 架构一致性评估
-
-| 检查项 | 状态 | 说明 |
-|--------|------|------|
-| README 与实际目录结构一致 | ✅ | README 描述与目录匹配 |
-| MCP_WORKFLOW.md 与实际 cases 一致 | ✅ | go2-scurve + manipulator-pickplace 存在 |
-| SKILL.md frontmatter 格式一致 | ✅ | 272 个文件，0 错误 |
-| .gitignore 正确配置 | ✅ | .docs/.vscode/.gitignore 不跟踪 |
-| init-agent.sh 生成文件完整 | ✅ | 包含 .docs/ .vscode/ 等 |
+| 内容 | 说明 |
+|------|------|
+| `agents/agents/` | 嵌套 agent 目录，已删除 |
+| `agents/generated/` | 自动生成引导文件，已删除 |
+| `agents/memory-bank/` | 占位符模板，已删除 |
+| `examples/memory-bank-example/` | 示例目录，已删除 |
+| `i18n/` | 重复翻译，根目录已有中文 README，已删除 |
+| `scripts/test-templates/{src,test,launch}` | 错误目录名，已删除 |
+| `REVIEW_BOARD/` | 空目录，已删除 |
 
 ---
 
-## 6. 修复进度
+## 4. 生成器统计
 
-| 日期 | 动作 | 结果 |
-|------|------|------|
-| 2026-04-04 | PROJECT_ROADMAP.md 创建 | ✅ 完成 |
-| 2026-04-04 | CRITICAL_ISSUES.md 创建 | ✅ 完成 |
-| 2026-04-04 | ARCHITECTURE_REPORT.md 创建 | ✅ 完成 |
-| 2026-04-04 | (3,1)_ros2_node_implementation.md | ✅ 完成 |
-| 2026-04-04 | ros2-common-prompts.md | ❌ 待做 |
-| 2026-04-04 | development-experience.md | ❌ 待做 |
-| 2026-04-04 | ros2-debug-guide.md | ❌ 待做 |
-| 2026-04-04 | docker-setup-guide.md | ❌ 待做 |
+| 类型 | 数量 |
+|------|------|
+| 包/节点生成器 | 21 |
+| C++ 节点模板 | 7 种类型 |
+| SLAM 配置 | 5 种 |
+| Gazebo 仿真 | 5 种机器人类型 |
+| 行为树 | 4 种 |
+| 多机协调 | 4 种 |
+| RL 算法 | 4 种 |
