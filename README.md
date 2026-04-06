@@ -221,3 +221,9 @@ bash scripts/generators/ros2-cpp-node.sh lifecycle my_robot rclcpp,std_msgs
 ## 📄 许可证
 
 Apache-2.0 · [LICENSE](LICENSE)
+
+---
+
+## 🗺️ Roadmap
+
+详见 [PROJECT_ROADMAP.md](PROJECT_ROADMAP.md)（v0.2 → v0.3 → v1.0 路线图）
