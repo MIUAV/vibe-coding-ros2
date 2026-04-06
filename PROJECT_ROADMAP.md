@@ -48,8 +48,8 @@
 | 功能 | 描述 | 优先级 |
 |------|------|--------|
 | `ros2-nav2-node-generator` | Nav2 compatible 节点模板 | ✅ P1 |
-| `ros2-control-node-generator` | ros2_control 硬件接口节点 | P2 |
-| `ros2-moveit-generator` | MoveIt2 运动规划节点 | P2 |
+| `ros2-control-node-generator` | ros2_control 硬件接口节点 | ✅ P2-2 |
+| `ros2-moveit-generator` | MoveIt2 运动规划节点 | ✅ P2-3 |
 
 ### 📦 案例包
 
