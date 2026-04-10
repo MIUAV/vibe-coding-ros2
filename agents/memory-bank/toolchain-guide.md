@@ -66,21 +66,23 @@ bash scripts/generators/ros2-launch-generator.sh <type> <pkg_name>
 | `ros2-param-wizard.sh` | 参数 YAML 生成 |
 | `ros2-performance-monitor.sh` | 性能监控 |
 
-## 翻译工作流（scripts/translator/）
+## 翻译工作流（i18n/）
+
+翻译脚本已移至 `i18n/translate-docs.sh`，翻译文件输出到 `i18n/` 目录。
 
 ```bash
 # 环境变量
 export DEEPL_API_KEY=your_key_here  # 或使用 Google Translate
 
-# 翻译单个文件
-bash scripts/translator/translate-docs.sh AGENTS.md zh-CN --deepl
+# 翻译单个文件（从项目根目录运行）
+bash i18n/translate-docs.sh README.md ja-JP --deepl
 
 # 翻译整个目录
-bash scripts/translator/translate-docs.sh agents/memory-bank/ ja-JP --deepl
+bash i18n/translate-docs.sh agents/memory-bank/ ko-KR --deepl
 
-# 输出格式：原文件名 + 语言后缀
-# AGENTS.md → AGENTS.zh-CN.md
-# AGENTS.md → AGENTS.ja-JP.md
+# 输出格式：i18n/<原文件名>.<语言代码>.<扩展名>
+# → i18n/README.ja-JP.md
+# → i18n/CLAUDE.ko-KR.md
 ```
 
 ## 自检命令速查
@@ -130,6 +132,6 @@ bash scripts/generators/ros2-simulator-generator.sh manipulator my_sim
 ### 批量翻译文档
 ```bash
 for lang in zh-CN ja-JP ko-KR; do
-  bash scripts/translator/translate-docs.sh README.md $lang --deepl
+  bash i18n/translate-docs.sh README.md $lang --deepl
 done
 ```

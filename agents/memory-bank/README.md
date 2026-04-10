@@ -109,15 +109,15 @@ bash agents/memory-bank/templates/auto-switch.sh "做一个无人机导航包"
 
 ## 🌐 i18n 多语言文档
 
-翻译工具：`scripts/translator/translate-docs.sh`
+翻译工具：`i18n/translate-docs.sh`
 
 ```bash
 # 设置 API Key
 export DEEPL_API_KEY=xxx  # 或 Google Translate (无需key)
 
 # 翻译单个文件
-bash scripts/translator/translate-docs.sh README.md ja-JP --deepl
+bash i18n/translate-docs.sh README.md ja-JP --deepl
 
 # 批量翻译目录
-bash scripts/translator/translate-docs.sh agents/memory-bank/ zh-CN --deepl
+bash i18n/translate-docs.sh agents/memory-bank/ zh-CN --deepl
 ```
