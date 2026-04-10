@@ -184,8 +184,9 @@ vibe-coding-ros2/
 ├── SOUL.md / SYSTEM.md / CLAUDE.md  # AI Agent 核心规则
 │
 ├── agents/
-│   ├── skills/                 # 276 个技能定义（SKILL.md）
-│   └── documents/               # 方法论文档
+│   ├── skills/                 # 19 个技能目录（SKILL.md）
+│   ├── memory-bank/           # AI Agent 上下文记忆（规范/模板）
+│   └── prompts/               # 提示词模板
 │
 ├── scripts/
 │   ├── generators/              # 包/节点/接口生成器

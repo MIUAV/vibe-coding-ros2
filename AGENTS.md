@@ -31,9 +31,9 @@ vibe-coding-ros2/
 ├── PROJECT_ROADMAP.md    # 技术路线图
 │
 ├── agents/
-│   ├── skills/           # 276 个技能定义（SKILL.md）
+│   ├── skills/           # 19 个技能目录（SKILL.md）
 │   ├── robots/           # 机器人类型指南
-│   ├── documents/        # 方法论文档（TDD/反模式/模型选择等）
+│   ├── memory-bank/      # AI Agent 上下文记忆（项目全景/规范/模板）
 │   └── prompts/          # 提示词模板
 │
 ├── scripts/
