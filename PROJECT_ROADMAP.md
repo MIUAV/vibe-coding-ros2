@@ -1,6 +1,6 @@
 # PROJECT_ROADMAP — Vibe-Coding-ROS2
 
-> 项目路线图。当前版本 v0.3.0（2026-04-07 完成）。
+> 项目路线图。当前版本 v0.3.1（2026-04-10 完成）。
 
 ---
 
@@ -103,13 +103,25 @@ AI Agent:
 
 ---
 
+## v0.3.1 更新（2026-04-10）
+
+**AI Agent 开发文档增强**
+- CLAUDE.md 完全重写（中文为主），增加工具决策树、依赖速查表、Agent 行为准则
+- agents/memory-bank/ 新增：**20 个自动切换模板**
+  - robot-type（7）：wheeled-vehicle / multi-rotor-uav / quadruped / manipulator / humanoid / underwater / multi-robot
+  - task-type（7）：navigation / perception / motion-control / simulation / multi-agent / reinforcement-learning / slam-mapping
+  - phase（6）：requirements / architecture / prototyping / implementation / integration / deployment
+- 自动切换脚本：`templates/auto-switch.sh`
+- 修复 AGENTS.md / README.md 中 agents/documents/ 旧引用 → agents/memory-bank/
+
 ## 版本历史
 
 | 版本 | 日期 | 主要内容 |
 |------|------|---------|
-| v0.3.x | 2026-04-07 | P2 Nav2/MoveIt/ros2_control + P3 仿真/SLAM/诊断/多机协调生成器 + 12案例 |
-| v0.3.x | 2026-04-07-am | P2 Nav2/MoveIt/ros2_control + 12案例（v0.3第一阶段） |
-| v0.3.x | 2026-04-07-pm | P3 仿真/SLAM/诊断/多机协调生成器（v0.3第二阶段） |
-| v0.2.x | 2026-04-06 | 工具链完整 + CI升级 + README重构 + P0-P2迭代完成 |
+| v0.3.1 | 2026-04-10 | memory-bank 20 模板 + CLAUDE.md 重写 + 文档修复 |
+| v0.3.0 | 2026-04-07 | P2 Nav2/MoveIt/ros2_control + P3 + 12案例 |
+| v0.3.0 | 2026-04-07-am | P2 + 12案例（v0.3第一阶段） |
+| v0.3.0 | 2026-04-07-pm | P3 仿真/SLAM/诊断/多机协调生成器 |
+| v0.2.x | 2026-04-06 | 工具链完整 + CI升级 + README重构 |
 | v0.1.x | 2026-04-05 | 初始版本：工具链 + CI + 案例文档化 |
 | v0.0.x | 2026-03 | 实验阶段 |
