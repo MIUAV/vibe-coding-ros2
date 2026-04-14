@@ -68,19 +68,24 @@ vibe-coding-ros2/
 │   │       ├── task-type/              # 按任务类型切换
 │   │       └── phase/                  # 按开发阶段切换
 │   │
-│   ├── skills/            # 276 个技能定义（SKILL.md）
+│   ├── skills/            # 180+ 技能库（SKILL.md）
 │   ├── robots/            # 机器人类型指南
 │   └── prompts/           # 提示词模板
 │
 ├── scripts/
-│   ├── generators/        # 22 个生成器
-│   ├── translator/         # i18n 翻译工作流
-│   │   └── translate-docs.sh
+│   ├── generators/        # 24 个生成器
+│   ├── debugger/          # ros2-debug.sh
+│   ├── validators/        # 脚本/技能验证
 │   └── ros2-*.sh          # 工具脚本
 │
-└── examples/
-    └── mcp-workflow/
-        └── cases/         # 12 个完整案例
+├── docs/                  # 文档目录
+├── QUICKREF.md            # ⭐ ROS2 命令速查（必熟）
+├── CHECKLIST.md           # ⭐ 开发质量清单（提交前必读）
+└── SYSTEM.md              # ⭐ AI 强制规则（最高优先级）
+
+```
+
+> **关键文件优先级**：SYSTEM.md > CLAUDE.md > QUICKREF.md > CHECKLIST.md > 工具脚本
 ```
 
 ---

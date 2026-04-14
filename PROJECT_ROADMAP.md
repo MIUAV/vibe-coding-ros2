@@ -1,6 +1,6 @@
 # PROJECT_ROADMAP — Vibe-Coding-ROS2
 
-> 项目路线图。当前版本 v0.3.1（2026-04-10 完成）。
+> 项目路线图。当前版本 v0.4.0（2026-04-13 进行中）。
 
 ---
 
@@ -103,6 +103,42 @@ AI Agent:
 
 ---
 
+## v0.4.0 规划（2026-04-13 进行中）
+
+### 目标：让 v1.0 愿景更近一步
+
+**核心改进方向：** 工具链闭环 + 文档完整 + CI 达标
+
+#### 📋 文档补全
+- ✅ `QUICKREF.md` — ROS2 命令速查（235行，13个场景）
+- ✅ `CHECKLIST.md` — 开发质量清单（82行，5类检查表）
+- ✅ `SYSTEM.md` — AI Agent 强制规则（103行，零容忍规则）
+- ✅ `README_EN.md` / `README_DE.md` — 英文/德文文档
+- ✅ `agents/skills/README.md` — 180+ SKILL 完整索引重写
+
+#### 🔧 工具链改进（P1）
+- `ros2-orchestrate.sh` 增强：支持 YAML/JSON 描述文件输入
+- Python 节点生成器：`ros2-python-node-generator.sh`
+- 统一接口描述格式：`.ifd`（接口定义文件）→ 自动生成 msg/srv/action + C++ 绑定
+
+#### 🧪 CI/CD 补完（P2）
+- ros2 bag integration test（当前缺失）
+- clang-tidy 覆盖率统计
+- 多 ROS2 版本（Humble / Iron / Jazzy）矩阵测试强化
+- 自动化生成器脚本测试框架
+
+#### 🤖 AI 增强（P2）
+- LLM 驱动的 CMake 错误自动修复（超出 ros2-cmake-fix 现有规则）
+- 基于过往编译历史学习，预测高概率失败点
+- 多轮对话上下文记忆（memory-bank 与 CLAUDE.md 深度整合）
+
+#### 📖 示例案例完善（P3）
+- `go2-scurve` 案例补充真实步态数据
+- `multi-robot-swarm` 案例补充分布式通信配置
+- 新增：`autonomous-delivery` 轮式 + 机械臂组合案例
+
+---
+
 ## v0.3.1 更新（2026-04-10）
 
 **AI Agent 开发文档增强**
@@ -118,10 +154,9 @@ AI Agent:
 
 | 版本 | 日期 | 主要内容 |
 |------|------|---------|
+| v0.4.0 | 2026-04-13 | QUICKREF + CHECKLIST + SYSTEM.md + SKILL索引重写 + 英德文 README |
 | v0.3.1 | 2026-04-10 | memory-bank 20 模板 + CLAUDE.md 重写 + 文档修复 |
 | v0.3.0 | 2026-04-07 | P2 Nav2/MoveIt/ros2_control + P3 + 12案例 |
-| v0.3.0 | 2026-04-07-am | P2 + 12案例（v0.3第一阶段） |
-| v0.3.0 | 2026-04-07-pm | P3 仿真/SLAM/诊断/多机协调生成器 |
 | v0.2.x | 2026-04-06 | 工具链完整 + CI升级 + README重构 |
 | v0.1.x | 2026-04-05 | 初始版本：工具链 + CI + 案例文档化 |
 | v0.0.x | 2026-03 | 实验阶段 |
