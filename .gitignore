@@ -1,0 +1,24 @@
+# Workspace metadata (local only)
+SOUL.md
+SOUL_EN.md
+AGENTS.md
+AGENTS_EN.md
+CLAUDE.md
+CLAUDE_EN.md
+SYSTEM.md
+SYSTEM_EN.md
+USER.md
+TOOLS.md
+MEMORY.md
+MEMORY.md.*
+HEARTBEAT.md
+BOOTSTRAP.md
+IDENTITY.md
+
+# Project docs (keep these)
+# README.md
+# README_*.md
+
+# OS
+.DS_Store
+*.swp
